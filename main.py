@@ -130,7 +130,7 @@ for input_file_name in os.listdir(INPUT_PATH):
                 type = 'Long'
             elif column['type'] == 'tinyint' or column['type'] == 'int':
                 type = 'Int'
-            elif column['type'] == 'datetime':
+            elif column['type'] == 'datetime' or column['type'] == 'time':
                 type = 'Date'
 
             if column['nullable']:
@@ -168,7 +168,7 @@ for input_file_name in os.listdir(INPUT_PATH):
                 type = 'Long'
             elif column['type'] == 'tinyint' or column['type'] == 'int':
                 type = 'Int'
-            elif column['type'] == 'datetime':
+            elif column['type'] == 'datetime' or column['type'] == 'time':
                 type = 'Date'
 
             if column['nullable']:
