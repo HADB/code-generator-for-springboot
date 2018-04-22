@@ -41,77 +41,51 @@ for input_file_name in os.listdir(INPUT_PATH):
         file_read.close()
 
         # [Model]Mapper.xml
-        content = ''
-
-        ## columns
-        content += '<sql id="%sColumns">\n' % (table_name)
         lines = []
         for column in columns:
-            lines.append('    `%s` as `%s`' % (column['name'], inflection.camelize(column['name'], False)))
-        content += '%s\n' % (',\n'.join(lines))
-        content += '</sql>\n\n'
+            lines.append('        `%s` as `%s`' % (column['name'], inflection.camelize(column['name'], False)))
+        as_list = ',\n'.join(lines)
 
-        ## insert
-        content += '<insert id="insert%s">\n' % (inflection.camelize(table_name))
-        content += '    INSERT INTO `t_%s`(\n' % (table_name)
         lines = []
         for column in columns:
             if column['name'] == 'id' or column['name'] == 'is_delete':
                 continue
             else:
-                lines.append('    `%s`' % (column['name']))
-        content += '%s)\n' % (',\n'.join(lines))
-        content += '    VALUES(\n'
+                lines.append('        `%s`' % (column['name']))
+        name_list = ',\n'.join(lines)
+
         lines = []
         for column in columns:
             if column['name'] == 'id' or column['name'] == 'is_delete':
                 continue
             elif column['name'] == 'create_time' or column['name'] == 'update_time':
-                lines.append('    NOW()')
+                lines.append('        NOW()')
             else:
-                lines.append('    #{%s.%s}' % (inflection.camelize(table_name, False), inflection.camelize(column['name'], False)))
-        content += '%s)\n' % (',\n'.join(lines))
-        content += '</insert>\n\n'
+                lines.append('        #{%s.%s}' % (inflection.camelize(table_name, False), inflection.camelize(column['name'], False)))
+        value_list = ',\n'.join(lines)
 
-        ## update
-        content += '<update id="update%s">\n' % (inflection.camelize(table_name))
-        content += '    UPDATE `%s` SET\n' % (table_name)
         lines = []
         for column in columns:
             if column['name'] == 'id' or column['name'] == 'create_time' or column['name'] == 'is_delete':
                 continue
             elif column['name'] == 'update_time':
-                lines.append('    `update_time` = NOW()')
+                lines.append('        `update_time` = NOW()')
             else:
-                lines.append('    `%s` = #{%s.%s}' % (column['name'], inflection.camelize(table_name, False), inflection.camelize(column['name'], False)))
-        content += '%s\n' % (',\n'.join(lines))
-        content += '    WHERE `id` = #{id}\n'
-        content += '</update>\n\n'
+                lines.append('        `%s` = #{%s.%s}' % (column['name'], inflection.camelize(table_name, False), inflection.camelize(column['name'], False)))
+        update_list = ',\n'.join(lines)
 
-        ## delete
-        content += '<update id="delete%s">\n' % (inflection.camelize(table_name))
-        content += '    UPDATE `%s` SET\n' % (table_name)
-        content += '    `is_delete` = 1\n'
-        content += '    WHERE `id` = #{id}\n'
-        content += '</update>\n\n'
-
-        ## select
-        content += '<select id="selectPaging%ss" resultType="%s.models.%s">\n' % (inflection.camelize(table_name), PACKAGE_NAME, inflection.camelize(table_name))
-        content += '    SELECT\n'
-        content += '    <include refid="%sColumns"></include>\n' % (inflection.camelize(table_name, False))
-        content += '    FROM `%s`\n' % (table_name)
-        content += '    WHERE `is_delete` = 0\n'
-        content += '    ORDER BY `create_time` ASC\n'
-        content += '    LIMIT #{request.paging.offset}, #{request.paging.pageSize}\n'
-        content += '</select>\n\n'
-
-        ## selectCount
-        content += '<select id="selectPaging%ssCount" resultType="Long">\n' % (inflection.camelize(table_name))
-        content += '    SELECT COUNT(*)\n'
-        content += '    FROM `%s`\n' % (table_name)
-        content += '    WHERE `is_delete` = 0\n'
-        content += '</select>\n\n'
-
+        file_read = open(os.path.join(TEMPLATE_PATH, 'Mapper.xml'), 'r')
+        content = file_read.read()
+        t = string.Template(content)
+        content = t.substitute(
+            table_name='t_' + table_name,
+            package_name=PACKAGE_NAME,
+            model_upper_camelcase=inflection.camelize(table_name),
+            model_camelcase=inflection.camelize(table_name, False),
+            as_list=as_list,
+            name_list=name_list,
+            value_list=value_list,
+            update_list=update_list)
         file_write = open(os.path.join(output_file_path, inflection.camelize(table_name) + 'Mapper.xml'), 'w')
         file_write.write(content)
         file_write.close()
@@ -197,7 +171,6 @@ for input_file_name in os.listdir(INPUT_PATH):
         file_write.close()
 
         # [Model]Mapper.kt
-        content = ''
         file_read = open(os.path.join(TEMPLATE_PATH, 'Mapper.kt'), 'r')
         content = file_read.read()
         t = string.Template(content)
@@ -207,7 +180,6 @@ for input_file_name in os.listdir(INPUT_PATH):
         file_write.close()
 
         # [Model]Service.kt
-        content = ''
         file_read = open(os.path.join(TEMPLATE_PATH, 'Service.kt'), 'r')
         content = file_read.read()
         t = string.Template(content)
@@ -223,7 +195,6 @@ for input_file_name in os.listdir(INPUT_PATH):
         file_write.close()
 
         # [Model]Controller.kt
-        content = ''
         file_read = open(os.path.join(TEMPLATE_PATH, 'Controller.kt'), 'r')
         content = file_read.read()
         t = string.Template(content)
