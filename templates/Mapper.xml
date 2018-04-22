@@ -16,7 +16,7 @@ ${value_list})
     <update id="update${model_upper_camelcase}">
         UPDATE `${table_name}` SET
 ${update_list}
-        WHERE `id` = #{id}
+        WHERE `id` = #{${model_camelcase}.id}
     </update>
 
     <update id="delete${model_upper_camelcase}">
@@ -24,6 +24,14 @@ ${update_list}
         SET `is_delete` = 1
         WHERE `id` = #{id}
     </update>
+
+    <select id="selectAll${model_upper_camelcase}s" resultType="${package_name}.models.${model_upper_camelcase}">
+        SELECT
+        <include refid="${model_camelcase}Columns"></include>
+        FROM `${table_name}`
+        WHERE `is_delete` = 0
+        ORDER BY `create_time` ASC
+    </select>
 
     <select id="selectPaging${model_upper_camelcase}s" resultType="${package_name}.models.${model_upper_camelcase}">
         SELECT
