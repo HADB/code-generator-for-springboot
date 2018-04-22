@@ -75,8 +75,8 @@ data class Device(
         val maintainerName: String?,        // 维护人姓名
         val maintainerMobile: String?,      // 维护人手机号
         val peakTimes: String?,             // 人群高峰时间(JSON数组)
-        val enableTimeFrom: String?,        // 启用时间(开始)
-        val enableTimeTo: String?,          // 启用时间(结束)
+        val enableTimeFrom: Date?,          // 启用时间(开始)
+        val enableTimeTo: Date?,            // 启用时间(结束)
         val heartbeatTime: Date?,           // 心跳时间
         val createTime: Date? = Date(0),    // 创建时间
         val updateTime: Date? = Date(0),    // 更新时间
@@ -161,29 +161,29 @@ import run.monkey.op.xiaotong.viewmodels.device.DeviceSearchRequest
 @Component
 open class DeviceService {
     @Autowired
-    private lateinit val deviceMapper: DeviceMapper
+    private lateinit var deviceMapper: DeviceMapper
 
     fun editDevice(request: DeviceEditRequest): Long {
         val device = Device(
-                id = request.id
-                machineCode = request.machineCode
-                description = request.description
-                communicationStatus = request.communicationStatus
-                industryId = request.industryId
-                provinceCode = request.provinceCode
-                provinceName = request.provinceName
-                cityCode = request.cityCode
-                cityName = request.cityName
-                districtCode = request.districtCode
-                districtName = request.districtName
-                streetCode = request.streetCode
-                streetName = request.streetName
-                specificAddress = request.specificAddress
-                maintainerName = request.maintainerName
-                maintainerMobile = request.maintainerMobile
-                peakTimes = request.peakTimes
-                enableTimeFrom = request.enableTimeFrom
-                enableTimeTo = request.enableTimeTo
+                id = request.id,
+                machineCode = request.machineCode,
+                description = request.description,
+                communicationStatus = request.communicationStatus,
+                industryId = request.industryId,
+                provinceCode = request.provinceCode,
+                provinceName = request.provinceName,
+                cityCode = request.cityCode,
+                cityName = request.cityName,
+                districtCode = request.districtCode,
+                districtName = request.districtName,
+                streetCode = request.streetCode,
+                streetName = request.streetName,
+                specificAddress = request.specificAddress,
+                maintainerName = request.maintainerName,
+                maintainerMobile = request.maintainerMobile,
+                peakTimes = request.peakTimes,
+                enableTimeFrom = request.enableTimeFrom,
+                enableTimeTo = request.enableTimeTo,
                 heartbeatTime = request.heartbeatTime
         )
         if (device.id == 0L) {
@@ -215,14 +215,12 @@ open class DeviceService {
 `DeviceEditRequest.kt`文件
 
 ```kotlin
-package run.monkey.op.xiaotong.models
+package run.monkey.op.xiaotong.viewmodels.device
 
-import run.monkey.op.xiaotong.annotations.NoArg
 import java.util.*
 
-@NoArg
-data class Device(
-        val id: Long = 0,                 // 主键
+data class DeviceEditRequest(
+        var id: Long = 0,                 // 主键
         val machineCode: String,          // 机器码
         val description: String?,         // 机器描述
         val communicationStatus: Int,     // 通讯状态(0:未连接, 1:已连接)
@@ -239,8 +237,8 @@ data class Device(
         val maintainerName: String?,      // 维护人姓名
         val maintainerMobile: String?,    // 维护人手机号
         val peakTimes: String?,           // 人群高峰时间(JSON数组)
-        val enableTimeFrom: String?,      // 启用时间(开始)
-        val enableTimeTo: String?,        // 启用时间(结束)
+        val enableTimeFrom: Date?,        // 启用时间(开始)
+        val enableTimeTo: Date?,          // 启用时间(结束)
         val heartbeatTime: Date?          // 心跳时间
 )
 ```
@@ -269,122 +267,135 @@ interface DeviceMapper {
 `DeviceMapper.xml`文件
 
 ```xml
-<sql id="deviceColumns">
-    `id` as `id`,
-    `machine_code` as `machineCode`,
-    `description` as `description`,
-    `communication_status` as `communicationStatus`,
-    `industry_id` as `industryId`,
-    `province_code` as `provinceCode`,
-    `province_name` as `provinceName`,
-    `city_code` as `cityCode`,
-    `city_name` as `cityName`,
-    `district_code` as `districtCode`,
-    `district_name` as `districtName`,
-    `street_code` as `streetCode`,
-    `street_name` as `streetName`,
-    `specific_address` as `specificAddress`,
-    `maintainer_name` as `maintainerName`,
-    `maintainer_mobile` as `maintainerMobile`,
-    `peak_times` as `peakTimes`,
-    `enable_time_from` as `enableTimeFrom`,
-    `enable_time_to` as `enableTimeTo`,
-    `heartbeat_time` as `heartbeatTime`,
-    `create_time` as `createTime`,
-    `update_time` as `updateTime`,
-    `is_delete` as `isDelete`
-</sql>
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 
-<insert id="insertDevice">
-    INSERT INTO `t_device`(
-    `machine_code`,
-    `description`,
-    `communication_status`,
-    `industry_id`,
-    `province_code`,
-    `province_name`,
-    `city_code`,
-    `city_name`,
-    `district_code`,
-    `district_name`,
-    `street_code`,
-    `street_name`,
-    `specific_address`,
-    `maintainer_name`,
-    `maintainer_mobile`,
-    `peak_times`,
-    `enable_time_from`,
-    `enable_time_to`,
-    `heartbeat_time`,
-    `create_time`,
-    `update_time`)
-    VALUES(
-    #{device.machineCode},
-    #{device.description},
-    #{device.communicationStatus},
-    #{device.industryId},
-    #{device.provinceCode},
-    #{device.provinceName},
-    #{device.cityCode},
-    #{device.cityName},
-    #{device.districtCode},
-    #{device.districtName},
-    #{device.streetCode},
-    #{device.streetName},
-    #{device.specificAddress},
-    #{device.maintainerName},
-    #{device.maintainerMobile},
-    #{device.peakTimes},
-    #{device.enableTimeFrom},
-    #{device.enableTimeTo},
-    #{device.heartbeatTime},
-    NOW(),
-    NOW())
-</insert>
+<mapper namespace="run.monkey.op.xiaotong.mappers.DeviceMapper">
+    <sql id="deviceColumns">
+        `id` as `id`,
+        `machine_code` as `machineCode`,
+        `description` as `description`,
+        `communication_status` as `communicationStatus`,
+        `industry_id` as `industryId`,
+        `province_code` as `provinceCode`,
+        `province_name` as `provinceName`,
+        `city_code` as `cityCode`,
+        `city_name` as `cityName`,
+        `district_code` as `districtCode`,
+        `district_name` as `districtName`,
+        `street_code` as `streetCode`,
+        `street_name` as `streetName`,
+        `specific_address` as `specificAddress`,
+        `maintainer_name` as `maintainerName`,
+        `maintainer_mobile` as `maintainerMobile`,
+        `peak_times` as `peakTimes`,
+        `enable_time_from` as `enableTimeFrom`,
+        `enable_time_to` as `enableTimeTo`,
+        `heartbeat_time` as `heartbeatTime`,
+        `create_time` as `createTime`,
+        `update_time` as `updateTime`,
+        `is_delete` as `isDelete`
+    </sql>
 
-<update id="updateDevice">
-    UPDATE `device` SET
-    `machine_code` = #{device.machineCode},
-    `description` = #{device.description},
-    `communication_status` = #{device.communicationStatus},
-    `industry_id` = #{device.industryId},
-    `province_code` = #{device.provinceCode},
-    `province_name` = #{device.provinceName},
-    `city_code` = #{device.cityCode},
-    `city_name` = #{device.cityName},
-    `district_code` = #{device.districtCode},
-    `district_name` = #{device.districtName},
-    `street_code` = #{device.streetCode},
-    `street_name` = #{device.streetName},
-    `specific_address` = #{device.specificAddress},
-    `maintainer_name` = #{device.maintainerName},
-    `maintainer_mobile` = #{device.maintainerMobile},
-    `peak_times` = #{device.peakTimes},
-    `enable_time_from` = #{device.enableTimeFrom},
-    `enable_time_to` = #{device.enableTimeTo},
-    `heartbeat_time` = #{device.heartbeatTime},
-    `update_time` = NOW()
-    WHERE `id` = #{id}
-</update>
+    <insert id="insertDevice">
+        INSERT INTO `t_device`(
+        `machine_code`,
+        `description`,
+        `communication_status`,
+        `industry_id`,
+        `province_code`,
+        `province_name`,
+        `city_code`,
+        `city_name`,
+        `district_code`,
+        `district_name`,
+        `street_code`,
+        `street_name`,
+        `specific_address`,
+        `maintainer_name`,
+        `maintainer_mobile`,
+        `peak_times`,
+        `enable_time_from`,
+        `enable_time_to`,
+        `heartbeat_time`,
+        `create_time`,
+        `update_time`)
+        VALUES(
+        #{device.machineCode},
+        #{device.description},
+        #{device.communicationStatus},
+        #{device.industryId},
+        #{device.provinceCode},
+        #{device.provinceName},
+        #{device.cityCode},
+        #{device.cityName},
+        #{device.districtCode},
+        #{device.districtName},
+        #{device.streetCode},
+        #{device.streetName},
+        #{device.specificAddress},
+        #{device.maintainerName},
+        #{device.maintainerMobile},
+        #{device.peakTimes},
+        #{device.enableTimeFrom},
+        #{device.enableTimeTo},
+        #{device.heartbeatTime},
+        NOW(),
+        NOW())
+    </insert>
 
-<update id="deleteDevice">
-    UPDATE `device` SET
-    `is_delete` = 1
-    WHERE `id` = #{id}
-</update>
+    <update id="updateDevice">
+        UPDATE `t_device` SET
+        `machine_code` = #{device.machineCode},
+        `description` = #{device.description},
+        `communication_status` = #{device.communicationStatus},
+        `industry_id` = #{device.industryId},
+        `province_code` = #{device.provinceCode},
+        `province_name` = #{device.provinceName},
+        `city_code` = #{device.cityCode},
+        `city_name` = #{device.cityName},
+        `district_code` = #{device.districtCode},
+        `district_name` = #{device.districtName},
+        `street_code` = #{device.streetCode},
+        `street_name` = #{device.streetName},
+        `specific_address` = #{device.specificAddress},
+        `maintainer_name` = #{device.maintainerName},
+        `maintainer_mobile` = #{device.maintainerMobile},
+        `peak_times` = #{device.peakTimes},
+        `enable_time_from` = #{device.enableTimeFrom},
+        `enable_time_to` = #{device.enableTimeTo},
+        `heartbeat_time` = #{device.heartbeatTime},
+        `update_time` = NOW()
+        WHERE `id` = #{device.id}
+    </update>
 
-<select id="selectPagingDevices" resultType="run.monkey.op.xiaotong.models.Device">
-    SELECT
-    <include refid="deviceColumns"></include>
-    FROM `device`
-    WHERE `is_delete` = 0
-    ORDER BY `create_time` ASC
-    LIMIT #{request.paging.offset}, #{request.paging.pageSize}
-</select>
+    <update id="deleteDevice">
+        UPDATE `t_device`
+        SET `is_delete` = 1
+        WHERE `id` = #{id}
+    </update>
 
-<select id="selectPagingDevicesCount" resultType="Long">
-    SELECT COUNT(*)
-    FROM `device`
-    WHERE `is_delete` = 0
-</select>
+    <select id="selectAllDevices" resultType="run.monkey.op.xiaotong.models.Device">
+        SELECT
+        <include refid="deviceColumns"></include>
+        FROM `t_device`
+        WHERE `is_delete` = 0
+        ORDER BY `create_time` ASC
+    </select>
+
+    <select id="selectPagingDevices" resultType="run.monkey.op.xiaotong.models.Device">
+        SELECT
+        <include refid="deviceColumns"></include>
+        FROM `t_device`
+        WHERE `is_delete` = 0
+        ORDER BY `create_time` ASC
+        LIMIT #{request.paging.offset}, #{request.paging.pageSize}
+    </select>
+
+    <select id="selectPagingDevicesCount" resultType="Long">
+        SELECT COUNT(*)
+        FROM `t_device`
+        WHERE `is_delete` = 0
+    </select>
+</mapper>
 ```
