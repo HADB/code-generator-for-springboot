@@ -156,14 +156,13 @@ for input_file_name in os.listdir(INPUT_PATH):
 
         # [Model]EditRequest.kt
         content = ''
-        content += 'package %s.models\n\n' % (PACKAGE_NAME)
-        content += 'import %s.annotations.NoArg\n' % (PACKAGE_NAME)
+        content += 'package %s.viewmodels.%s\n\n' % (PACKAGE_NAME, inflection.camelize(table_name, False))
         content += 'import java.util.*\n\n'
-        content += '@NoArg\n'
-        content += 'data class %s(\n' % (inflection.camelize(table_name))
+        content += 'data class %sEditRequest(\n' % (inflection.camelize(table_name))
         lines = []
         for column in columns:
             type = 'String'
+            define = 'val'
             if column['type'] == 'bigint':
                 type = 'Long'
             elif column['type'] == 'tinyint' or column['type'] == 'int':
@@ -175,9 +174,10 @@ for input_file_name in os.listdir(INPUT_PATH):
                 type += '?'
             if column['name'] == 'id':
                 type += ' = 0'
+                define = 'var'
             if column['name'] == 'create_time' or column['name'] == 'update_time' or column['name'] == 'is_delete':
                 continue
-            lines.append('        val %s: %s' % (inflection.camelize(column['name'], False), type))
+            lines.append('        %s %s: %s' % (define, inflection.camelize(column['name'], False), type))
         max_length = len(max(lines, key=len))
         for index, line in enumerate(lines):
             if index < len(lines) - 1:
