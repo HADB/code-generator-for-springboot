@@ -211,12 +211,13 @@ for input_file_name in os.listdir(INPUT_PATH):
         file_read = open(os.path.join(TEMPLATE_PATH, 'Service.kt'), 'r')
         content = file_read.read()
         t = string.Template(content)
-        columns_data = ''
+        columns_data = []
         for column in columns:
             if column['name'] == 'create_time' or column['name'] == 'update_time' or column['name'] == 'is_delete':
                 continue
-            columns_data += '\n                %s = request.%s' % (inflection.camelize(column['name'], False), inflection.camelize(column['name'], False))
-        content = t.substitute(package_name=PACKAGE_NAME, model_upper_camelcase=inflection.camelize(table_name), model_camelcase=inflection.camelize(table_name, False), columns_data=columns_data)
+            columns_data.append('                %s = request.%s' % (inflection.camelize(column['name'], False), inflection.camelize(column['name'], False)))
+        content = t.substitute(
+            package_name=PACKAGE_NAME, model_upper_camelcase=inflection.camelize(table_name), model_camelcase=inflection.camelize(table_name, False), columns_data=',\n'.join(columns_data))
         file_write = open(os.path.join(output_file_path, inflection.camelize(table_name) + 'Service.kt'), 'w')
         file_write.write(content)
         file_write.close()

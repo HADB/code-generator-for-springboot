@@ -10,10 +10,11 @@ import ${package_name}.viewmodels.${model_camelcase}.${model_upper_camelcase}Sea
 @Component
 open class ${model_upper_camelcase}Service {
     @Autowired
-    private lateinit val ${model_camelcase}Mapper: ${model_upper_camelcase}Mapper
+    private lateinit var ${model_camelcase}Mapper: ${model_upper_camelcase}Mapper
 
     fun edit${model_upper_camelcase}(request: ${model_upper_camelcase}EditRequest): Long {
-        val ${model_camelcase} = ${model_upper_camelcase}(${columns_data}
+        val ${model_camelcase} = ${model_upper_camelcase}(
+${columns_data}
         )
         if (${model_camelcase}.id == 0L) {
             ${model_camelcase}Mapper.insert${model_upper_camelcase}(${model_camelcase})
