@@ -1,6 +1,6 @@
 # coding=utf-8
 """
-生成Mybatis基础的增删改查SQL
+crud-code-generator-for-springboot
 """
 import os
 import inflection
