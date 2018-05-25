@@ -17,6 +17,9 @@ class ${model_upper_camelcase}Controller {
     @Autowired
     lateinit var ${model_camelcase}Service: ${model_upper_camelcase}Service
 
+    /*
+     * 添加
+     */
     @PostMapping
     @Permission
     fun add(@RequestBody request: ${model_upper_camelcase}EditRequest): Response {
@@ -24,6 +27,9 @@ class ${model_upper_camelcase}Controller {
         return Response.success()
     }
 
+    /*
+     * 修改
+     */
     @PutMapping("/{id}")
     @Permission
     fun edit(@PathVariable("id") id: Long, @RequestBody request: ${model_upper_camelcase}EditRequest): Response {
@@ -32,6 +38,9 @@ class ${model_upper_camelcase}Controller {
         return Response.success()
     }
 
+    /*
+     * 删除
+     */
     @DeleteMapping("/{id}")
     @Permission
     fun delete(@PathVariable("id") id: Long): Response {
@@ -39,6 +48,9 @@ class ${model_upper_camelcase}Controller {
         return Response.success()
     }
 
+    /*
+     * 获取全部
+     */
     @GetMapping("/all")
     @AllowAnonymous
     fun all(): Response {
@@ -46,6 +58,9 @@ class ${model_upper_camelcase}Controller {
         return Response.success(result)
     }
 
+    /*
+     * 搜索
+     */
     @PostMapping("/search")
     @AllowAnonymous
     fun search(@RequestBody request: ${model_upper_camelcase}SearchRequest): Response {
