@@ -43,7 +43,10 @@ for input_file_name in os.listdir(INPUT_PATH):
         # [Model]Mapper.xml
         lines = []
         for column in columns:
-            lines.append('        `%s` as `%s`' % (column['name'], inflection.camelize(column['name'], False)))
+            if column['name'] == 'is_delete':
+                continue
+            else:
+                lines.append('        `%s` as `%s`' % (column['name'], inflection.camelize(column['name'], False)))
         as_list = ',\n'.join(lines)
 
         lines = []
@@ -99,28 +102,34 @@ for input_file_name in os.listdir(INPUT_PATH):
         content += 'data class %s(\n' % (inflection.camelize(table_name))
         lines = []
         for column in columns:
-            type = 'String'
-            if column['type'] == 'bigint':
-                type = 'Long'
-            elif column['type'] == 'tinyint' or column['type'] == 'int':
-                type = 'Int'
-            elif column['type'] == 'datetime' or column['type'] == 'time':
-                type = 'Date'
+            if column['name'] == 'is_delete':
+                continue
+            else:
+                type = 'String'
+                if column['type'] == 'bigint':
+                    type = 'Long'
+                elif column['type'] == 'tinyint' or column['type'] == 'int':
+                    type = 'Int'
+                elif column['type'] == 'datetime' or column['type'] == 'time':
+                    type = 'Date'
 
-            if column['nullable']:
-                type += '?'
-            if column['name'] == 'create_time' or column['name'] == 'update_time':
-                type += ' = Date(0)'
-            if column['name'] == 'id' or column['name'] == 'is_delete':
-                type += ' = 0'
-            lines.append('        val %s: %s' % (inflection.camelize(column['name'], False), type))
+                if column['nullable']:
+                    type += '?'
+                if column['name'] == 'create_time' or column['name'] == 'update_time':
+                    type += ' = null'
+                if column['name'] == 'id' or column['name'] == 'is_delete':
+                    type += ' = 0'
+                lines.append('        val %s: %s' % (inflection.camelize(column['name'], False), type))
         max_length = len(max(lines, key=len))
         for index, line in enumerate(lines):
             if index < len(lines) - 1:
                 lines[index] += ','
             lines[index] = lines[index].ljust(max_length + 5)
         for index, column in enumerate(columns):
-            lines[index] += '// ' + column['comment']
+            if column['name'] == 'is_delete':
+                continue
+            else:
+                lines[index] += '// ' + column['comment']
         content += '%s\n' % ('\n'.join(lines))
         content += ')\n'
 
