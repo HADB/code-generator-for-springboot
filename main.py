@@ -5,21 +5,21 @@ crud-code-generator-for-springboot
 import os
 import inflection
 import string
+import shutil
 
 CURRENT_PATH = os.getcwd()  #当前路径
 INPUT_PATH = os.path.join(CURRENT_PATH, 'inputs')  #输入路径
 OUTPUT_PATH = os.path.join(CURRENT_PATH, 'outputs')  #输出路径
 TEMPLATE_PATH = os.path.join(CURRENT_PATH, 'templates')  #模板路径
-PACKAGE_NAME = 'run.monkey.op.xiaotong'
+PACKAGE_NAME = 'run.monkey.op.jpy'
+
+shutil.rmtree(OUTPUT_PATH)
 
 for input_file_name in os.listdir(INPUT_PATH):
     input_file_path = os.path.join(INPUT_PATH, input_file_name)
     if not os.path.isdir(input_file_path):
         file_name = os.path.splitext(input_file_name)[0].strip()
         table_name = file_name[2:]
-        output_file_path = os.path.join(OUTPUT_PATH, table_name)
-        if not os.path.exists(output_file_path):
-            os.makedirs(output_file_path)
         file_read = open(input_file_path, 'r')
         columns = []
         for line in file_read:
@@ -89,7 +89,11 @@ for input_file_name in os.listdir(INPUT_PATH):
             name_list=name_list,
             value_list=value_list,
             update_list=update_list)
-        file_write = open(os.path.join(output_file_path, inflection.camelize(table_name) + 'Mapper.xml'), 'w')
+
+        output_mybatis_path = os.path.join(OUTPUT_PATH, 'mybatis')
+        if not os.path.exists(output_mybatis_path):
+            os.makedirs(output_mybatis_path)
+        file_write = open(os.path.join(output_mybatis_path, inflection.camelize(table_name) + 'Mapper.xml'), 'w')
         file_write.write(content)
         file_write.close()
 
@@ -133,7 +137,10 @@ for input_file_name in os.listdir(INPUT_PATH):
         content += '%s\n' % ('\n'.join(lines))
         content += ')\n'
 
-        file_write = open(os.path.join(output_file_path, inflection.camelize(table_name) + '.kt'), 'w')
+        output_models_path = os.path.join(OUTPUT_PATH, 'models')
+        if not os.path.exists(output_models_path):
+            os.makedirs(output_models_path)
+        file_write = open(os.path.join(output_models_path, inflection.camelize(table_name) + '.kt'), 'w')
         file_write.write(content)
         file_write.close()
 
@@ -175,7 +182,20 @@ for input_file_name in os.listdir(INPUT_PATH):
         content += '%s\n' % ('\n'.join(lines))
         content += ')\n'
 
-        file_write = open(os.path.join(output_file_path, inflection.camelize(table_name) + 'EditRequest.kt'), 'w')
+        output_viewmodels_path = os.path.join(OUTPUT_PATH, 'viewmodels', inflection.camelize(table_name, False))
+        if not os.path.exists(output_viewmodels_path):
+            os.makedirs(output_viewmodels_path)
+        file_write = open(os.path.join(output_viewmodels_path, inflection.camelize(table_name) + 'EditRequest.kt'), 'w')
+        file_write.write(content)
+        file_write.close()
+
+        # [Model]SearchRequest.kt
+        file_read = open(os.path.join(TEMPLATE_PATH, 'SearchRequest.kt'), 'r')
+        content = file_read.read()
+        t = string.Template(content)
+        content = t.substitute(package_name=PACKAGE_NAME, model_upper_camelcase=inflection.camelize(table_name), model_camelcase=inflection.camelize(table_name, False))
+
+        file_write = open(os.path.join(output_viewmodels_path, inflection.camelize(table_name) + 'SearchRequest.kt'), 'w')
         file_write.write(content)
         file_write.close()
 
@@ -184,7 +204,11 @@ for input_file_name in os.listdir(INPUT_PATH):
         content = file_read.read()
         t = string.Template(content)
         content = t.substitute(package_name=PACKAGE_NAME, model_upper_camelcase=inflection.camelize(table_name), model_camelcase=inflection.camelize(table_name, False))
-        file_write = open(os.path.join(output_file_path, inflection.camelize(table_name) + 'Mapper.kt'), 'w')
+
+        output_mappers_path = os.path.join(OUTPUT_PATH, 'mappers')
+        if not os.path.exists(output_mappers_path):
+            os.makedirs(output_mappers_path)
+        file_write = open(os.path.join(output_mappers_path, inflection.camelize(table_name) + 'Mapper.kt'), 'w')
         file_write.write(content)
         file_write.close()
 
@@ -199,7 +223,11 @@ for input_file_name in os.listdir(INPUT_PATH):
             columns_data.append('                %s = request.%s' % (inflection.camelize(column['name'], False), inflection.camelize(column['name'], False)))
         content = t.substitute(
             package_name=PACKAGE_NAME, model_upper_camelcase=inflection.camelize(table_name), model_camelcase=inflection.camelize(table_name, False), columns_data=',\n'.join(columns_data))
-        file_write = open(os.path.join(output_file_path, inflection.camelize(table_name) + 'Service.kt'), 'w')
+
+        output_services_path = os.path.join(OUTPUT_PATH, 'services')
+        if not os.path.exists(output_services_path):
+            os.makedirs(output_services_path)
+        file_write = open(os.path.join(output_services_path, inflection.camelize(table_name) + 'Service.kt'), 'w')
         file_write.write(content)
         file_write.close()
 
@@ -208,6 +236,10 @@ for input_file_name in os.listdir(INPUT_PATH):
         content = file_read.read()
         t = string.Template(content)
         content = t.substitute(package_name=PACKAGE_NAME, model_upper_camelcase=inflection.camelize(table_name), model_camelcase=inflection.camelize(table_name, False))
-        file_write = open(os.path.join(output_file_path, inflection.camelize(table_name) + 'Controller.kt'), 'w')
+
+        output_controllers_path = os.path.join(OUTPUT_PATH, 'controllers')
+        if not os.path.exists(output_controllers_path):
+            os.makedirs(output_controllers_path)
+        file_write = open(os.path.join(output_controllers_path, inflection.camelize(table_name) + 'Controller.kt'), 'w')
         file_write.write(content)
         file_write.close()
