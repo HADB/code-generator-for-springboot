@@ -6,7 +6,7 @@
 ${as_list}
     </sql>
 
-    <insert id="insert${model_upper_camelcase}">
+    <insert id="insert${model_upper_camelcase}" useGeneratedKeys="true" keyProperty="${model_camelcase}.id">
         INSERT INTO `${table_name}`(
 ${name_list})
         VALUES(
