@@ -28,6 +28,10 @@ ${columns_data}
         ${model_camelcase}Mapper.delete${model_upper_camelcase}(id)
     }
 
+    fun get${model_upper_camelcase}ById(id: Long): ${model_upper_camelcase} {
+        return ${model_camelcase}Mapper.select${model_upper_camelcase}ById(id)
+    }
+
     fun getAll${model_upper_camelcase}s(): List<${model_upper_camelcase}> {
         return ${model_camelcase}Mapper.selectAll${model_upper_camelcase}s()
     }

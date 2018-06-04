@@ -49,6 +49,16 @@ class ${model_upper_camelcase}Controller {
     }
 
     /*
+     * 获取详情
+     */
+    @GetMapping("/{id}")
+    @AllowAnonymous
+    fun get(@PathVariable("id") id: Long): Response {
+        val ${model_camelcase} = ${model_camelcase}Service.get${model_upper_camelcase}ById(id)
+        return Response.success(${model_camelcase})
+    }
+
+    /*
      * 获取全部
      */
     @GetMapping("/all")

@@ -25,6 +25,13 @@ ${update_list}
         WHERE `id` = #{id}
     </update>
 
+    <select id="select${model_upper_camelcase}ById" resultType="${package_name}.models.${model_upper_camelcase}">
+        SELECT
+        <include refid="${model_camelcase}Columns"></include>
+        FROM `${table_name}`
+        WHERE `id` = #{id}
+    </select>
+
     <select id="selectAll${model_upper_camelcase}s" resultType="${package_name}.models.${model_upper_camelcase}">
         SELECT
         <include refid="${model_camelcase}Columns"></include>
