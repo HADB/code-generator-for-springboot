@@ -147,12 +147,15 @@ for input_file_name in os.listdir(INPUT_PATH):
         # [Model]EditRequest.kt
         content = ''
         content += 'package %s.viewmodels.%s\n\n' % (PACKAGE_NAME, inflection.camelize(table_name, False))
-        content += 'import java.util.*\n\n'
+        content += 'import io.swagger.annotations.ApiModelProperty\nimport java.util.*\n\n'
         content += 'data class %sEditRequest(\n' % (inflection.camelize(table_name))
         lines = []
-        for column in columns:
+        for index, column in enumerate(columns):
             type = 'String'
             define = 'val'
+            required = True
+            hidden = False
+            lineText = ''
             if column['type'] == 'bigint':
                 type = 'Long'
             elif column['type'] == 'tinyint' or column['type'] == 'int':
@@ -162,24 +165,21 @@ for input_file_name in os.listdir(INPUT_PATH):
 
             if column['nullable']:
                 type += '?'
+                required = False
             if column['name'] == 'id':
-                type += ' = 0'
+                type += '?'
                 define = 'var'
+                required = False
+                hidden = True
             if column['name'] == 'create_time' or column['name'] == 'update_time' or column['name'] == 'is_delete':
                 continue
-            lines.append('        %s %s: %s' % (define, inflection.camelize(column['name'], False), type))
-        max_length = len(max(lines, key=len))
-        for index, line in enumerate(lines):
-            if index < len(lines) - 1:
-                lines[index] += ','
-            lines[index] = lines[index].ljust(max_length + 5)
-        i = 0
-        for column in columns:
-            if column['name'] == 'create_time' or column['name'] == 'update_time' or column['name'] == 'is_delete':
-                continue
-            lines[i] += '// ' + column['comment']
-            i += 1
-        content += '%s\n' % ('\n'.join(lines))
+            if required:
+                lineText += '        @NotNull("%s 不能为空")\n' % (column['name'])
+            lineText += '        @ApiModelProperty(position = %s, notes = "%s", required = %s, hidden = %s)\n' % (index, column['comment'], 'true' if required else 'false', 'true'
+                                                                                                                if hidden else 'false')
+            lineText += '        %s %s: %s' % (define, inflection.camelize(column['name'], False), type)
+            lines.append(lineText)
+        content += '%s\n' % (',\n\n'.join(lines))
         content += ')\n'
 
         output_viewmodels_path = os.path.join(OUTPUT_PATH, 'viewmodels', inflection.camelize(table_name, False))

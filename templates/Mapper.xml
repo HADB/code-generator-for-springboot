@@ -17,12 +17,14 @@ ${value_list})
         UPDATE `${table_name}` SET
 ${update_list}
         WHERE `id` = #{${model_camelcase}.id}
+        AND `is_delete` = 0
     </update>
 
     <update id="delete${model_upper_camelcase}">
         UPDATE `${table_name}`
         SET `is_delete` = 1
         WHERE `id` = #{id}
+        AND `is_delete` = 0
     </update>
 
     <select id="select${model_upper_camelcase}ById" resultType="${package_name}.models.${model_upper_camelcase}">
@@ -30,6 +32,7 @@ ${update_list}
         <include refid="${model_camelcase}Columns"></include>
         FROM `${table_name}`
         WHERE `id` = #{id}
+        AND `is_delete` = 0
     </select>
 
     <select id="selectAll${model_upper_camelcase}s" resultType="${package_name}.models.${model_upper_camelcase}">

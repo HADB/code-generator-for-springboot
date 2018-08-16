@@ -1,15 +1,17 @@
 package ${package_name}.controllers
 
+import io.swagger.annotations.Api
+import io.swagger.annotations.ApiImplicitParam
+import io.swagger.annotations.ApiOperation
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
-import ${package_name}.annotations.AllowAnonymous
-import ${package_name}.annotations.Permission
 import ${package_name}.models.Response
 import ${package_name}.services.${model_upper_camelcase}Service
 import ${package_name}.viewmodels.common.SearchResponse
 import ${package_name}.viewmodels.${model_camelcase}.${model_upper_camelcase}EditRequest
 import ${package_name}.viewmodels.${model_camelcase}.${model_upper_camelcase}SearchRequest
 
+@Api(tags = ["${model_upper_camelcase}"])
 @CrossOrigin
 @RestController
 @RequestMapping("/${model_camelcase}")
@@ -18,10 +20,10 @@ class ${model_upper_camelcase}Controller {
     lateinit var ${model_camelcase}Service: ${model_upper_camelcase}Service
 
     /*
-     * 添加
+     * 新增
      */
+    @ApiOperation(value = "新增 ${model_upper_camelcase}")
     @PostMapping
-    @Permission
     fun add(@RequestBody request: ${model_upper_camelcase}EditRequest): Response {
         ${model_camelcase}Service.edit${model_upper_camelcase}(request)
         return Response.success()
@@ -30,8 +32,9 @@ class ${model_upper_camelcase}Controller {
     /*
      * 修改
      */
+    @ApiOperation(value = "修改 ${model_upper_camelcase}")
+    @ApiImplicitParam(name = "id", value = "${model_upper_camelcase} ID", required = true, dataType = "Long")
     @PutMapping("/{id}")
-    @Permission
     fun edit(@PathVariable("id") id: Long, @RequestBody request: ${model_upper_camelcase}EditRequest): Response {
         request.id = id
         ${model_camelcase}Service.edit${model_upper_camelcase}(request)
@@ -41,8 +44,9 @@ class ${model_upper_camelcase}Controller {
     /*
      * 删除
      */
+    @ApiOperation(value = "删除 ${model_upper_camelcase}")
+    @ApiImplicitParam(name = "id", value = "${model_upper_camelcase} ID", required = true, dataType = "Long")
     @DeleteMapping("/{id}")
-    @Permission
     fun delete(@PathVariable("id") id: Long): Response {
         ${model_camelcase}Service.delete${model_upper_camelcase}(id)
         return Response.success()
@@ -51,8 +55,9 @@ class ${model_upper_camelcase}Controller {
     /*
      * 获取详情
      */
+    @ApiOperation(value = "获取 ${model_upper_camelcase} 详情")
+    @ApiImplicitParam(name = "id", value = "${model_upper_camelcase} ID", required = true, dataType = "Long")
     @GetMapping("/{id}")
-    @AllowAnonymous
     fun get(@PathVariable("id") id: Long): Response {
         val ${model_camelcase} = ${model_camelcase}Service.get${model_upper_camelcase}ById(id)
         return Response.success(${model_camelcase})
@@ -61,8 +66,8 @@ class ${model_upper_camelcase}Controller {
     /*
      * 获取全部
      */
+    @ApiOperation(value = "获取全部 ${model_upper_camelcase}")
     @GetMapping("/all")
-    @AllowAnonymous
     fun all(): Response {
         val result = ${model_camelcase}Service.getAll${model_upper_camelcase}s()
         return Response.success(result)
@@ -71,8 +76,8 @@ class ${model_upper_camelcase}Controller {
     /*
      * 搜索
      */
+    @ApiOperation(value = "搜索 ${model_upper_camelcase}")
     @PostMapping("/search")
-    @AllowAnonymous
     fun search(@RequestBody request: ${model_upper_camelcase}SearchRequest): Response {
         val results = ${model_camelcase}Service.searchPaging${model_upper_camelcase}s(request)
         val count = ${model_camelcase}Service.searchPaging${model_upper_camelcase}sCount(request)
