@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiOperation
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
 import ${package_name}.models.Response
+import ${package_name}.models.${model_upper_camelcase}
 import ${package_name}.services.${model_upper_camelcase}Service
 import ${package_name}.viewmodels.common.SearchResponse
 import ${package_name}.viewmodels.${model_camelcase}.${model_upper_camelcase}EditRequest
@@ -24,7 +25,7 @@ class ${model_upper_camelcase}Controller {
      */
     @ApiOperation(value = "新增 ${model_upper_camelcase}")
     @PostMapping
-    fun add(@RequestBody request: ${model_upper_camelcase}EditRequest): Response {
+    fun add(@RequestBody request: ${model_upper_camelcase}EditRequest): Response<Any> {
         ${model_camelcase}Service.edit${model_upper_camelcase}(request)
         return Response.success()
     }
@@ -35,7 +36,7 @@ class ${model_upper_camelcase}Controller {
     @ApiOperation(value = "修改 ${model_upper_camelcase}")
     @ApiImplicitParam(name = "id", value = "${model_upper_camelcase} ID", required = true, dataType = "Long")
     @PutMapping("/{id}")
-    fun edit(@PathVariable("id") id: Long, @RequestBody request: ${model_upper_camelcase}EditRequest): Response {
+    fun edit(@PathVariable("id") id: Long, @RequestBody request: ${model_upper_camelcase}EditRequest): Response<Any> {
         request.id = id
         ${model_camelcase}Service.edit${model_upper_camelcase}(request)
         return Response.success()
@@ -47,7 +48,7 @@ class ${model_upper_camelcase}Controller {
     @ApiOperation(value = "删除 ${model_upper_camelcase}")
     @ApiImplicitParam(name = "id", value = "${model_upper_camelcase} ID", required = true, dataType = "Long")
     @DeleteMapping("/{id}")
-    fun delete(@PathVariable("id") id: Long): Response {
+    fun delete(@PathVariable("id") id: Long): Response<Any> {
         ${model_camelcase}Service.delete${model_upper_camelcase}(id)
         return Response.success()
     }
@@ -58,7 +59,7 @@ class ${model_upper_camelcase}Controller {
     @ApiOperation(value = "获取 ${model_upper_camelcase} 详情")
     @ApiImplicitParam(name = "id", value = "${model_upper_camelcase} ID", required = true, dataType = "Long")
     @GetMapping("/{id}")
-    fun get(@PathVariable("id") id: Long): Response {
+    fun get(@PathVariable("id") id: Long): Response<${model_upper_camelcase}> {
         val ${model_camelcase} = ${model_camelcase}Service.get${model_upper_camelcase}ById(id)
         return Response.success(${model_camelcase})
     }
@@ -68,7 +69,7 @@ class ${model_upper_camelcase}Controller {
      */
     @ApiOperation(value = "获取全部 ${model_upper_camelcase}")
     @GetMapping("/all")
-    fun all(): Response {
+    fun all(): Response<List<${model_upper_camelcase}>> {
         val result = ${model_camelcase}Service.getAll${model_upper_camelcase}s()
         return Response.success(result)
     }
@@ -78,7 +79,7 @@ class ${model_upper_camelcase}Controller {
      */
     @ApiOperation(value = "搜索 ${model_upper_camelcase}")
     @PostMapping("/search")
-    fun search(@RequestBody request: ${model_upper_camelcase}SearchRequest): Response {
+    fun search(@RequestBody request: ${model_upper_camelcase}SearchRequest): Response<SearchResponse<${model_upper_camelcase}>> {
         val results = ${model_camelcase}Service.searchPaging${model_upper_camelcase}s(request)
         val count = ${model_camelcase}Service.searchPaging${model_upper_camelcase}sCount(request)
         val response = SearchResponse(results, count)

@@ -11,7 +11,7 @@ CURRENT_PATH = os.getcwd()  #当前路径
 INPUT_PATH = os.path.join(CURRENT_PATH, 'inputs')  #输入路径
 OUTPUT_PATH = os.path.join(CURRENT_PATH, 'outputs')  #输出路径
 TEMPLATE_PATH = os.path.join(CURRENT_PATH, 'templates')  #模板路径
-PACKAGE_NAME = 'run.monkey.op.jpy'
+PACKAGE_NAME = 'run.monkey.op.charging'
 
 shutil.rmtree(OUTPUT_PATH)
 
@@ -100,12 +100,14 @@ for input_file_name in os.listdir(INPUT_PATH):
         # [Model].kt
         content = ''
         content += 'package %s.models\n\n' % (PACKAGE_NAME)
+        content += 'import io.swagger.annotations.ApiModelProperty\n'
         content += 'import %s.annotations.NoArg\n' % (PACKAGE_NAME)
         content += 'import java.util.*\n\n'
         content += '@NoArg\n'
         content += 'data class %s(\n' % (inflection.camelize(table_name))
         lines = []
-        for column in columns:
+        for index, column in enumerate(columns):
+            lineText = ''
             if column['name'] == 'is_delete':
                 continue
             else:
@@ -123,18 +125,10 @@ for input_file_name in os.listdir(INPUT_PATH):
                     type += ' = null'
                 if column['name'] == 'id' or column['name'] == 'is_delete':
                     type += ' = 0'
-                lines.append('        val %s: %s' % (inflection.camelize(column['name'], False), type))
-        max_length = len(max(lines, key=len))
-        for index, line in enumerate(lines):
-            if index < len(lines) - 1:
-                lines[index] += ','
-            lines[index] = lines[index].ljust(max_length + 5)
-        for index, column in enumerate(columns):
-            if column['name'] == 'is_delete':
-                continue
-            else:
-                lines[index] += '// ' + column['comment']
-        content += '%s\n' % ('\n'.join(lines))
+                lineText += '        @ApiModelProperty(position = %s, notes = "%s")\n' % (index, column['comment'])
+                lineText += '        val %s: %s' % (inflection.camelize(column['name'], False), type)
+                lines.append(lineText)
+        content += '%s\n' % (',\n\n'.join(lines))
         content += ')\n'
 
         output_models_path = os.path.join(OUTPUT_PATH, 'models')
@@ -147,7 +141,7 @@ for input_file_name in os.listdir(INPUT_PATH):
         # [Model]EditRequest.kt
         content = ''
         content += 'package %s.viewmodels.%s\n\n' % (PACKAGE_NAME, inflection.camelize(table_name, False))
-        content += 'import io.swagger.annotations.ApiModelProperty\nimport java.util.*\n\n'
+        content += 'import io.swagger.annotations.ApiModelProperty\nimport java.util.*\nimport javax.validation.constraints.NotNull\n\n'
         content += 'data class %sEditRequest(\n' % (inflection.camelize(table_name))
         lines = []
         for index, column in enumerate(columns):
@@ -167,16 +161,17 @@ for input_file_name in os.listdir(INPUT_PATH):
                 type += '?'
                 required = False
             if column['name'] == 'id':
-                type += '?'
                 define = 'var'
                 required = False
                 hidden = True
             if column['name'] == 'create_time' or column['name'] == 'update_time' or column['name'] == 'is_delete':
                 continue
+            if column['name'] == 'id':
+                type += ' = 0'
             if required:
-                lineText += '        @NotNull("%s 不能为空")\n' % (column['name'])
+                lineText += '        @NotNull(message = "%s 不能为空")\n' % (column['name'])
             lineText += '        @ApiModelProperty(position = %s, notes = "%s", required = %s, hidden = %s)\n' % (index, column['comment'], 'true' if required else 'false', 'true'
-                                                                                                                if hidden else 'false')
+                                                                                                                  if hidden else 'false')
             lineText += '        %s %s: %s' % (define, inflection.camelize(column['name'], False), type)
             lines.append(lineText)
         content += '%s\n' % (',\n\n'.join(lines))

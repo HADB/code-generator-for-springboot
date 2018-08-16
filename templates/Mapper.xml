@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="${package_name}.mappers.${model_upper_camelcase}Mapper">
     <sql id="${model_camelcase}Columns">
@@ -29,7 +29,7 @@ ${update_list}
 
     <select id="select${model_upper_camelcase}ById" resultType="${package_name}.models.${model_upper_camelcase}">
         SELECT
-        <include refid="${model_camelcase}Columns"></include>
+        <include refid="${model_camelcase}Columns"/>
         FROM `${table_name}`
         WHERE `id` = #{id}
         AND `is_delete` = 0
@@ -37,17 +37,23 @@ ${update_list}
 
     <select id="selectAll${model_upper_camelcase}s" resultType="${package_name}.models.${model_upper_camelcase}">
         SELECT
-        <include refid="${model_camelcase}Columns"></include>
+        <include refid="${model_camelcase}Columns"/>
         FROM `${table_name}`
         WHERE `is_delete` = 0
         ORDER BY `create_time` ASC
     </select>
 
+    <sql id="${model_camelcase}SearchWhere">
+        `is_delete` = 0
+    </sql>
+
     <select id="selectPaging${model_upper_camelcase}s" resultType="${package_name}.models.${model_upper_camelcase}">
         SELECT
-        <include refid="${model_camelcase}Columns"></include>
+        <include refid="${model_camelcase}Columns"/>
         FROM `${table_name}`
-        WHERE `is_delete` = 0
+        <where>
+            <include refid="${model_camelcase}SearchWhere"/>
+        </where>
         ORDER BY `create_time` ASC
         LIMIT #{request.paging.offset}, #{request.paging.pageSize}
     </select>
@@ -55,6 +61,8 @@ ${update_list}
     <select id="selectPaging${model_upper_camelcase}sCount" resultType="Long">
         SELECT COUNT(*)
         FROM `${table_name}`
-        WHERE `is_delete` = 0
+        <where>
+            <include refid="${model_camelcase}SearchWhere"/>
+        </where>
     </select>
 </mapper>
