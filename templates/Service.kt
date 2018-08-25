@@ -32,10 +32,6 @@ ${columns_data}
         return ${model_camelcase}Mapper.select${model_upper_camelcase}ById(id)
     }
 
-    fun getAll${model_upper_camelcase}s(): List<${model_upper_camelcase}> {
-        return ${model_camelcase}Mapper.selectAll${model_upper_camelcase}s()
-    }
-
     fun searchPaging${model_upper_camelcase}s(${model_camelcase}SearchRequest: ${model_upper_camelcase}SearchRequest): List<${model_upper_camelcase}> {
         return ${model_camelcase}Mapper.selectPaging${model_upper_camelcase}s(${model_camelcase}SearchRequest)
     }

@@ -3,6 +3,8 @@
 crud-code-generator-for-springboot
 """
 import os
+import sys
+import getopt
 import inflection
 import string
 import shutil
@@ -11,7 +13,13 @@ CURRENT_PATH = os.getcwd()  #当前路径
 INPUT_PATH = os.path.join(CURRENT_PATH, 'inputs')  #输入路径
 OUTPUT_PATH = os.path.join(CURRENT_PATH, 'outputs')  #输出路径
 TEMPLATE_PATH = os.path.join(CURRENT_PATH, 'templates')  #模板路径
-PACKAGE_NAME = 'run.monkey.op.charging'
+PACKAGE_NAME = 'demo.package.name'
+
+opts, args = getopt.getopt(sys.argv[1:], 'p:')
+for name, value in opts:
+    if name == '-p':
+        print(name, value)
+        PACKAGE_NAME = value
 
 shutil.rmtree(OUTPUT_PATH)
 
@@ -46,8 +54,8 @@ for input_file_name in os.listdir(INPUT_PATH):
             if column['name'] == 'is_delete':
                 continue
             else:
-                lines.append('        `%s` as `%s`' % (column['name'], inflection.camelize(column['name'], False)))
-        as_list = ',\n'.join(lines)
+                lines.append('        `%s`.`%s` as `%s`' % (inflection.camelize(table_name, False), column['name'], inflection.camelize(column['name'], False)))
+        column_list = ',\n'.join(lines)
 
         lines = []
         for column in columns:
@@ -64,7 +72,7 @@ for input_file_name in os.listdir(INPUT_PATH):
             elif column['name'] == 'create_time' or column['name'] == 'update_time':
                 lines.append('        NOW()')
             else:
-                lines.append('        #{%s.%s}' % (inflection.camelize(table_name, False), inflection.camelize(column['name'], False)))
+                lines.append('        #{`%s`.%s}' % (inflection.camelize(table_name, False), inflection.camelize(column['name'], False)))
         value_list = ',\n'.join(lines)
 
         lines = []
@@ -74,7 +82,7 @@ for input_file_name in os.listdir(INPUT_PATH):
             elif column['name'] == 'update_time':
                 lines.append('        `update_time` = NOW()')
             else:
-                lines.append('        `%s` = #{%s.%s}' % (column['name'], inflection.camelize(table_name, False), inflection.camelize(column['name'], False)))
+                lines.append('        `%s` = #{`%s`.%s}' % (column['name'], inflection.camelize(table_name, False), inflection.camelize(column['name'], False)))
         update_list = ',\n'.join(lines)
 
         file_read = open(os.path.join(TEMPLATE_PATH, 'Mapper.xml'), 'r')
@@ -85,7 +93,7 @@ for input_file_name in os.listdir(INPUT_PATH):
             package_name=PACKAGE_NAME,
             model_upper_camelcase=inflection.camelize(table_name),
             model_camelcase=inflection.camelize(table_name, False),
-            as_list=as_list,
+            column_list=column_list,
             name_list=name_list,
             value_list=value_list,
             update_list=update_list)
@@ -116,7 +124,7 @@ for input_file_name in os.listdir(INPUT_PATH):
                     type = 'Long'
                 elif column['type'] == 'tinyint' or column['type'] == 'int':
                     type = 'Int'
-                elif column['type'] == 'datetime' or column['type'] == 'time':
+                elif column['type'] == 'datetime' or column['type'] == 'time' or column['type'] == 'date':
                     type = 'Date'
 
                 if column['nullable']:
@@ -154,7 +162,7 @@ for input_file_name in os.listdir(INPUT_PATH):
                 type = 'Long'
             elif column['type'] == 'tinyint' or column['type'] == 'int':
                 type = 'Int'
-            elif column['type'] == 'datetime' or column['type'] == 'time':
+            elif column['type'] == 'datetime' or column['type'] == 'time' or column['type'] == 'date':
                 type = 'Date'
 
             if column['nullable']:

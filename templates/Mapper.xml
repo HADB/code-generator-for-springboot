@@ -3,7 +3,15 @@
 
 <mapper namespace="${package_name}.mappers.${model_upper_camelcase}Mapper">
     <sql id="${model_camelcase}Columns">
-${as_list}
+${column_list}
+    </sql>
+
+    <sql id="${model_camelcase}Tables">
+        `${table_name}` `${model_camelcase}`
+    </sql>
+
+    <sql id="${model_camelcase}SearchWhere">
+        `${model_camelcase}`.`is_delete` = 0
     </sql>
 
     <insert id="insert${model_upper_camelcase}" useGeneratedKeys="true" keyProperty="${model_camelcase}.id">
@@ -30,37 +38,28 @@ ${update_list}
     <select id="select${model_upper_camelcase}ById" resultType="${package_name}.models.${model_upper_camelcase}">
         SELECT
         <include refid="${model_camelcase}Columns"/>
-        FROM `${table_name}`
-        WHERE `id` = #{id}
-        AND `is_delete` = 0
+        FROM
+        <include refid="${model_camelcase}Tables"/>
+        WHERE `${model_camelcase}`.`id` = #{id}
+        AND `${model_camelcase}`.`is_delete` = 0
     </select>
-
-    <select id="selectAll${model_upper_camelcase}s" resultType="${package_name}.models.${model_upper_camelcase}">
-        SELECT
-        <include refid="${model_camelcase}Columns"/>
-        FROM `${table_name}`
-        WHERE `is_delete` = 0
-        ORDER BY `create_time` ASC
-    </select>
-
-    <sql id="${model_camelcase}SearchWhere">
-        `is_delete` = 0
-    </sql>
 
     <select id="selectPaging${model_upper_camelcase}s" resultType="${package_name}.models.${model_upper_camelcase}">
         SELECT
         <include refid="${model_camelcase}Columns"/>
-        FROM `${table_name}`
+        FROM
+        <include refid="${model_camelcase}Tables"/>
         <where>
             <include refid="${model_camelcase}SearchWhere"/>
         </where>
-        ORDER BY `create_time` ASC
+        ORDER BY `${model_camelcase}`.`create_time` ASC
         LIMIT #{request.paging.offset}, #{request.paging.pageSize}
     </select>
 
     <select id="selectPaging${model_upper_camelcase}sCount" resultType="Long">
         SELECT COUNT(*)
-        FROM `${table_name}`
+        FROM
+        <include refid="${model_camelcase}Tables"/>
         <where>
             <include refid="${model_camelcase}SearchWhere"/>
         </where>
