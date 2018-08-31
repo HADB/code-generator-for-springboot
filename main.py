@@ -72,7 +72,7 @@ for input_file_name in os.listdir(INPUT_PATH):
             elif column['name'] == 'create_time' or column['name'] == 'update_time':
                 lines.append('        NOW()')
             else:
-                lines.append('        #{`%s`.%s}' % (inflection.camelize(table_name, False), inflection.camelize(column['name'], False)))
+                lines.append('        #{%s.%s}' % (inflection.camelize(table_name, False), inflection.camelize(column['name'], False)))
         value_list = ',\n'.join(lines)
 
         lines = []
@@ -82,7 +82,7 @@ for input_file_name in os.listdir(INPUT_PATH):
             elif column['name'] == 'update_time':
                 lines.append('        `update_time` = NOW()')
             else:
-                lines.append('        `%s` = #{`%s`.%s}' % (column['name'], inflection.camelize(table_name, False), inflection.camelize(column['name'], False)))
+                lines.append('        `%s` = #{%s.%s}' % (column['name'], inflection.camelize(table_name, False), inflection.camelize(column['name'], False)))
         update_list = ',\n'.join(lines)
 
         file_read = open(os.path.join(TEMPLATE_PATH, 'Mapper.xml'), 'r')

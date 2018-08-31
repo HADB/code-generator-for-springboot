@@ -32,11 +32,11 @@ ${columns_data}
         return ${model_camelcase}Mapper.select${model_upper_camelcase}ById(id)
     }
 
-    fun searchPaging${model_upper_camelcase}s(${model_camelcase}SearchRequest: ${model_upper_camelcase}SearchRequest): List<${model_upper_camelcase}> {
-        return ${model_camelcase}Mapper.selectPaging${model_upper_camelcase}s(${model_camelcase}SearchRequest)
+    fun searchPaging${model_upper_camelcase}s(request: ${model_upper_camelcase}SearchRequest): List<${model_upper_camelcase}> {
+        return ${model_camelcase}Mapper.selectPaging${model_upper_camelcase}s(request)
     }
 
-    fun searchPaging${model_upper_camelcase}sCount(${model_camelcase}SearchRequest: ${model_upper_camelcase}SearchRequest): Long {
-        return ${model_camelcase}Mapper.selectPaging${model_upper_camelcase}sCount(${model_camelcase}SearchRequest)
+    fun searchPaging${model_upper_camelcase}sCount(request: ${model_upper_camelcase}SearchRequest): Long {
+        return ${model_camelcase}Mapper.selectPaging${model_upper_camelcase}sCount(request)
     }
 }

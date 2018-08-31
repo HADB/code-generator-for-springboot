@@ -11,6 +11,6 @@ interface ${model_upper_camelcase}Mapper {
     fun update${model_upper_camelcase}(@Param("${model_camelcase}") ${model_camelcase}: ${model_upper_camelcase})
     fun delete${model_upper_camelcase}(@Param("id") id: Long)
     fun select${model_upper_camelcase}ById(@Param("id") id: Long): ${model_upper_camelcase}?
-    fun selectPaging${model_upper_camelcase}s(@Param("request") ${model_camelcase}SearchRequest: ${model_upper_camelcase}SearchRequest): List<${model_upper_camelcase}>
-    fun selectPaging${model_upper_camelcase}sCount(@Param("request") ${model_camelcase}SearchRequest: ${model_upper_camelcase}SearchRequest): Long
+    fun selectPaging${model_upper_camelcase}s(@Param("request") request: ${model_upper_camelcase}SearchRequest): List<${model_upper_camelcase}>
+    fun selectPaging${model_upper_camelcase}sCount(@Param("request") request: ${model_upper_camelcase}SearchRequest): Long
 }
