@@ -65,16 +65,6 @@ class ${model_upper_camelcase}Controller {
     }
 
     /*
-     * 获取全部
-     */
-    @ApiOperation(value = "获取全部 ${model_upper_camelcase}")
-    @GetMapping("/all")
-    fun all(): Response<List<${model_upper_camelcase}>> {
-        val result = ${model_camelcase}Service.getAll${model_upper_camelcase}s()
-        return Response.success(result)
-    }
-
-    /*
      * 搜索
      */
     @ApiOperation(value = "搜索 ${model_upper_camelcase}")

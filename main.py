@@ -177,7 +177,7 @@ for input_file_name in os.listdir(INPUT_PATH):
             if column['name'] == 'id':
                 type += ' = 0'
             if required:
-                lineText += '        @NotNull(message = "%s 不能为空")\n' % (column['name'])
+                lineText += '        @NotNull(message = "%s 不能为空")\n' % (inflection.camelize(column['name'], False))
             lineText += '        @ApiModelProperty(position = %s, notes = "%s", required = %s, hidden = %s)\n' % (index, column['comment'], 'true' if required else 'false', 'true'
                                                                                                                   if hidden else 'false')
             lineText += '        %s %s: %s' % (define, inflection.camelize(column['name'], False), type)
