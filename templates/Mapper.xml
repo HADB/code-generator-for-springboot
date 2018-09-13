@@ -52,7 +52,7 @@ ${update_list}
         <where>
             <include refid="${model_camelcase}SearchWhere"/>
         </where>
-        ORDER BY `${model_camelcase}`.`create_time` ASC
+        ORDER BY `${model_camelcase}`.`id` ASC
         LIMIT #{request.paging.offset}, #{request.paging.pageSize}
     </select>
 
