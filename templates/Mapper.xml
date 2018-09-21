@@ -11,7 +11,7 @@ ${column_list}
     </sql>
 
     <sql id="${model_camelcase}SearchWhere">
-        `${model_camelcase}`.`is_delete` = 0
+${search_where}
     </sql>
 
     <insert id="insert${model_upper_camelcase}" useGeneratedKeys="true" keyProperty="${model_camelcase}.id">

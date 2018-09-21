@@ -67,6 +67,29 @@ for input_file_name in os.listdir(INPUT_PATH):
 
         lines = []
         for column in columns:
+            if column['name'] == 'id':
+                continue
+            if column['type'] == 'datetime' or column['type'] == 'time' or column['type'] == 'date':
+                lines.append('        <if test="request.%sFrom != null">' % (inflection.camelize(column['name'], False)))
+                lines.append('            AND `%s`.`%s` &gt;= #{request.%sFrom}' % (inflection.camelize(table_name, False), column['name'], inflection.camelize(column['name'], False)))
+                lines.append('        </if>')
+                lines.append('        <if test="request.%sTo != null">' % (inflection.camelize(column['name'], False)))
+                lines.append('            AND `%s`.`%s` &lt;= #{request.%sTo}' % (inflection.camelize(table_name, False), column['name'], inflection.camelize(column['name'], False)))
+                lines.append('        </if>')
+                continue
+            if column['name'] == 'is_delete':
+                lines.append('        AND `%s`.`%s` = 0' % (inflection.camelize(table_name, False), column['name']))
+                continue
+            if column['type'] == 'varchar' or column['type'] == 'text':
+                lines.append('        <if test="request.%s != null and request.%s !=' '">' % (inflection.camelize(column['name'], False)))
+            else:
+                lines.append('        <if test="request.%s != null">' % (inflection.camelize(column['name'], False)))
+            lines.append('            AND `%s`.`%s` = #{request.%s}' % (inflection.camelize(table_name, False), column['name'], inflection.camelize(column['name'], False)))
+            lines.append('        </if>')
+        search_where = '\n'.join(lines)
+
+        lines = []
+        for column in columns:
             if column['name'] == 'id' or column['name'] == 'is_delete':
                 continue
             elif column['name'] == 'create_time' or column['name'] == 'update_time':
@@ -94,6 +117,7 @@ for input_file_name in os.listdir(INPUT_PATH):
             model_upper_camelcase=inflection.camelize(table_name),
             model_camelcase=inflection.camelize(table_name, False),
             column_list=column_list,
+            search_where=search_where,
             name_list=name_list,
             value_list=value_list,
             update_list=update_list)
@@ -114,7 +138,8 @@ for input_file_name in os.listdir(INPUT_PATH):
         content += '@NoArg\n'
         content += 'data class %s(\n' % (inflection.camelize(table_name))
         lines = []
-        for index, column in enumerate(columns):
+        swagger_index = 0
+        for column in columns:
             lineText = ''
             if column['name'] == 'is_delete':
                 continue
@@ -133,9 +158,10 @@ for input_file_name in os.listdir(INPUT_PATH):
                     type += ' = null'
                 if column['name'] == 'id' or column['name'] == 'is_delete':
                     type += ' = 0'
-                lineText += '        @ApiModelProperty(position = %s, notes = "%s")\n' % (index, column['comment'])
+                lineText += '        @ApiModelProperty(position = %s, notes = "%s")\n' % (swagger_index, column['comment'])
                 lineText += '        val %s: %s' % (inflection.camelize(column['name'], False), type)
                 lines.append(lineText)
+                swagger_index += 1
         content += '%s\n' % (',\n\n'.join(lines))
         content += ')\n'
 
@@ -152,7 +178,8 @@ for input_file_name in os.listdir(INPUT_PATH):
         content += 'import io.swagger.annotations.ApiModelProperty\nimport java.util.*\nimport javax.validation.constraints.NotNull\n\n'
         content += 'data class %sEditRequest(\n' % (inflection.camelize(table_name))
         lines = []
-        for index, column in enumerate(columns):
+        swagger_index = 0
+        for column in columns:
             type = 'String'
             define = 'val'
             required = True
@@ -178,10 +205,11 @@ for input_file_name in os.listdir(INPUT_PATH):
                 type += ' = 0'
             if required:
                 lineText += '        @NotNull(message = "%s 不能为空")\n' % (inflection.camelize(column['name'], False))
-            lineText += '        @ApiModelProperty(position = %s, notes = "%s", required = %s, hidden = %s)\n' % (index, column['comment'], 'true' if required else 'false', 'true'
+            lineText += '        @ApiModelProperty(position = %s, notes = "%s", required = %s, hidden = %s)\n' % (swagger_index, column['comment'], 'true' if required else 'false', 'true'
                                                                                                                   if hidden else 'false')
             lineText += '        %s %s: %s' % (define, inflection.camelize(column['name'], False), type)
             lines.append(lineText)
+            swagger_index += 1
         content += '%s\n' % (',\n\n'.join(lines))
         content += ')\n'
 
@@ -193,11 +221,49 @@ for input_file_name in os.listdir(INPUT_PATH):
         file_write.close()
 
         # [Model]SearchRequest.kt
-        file_read = open(os.path.join(TEMPLATE_PATH, 'SearchRequest.kt'), 'r')
-        content = file_read.read()
-        t = string.Template(content)
-        content = t.substitute(package_name=PACKAGE_NAME, model_upper_camelcase=inflection.camelize(table_name), model_camelcase=inflection.camelize(table_name, False))
+        content = ''
+        content += 'package %s.viewmodels.%s\n\n' % (PACKAGE_NAME, inflection.camelize(table_name, False))
+        content += 'import io.swagger.annotations.ApiModelProperty\nimport run.monkey.op.charging.models.Paging\nimport java.util.*\n\n'
+        content += 'data class %sSearchRequest(\n' % (inflection.camelize(table_name))
+        lines = []
+        swagger_index = 0
+        for column in columns:
+            if column['name'] == 'id' or column['name'] == 'is_delete':
+                continue
+            type = 'String?'
+            define = 'val'
+            required = True
+            hidden = False
+            lineText = ''
+            if column['type'] == 'bigint':
+                type = 'Long?'
+            elif column['type'] == 'tinyint' or column['type'] == 'int':
+                type = 'Int?'
+            elif column['type'] == 'datetime' or column['type'] == 'time' or column['type'] == 'date':
+                type = 'Date?'
+                lineText = '        @ApiModelProperty(position = %s, notes = "%s From")\n' % (swagger_index, column['comment'])
+                lineText += '        %s %s: %s' % (define, inflection.camelize(column['name'] + "From", False), type)
+                lines.append(lineText)
+                swagger_index += 1
+                lineText = '        @ApiModelProperty(position = %s, notes = "%s To")\n' % (swagger_index, column['comment'])
+                lineText += '        %s %s: %s' % (define, inflection.camelize(column['name'] + "To", False), type)
+                lines.append(lineText)
+                swagger_index += 1
+                continue
 
+            lineText += '        @ApiModelProperty(position = %s, notes = "%s")\n' % (swagger_index, column['comment'])
+            lineText += '        %s %s: %s' % (define, inflection.camelize(column['name'], False), type)
+            lines.append(lineText)
+            swagger_index += 1
+        lineText = '        @ApiModelProperty(position = %s, notes = "分页(默认第1页，每页显示10条)")\n' % (swagger_index)
+        lineText += ('        val paging: Paging = Paging(1,10)')
+        lines.append(lineText)
+        content += '%s\n' % (',\n\n'.join(lines))
+        content += ')\n'
+
+        output_viewmodels_path = os.path.join(OUTPUT_PATH, 'viewmodels', inflection.camelize(table_name, False))
+        if not os.path.exists(output_viewmodels_path):
+            os.makedirs(output_viewmodels_path)
         file_write = open(os.path.join(output_viewmodels_path, inflection.camelize(table_name) + 'SearchRequest.kt'), 'w')
         file_write.write(content)
         file_write.close()
