@@ -31,8 +31,10 @@ ${update_list}
     <update id="delete${model_upper_camelcase}">
         UPDATE `${table_name}`
         SET `is_delete` = 1
-        WHERE `id` = #{id}
-        AND `is_delete` = 0
+        <where>
+            AND `id` = #{id}
+            AND `is_delete` = 0
+        </where>
     </update>
 
     <select id="select${model_upper_camelcase}ById" resultType="${package_name}.models.${model_upper_camelcase}">
@@ -40,8 +42,11 @@ ${update_list}
         <include refid="${model_camelcase}Columns"/>
         FROM
         <include refid="${model_camelcase}Tables"/>
-        WHERE `${model_camelcase}`.`id` = #{id}
-        AND `${model_camelcase}`.`is_delete` = 0
+        <where>
+            AND `${model_camelcase}`.`id` = #{id}
+            AND `${model_camelcase}`.`is_delete` = 0
+        <where>
+        LIMIT 1
     </select>
 
     <select id="selectPaging${model_upper_camelcase}s" resultType="${package_name}.models.${model_upper_camelcase}">
