@@ -81,7 +81,7 @@ for input_file_name in os.listdir(INPUT_PATH):
                 lines.append('        AND `%s`.`%s` = 0' % (inflection.camelize(table_name, False), column['name']))
                 continue
             if column['type'] == 'varchar' or column['type'] == 'text':
-                lines.append('        <if test="request.%s != null and request.%s !=' '">' % (inflection.camelize(column['name'], False)))
+                lines.append('        <if test="request.%s != null and request.%s !=\'\'">' % (inflection.camelize(column['name'], False), inflection.camelize(column['name'], False)))
             else:
                 lines.append('        <if test="request.%s != null">' % (inflection.camelize(column['name'], False)))
             lines.append('            AND `%s`.`%s` = #{request.%s}' % (inflection.camelize(table_name, False), column['name'], inflection.camelize(column['name'], False)))

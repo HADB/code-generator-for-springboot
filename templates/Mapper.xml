@@ -45,7 +45,7 @@ ${update_list}
         <where>
             AND `${model_camelcase}`.`id` = #{id}
             AND `${model_camelcase}`.`is_delete` = 0
-        <where>
+        </where>
         LIMIT 1
     </select>
 
