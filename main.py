@@ -67,7 +67,7 @@ for input_file_name in os.listdir(INPUT_PATH):
 
         lines = []
         for column in columns:
-            if column['name'] == 'id':
+            if column['name'] == 'id' or column['name'] == 'sort_weight':
                 continue
             if column['type'] == 'datetime' or column['type'] == 'time' or column['type'] == 'date':
                 lines.append('        <if test="request.%sFrom != null">' % (inflection.camelize(column['name'], False)))
@@ -87,6 +87,14 @@ for input_file_name in os.listdir(INPUT_PATH):
             lines.append('            AND `%s`.`%s` = #{request.%s}' % (inflection.camelize(table_name, False), column['name'], inflection.camelize(column['name'], False)))
             lines.append('        </if>')
         search_where = '\n'.join(lines)
+
+        lines = []
+        for column in columns:
+            if column['name'] == 'sort_weight':
+                lines.append('`%s`.`sort_weight` DESC' % (inflection.camelize(table_name, False)))
+        if (not lines):
+            lines.append('`%s`.`id` ASC' % (inflection.camelize(table_name, False)))
+        orders = ', '.join(lines)
 
         lines = []
         for column in columns:
@@ -118,6 +126,7 @@ for input_file_name in os.listdir(INPUT_PATH):
             model_camelcase=inflection.camelize(table_name, False),
             column_list=column_list,
             search_where=search_where,
+            orders=orders,
             name_list=name_list,
             value_list=value_list,
             update_list=update_list)
@@ -228,7 +237,7 @@ for input_file_name in os.listdir(INPUT_PATH):
         lines = []
         swagger_index = 0
         for column in columns:
-            if column['name'] == 'id' or column['name'] == 'is_delete':
+            if column['name'] == 'id' or column['name'] == 'sort_weight' or column['name'] == 'is_delete':
                 continue
             type = 'String?'
             define = 'val'
