@@ -232,7 +232,7 @@ for input_file_name in os.listdir(INPUT_PATH):
         # [Model]SearchRequest.kt
         content = ''
         content += 'package %s.viewmodels.%s\n\n' % (PACKAGE_NAME, inflection.camelize(table_name, False))
-        content += 'import io.swagger.annotations.ApiModelProperty\nimport run.monkey.op.charging.models.Paging\nimport java.util.*\n\n'
+        content += 'import io.swagger.annotations.ApiModelProperty\nimport %s.models.Paging\nimport java.util.*\n\n' % (PACKAGE_NAME)
         content += 'data class %sSearchRequest(\n' % (inflection.camelize(table_name))
         lines = []
         swagger_index = 0
@@ -313,7 +313,7 @@ for input_file_name in os.listdir(INPUT_PATH):
         file_read = open(os.path.join(TEMPLATE_PATH, 'Controller.kt'), 'r')
         content = file_read.read()
         t = string.Template(content)
-        content = t.substitute(package_name=PACKAGE_NAME, model_upper_camelcase=inflection.camelize(table_name), model_camelcase=inflection.camelize(table_name, False))
+        content = t.substitute(package_name=PACKAGE_NAME, model_dasherize=inflection.dasherize(table_name), model_upper_camelcase=inflection.camelize(table_name), model_camelcase=inflection.camelize(table_name, False))
 
         output_controllers_path = os.path.join(OUTPUT_PATH, 'controllers')
         if not os.path.exists(output_controllers_path):

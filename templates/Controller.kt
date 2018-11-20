@@ -15,7 +15,7 @@ import ${package_name}.viewmodels.${model_camelcase}.${model_upper_camelcase}Sea
 @Api(tags = ["${model_upper_camelcase}"])
 @CrossOrigin
 @RestController
-@RequestMapping("/${model_camelcase}")
+@RequestMapping("/${model_dasherize}")
 class ${model_upper_camelcase}Controller {
     @Autowired
     lateinit var ${model_camelcase}Service: ${model_upper_camelcase}Service
