@@ -11,7 +11,6 @@ import shutil
 
 CURRENT_PATH = os.getcwd()  #当前路径
 INPUT_PATH = os.path.join(CURRENT_PATH, 'inputs')  #输入路径
-OUTPUT_PATH = os.path.join(CURRENT_PATH, 'outputs')  #输出路径
 TEMPLATE_PATH = os.path.join(CURRENT_PATH, 'templates')  #模板路径
 PACKAGE_NAME = 'demo.package.name'
 
@@ -21,7 +20,10 @@ for name, value in opts:
         print(name, value)
         PACKAGE_NAME = value
 
+OUTPUT_PATH = os.path.join(CURRENT_PATH, 'outputs')  #输出路径
 shutil.rmtree(OUTPUT_PATH)
+KOTLIN_OUTPUT_PATH = os.path.join(OUTPUT_PATH, 'main', 'kotlin', PACKAGE_NAME)
+MYBATIS_OUTPUT_PATH = os.path.join(OUTPUT_PATH, 'main', 'resources', 'mybatis')
 
 for input_file_name in os.listdir(INPUT_PATH):
     input_file_path = os.path.join(INPUT_PATH, input_file_name)
@@ -131,7 +133,7 @@ for input_file_name in os.listdir(INPUT_PATH):
             value_list=value_list,
             update_list=update_list)
 
-        output_mybatis_path = os.path.join(OUTPUT_PATH, 'mybatis')
+        output_mybatis_path = os.path.join(MYBATIS_OUTPUT_PATH, 'mapper')
         if not os.path.exists(output_mybatis_path):
             os.makedirs(output_mybatis_path)
         file_write = open(os.path.join(output_mybatis_path, inflection.camelize(table_name) + 'Mapper.xml'), 'w')
@@ -174,7 +176,7 @@ for input_file_name in os.listdir(INPUT_PATH):
         content += '%s\n' % (',\n\n'.join(lines))
         content += ')\n'
 
-        output_models_path = os.path.join(OUTPUT_PATH, 'models')
+        output_models_path = os.path.join(KOTLIN_OUTPUT_PATH, 'models')
         if not os.path.exists(output_models_path):
             os.makedirs(output_models_path)
         file_write = open(os.path.join(output_models_path, inflection.camelize(table_name) + '.kt'), 'w')
@@ -222,7 +224,7 @@ for input_file_name in os.listdir(INPUT_PATH):
         content += '%s\n' % (',\n\n'.join(lines))
         content += ')\n'
 
-        output_viewmodels_path = os.path.join(OUTPUT_PATH, 'viewmodels', inflection.camelize(table_name, False))
+        output_viewmodels_path = os.path.join(KOTLIN_OUTPUT_PATH, 'viewmodels', inflection.camelize(table_name, False))
         if not os.path.exists(output_viewmodels_path):
             os.makedirs(output_viewmodels_path)
         file_write = open(os.path.join(output_viewmodels_path, inflection.camelize(table_name) + 'EditRequest.kt'), 'w')
@@ -270,7 +272,7 @@ for input_file_name in os.listdir(INPUT_PATH):
         content += '%s\n' % (',\n\n'.join(lines))
         content += ')\n'
 
-        output_viewmodels_path = os.path.join(OUTPUT_PATH, 'viewmodels', inflection.camelize(table_name, False))
+        output_viewmodels_path = os.path.join(KOTLIN_OUTPUT_PATH, 'viewmodels', inflection.camelize(table_name, False))
         if not os.path.exists(output_viewmodels_path):
             os.makedirs(output_viewmodels_path)
         file_write = open(os.path.join(output_viewmodels_path, inflection.camelize(table_name) + 'SearchRequest.kt'), 'w')
@@ -283,7 +285,7 @@ for input_file_name in os.listdir(INPUT_PATH):
         t = string.Template(content)
         content = t.substitute(package_name=PACKAGE_NAME, model_upper_camelcase=inflection.camelize(table_name), model_camelcase=inflection.camelize(table_name, False))
 
-        output_mappers_path = os.path.join(OUTPUT_PATH, 'mappers')
+        output_mappers_path = os.path.join(KOTLIN_OUTPUT_PATH, 'mappers')
         if not os.path.exists(output_mappers_path):
             os.makedirs(output_mappers_path)
         file_write = open(os.path.join(output_mappers_path, inflection.camelize(table_name) + 'Mapper.kt'), 'w')
@@ -302,7 +304,7 @@ for input_file_name in os.listdir(INPUT_PATH):
         content = t.substitute(
             package_name=PACKAGE_NAME, model_upper_camelcase=inflection.camelize(table_name), model_camelcase=inflection.camelize(table_name, False), columns_data=',\n'.join(columns_data))
 
-        output_services_path = os.path.join(OUTPUT_PATH, 'services')
+        output_services_path = os.path.join(KOTLIN_OUTPUT_PATH, 'services')
         if not os.path.exists(output_services_path):
             os.makedirs(output_services_path)
         file_write = open(os.path.join(output_services_path, inflection.camelize(table_name) + 'Service.kt'), 'w')
@@ -313,9 +315,10 @@ for input_file_name in os.listdir(INPUT_PATH):
         file_read = open(os.path.join(TEMPLATE_PATH, 'Controller.kt'), 'r')
         content = file_read.read()
         t = string.Template(content)
-        content = t.substitute(package_name=PACKAGE_NAME, model_dasherize=inflection.dasherize(table_name), model_upper_camelcase=inflection.camelize(table_name), model_camelcase=inflection.camelize(table_name, False))
+        content = t.substitute(
+            package_name=PACKAGE_NAME, model_dasherize=inflection.dasherize(table_name), model_upper_camelcase=inflection.camelize(table_name), model_camelcase=inflection.camelize(table_name, False))
 
-        output_controllers_path = os.path.join(OUTPUT_PATH, 'controllers')
+        output_controllers_path = os.path.join(KOTLIN_OUTPUT_PATH, 'controllers')
         if not os.path.exists(output_controllers_path):
             os.makedirs(output_controllers_path)
         file_write = open(os.path.join(output_controllers_path, inflection.camelize(table_name) + 'Controller.kt'), 'w')
