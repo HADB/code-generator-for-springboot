@@ -22,7 +22,7 @@ for name, value in opts:
 
 OUTPUT_PATH = os.path.join(CURRENT_PATH, 'outputs')  #输出路径
 shutil.rmtree(OUTPUT_PATH)
-KOTLIN_OUTPUT_PATH = os.path.join(OUTPUT_PATH, 'main', 'kotlin', PACKAGE_NAME)
+KOTLIN_OUTPUT_PATH = os.path.join(OUTPUT_PATH, 'main', 'kotlin', *PACKAGE_NAME.split('.'))
 MYBATIS_OUTPUT_PATH = os.path.join(OUTPUT_PATH, 'main', 'resources', 'mybatis')
 
 for input_file_name in os.listdir(INPUT_PATH):
