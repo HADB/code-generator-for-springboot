@@ -38,6 +38,7 @@ class ${model_upper_camelcase}Controller {
     @PutMapping("/{id}")
     fun edit(@PathVariable("id") id: Long, @RequestBody request: ${model_upper_camelcase}EditRequest): Response<Any> {
         request.id = id
+        val ${model_camelcase} = ${model_camelcase}Service.get${model_upper_camelcase}ById(id) ?: return Response.error("${model_upper_camelcase} 不存在")
         ${model_camelcase}Service.edit${model_upper_camelcase}(request)
         return Response.success()
     }
