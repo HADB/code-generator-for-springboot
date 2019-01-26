@@ -53,18 +53,24 @@ for input_file_name in os.listdir(INPUT_PATH):
         # [Model]Mapper.xml
         lines = []
         for column in columns:
+            property_name = column['name']
             if column['name'] == 'is_delete':
                 continue
-            else:
-                lines.append('        `%s`.`%s` as `%s`' % (inflection.camelize(table_name, False), column['name'], inflection.camelize(column['name'], False)))
+            if column['name'].startswith('is_'):
+                property_name = column['name'][3:]
+
+            lines.append('        `%s`.`%s` as `%s`' % (inflection.camelize(table_name, False), column['name'], inflection.camelize(property_name, False)))
         column_list = ',\n'.join(lines)
 
         lines = []
         for column in columns:
+            property_name = column['name']
             if column['name'] == 'id' or column['name'] == 'is_delete':
                 continue
-            else:
-                lines.append('        `%s`' % (column['name']))
+            if column['name'].startswith('is_'):
+                property_name = column['name'][3:]
+
+            lines.append('        `%s`' % (column['name']))
         name_list = ',\n'.join(lines)
 
         lines = []
@@ -84,9 +90,14 @@ for input_file_name in os.listdir(INPUT_PATH):
                 continue
             if column['type'] == 'varchar' or column['type'] == 'text':
                 lines.append('        <if test="request.%s != null and request.%s !=\'\'">' % (inflection.camelize(column['name'], False), inflection.camelize(column['name'], False)))
+            elif column['name'].startswith('is_'):
+                lines.append('        <if test="request.%s != null">' % (inflection.camelize(column['name'][3:], False)))                
             else:
                 lines.append('        <if test="request.%s != null">' % (inflection.camelize(column['name'], False)))
-            lines.append('            AND `%s`.`%s` = #{request.%s}' % (inflection.camelize(table_name, False), column['name'], inflection.camelize(column['name'], False)))
+            if column['name'].startswith('is_'):
+                lines.append('            AND `%s`.`%s` = #{request.%s}' % (inflection.camelize(table_name, False), column['name'], inflection.camelize(column['name'][3:], False)))
+            else:
+                lines.append('            AND `%s`.`%s` = #{request.%s}' % (inflection.camelize(table_name, False), column['name'], inflection.camelize(column['name'], False)))
             lines.append('        </if>')
         search_where = '\n'.join(lines)
 
@@ -104,6 +115,8 @@ for input_file_name in os.listdir(INPUT_PATH):
                 continue
             elif column['name'] == 'create_time' or column['name'] == 'update_time':
                 lines.append('        NOW()')
+            elif column['name'].startswith('is_'):
+                lines.append('        #{%s.%s}' % (inflection.camelize(table_name, False), inflection.camelize(column['name'][3:], False)))
             else:
                 lines.append('        #{%s.%s}' % (inflection.camelize(table_name, False), inflection.camelize(column['name'], False)))
         value_list = ',\n'.join(lines)
@@ -114,6 +127,8 @@ for input_file_name in os.listdir(INPUT_PATH):
                 continue
             elif column['name'] == 'update_time':
                 lines.append('        `update_time` = NOW()')
+            elif column['name'].startswith('is_'):
+                lines.append('        `%s` = #{%s.%s}' % (column['name'], inflection.camelize(table_name, False), inflection.camelize(column['name'][3:], False)))
             else:
                 lines.append('        `%s` = #{%s.%s}' % (column['name'], inflection.camelize(table_name, False), inflection.camelize(column['name'], False)))
         update_list = ',\n'.join(lines)
@@ -156,8 +171,12 @@ for input_file_name in os.listdir(INPUT_PATH):
                 continue
             else:
                 type = 'String'
+                property_name = column['name']
                 if column['type'] == 'bigint':
                     type = 'Long'
+                elif column['type'] == 'tinyint' and column['name'].startswith('is_'):
+                    type = 'Boolean'
+                    property_name = column['name'][3:]
                 elif column['type'] == 'tinyint' or column['type'] == 'int':
                     type = 'Int'
                 elif column['type'] == 'datetime' or column['type'] == 'time' or column['type'] == 'date':
@@ -170,7 +189,7 @@ for input_file_name in os.listdir(INPUT_PATH):
                 if column['name'] == 'id' or column['name'] == 'is_delete':
                     type += ' = 0'
                 lineText += '        @ApiModelProperty(position = %s, notes = "%s")\n' % (swagger_index, column['comment'])
-                lineText += '        val %s: %s' % (inflection.camelize(column['name'], False), type)
+                lineText += '        val %s: %s' % (inflection.camelize(property_name, False), type)
                 lines.append(lineText)
                 swagger_index += 1
         content += '%s\n' % (',\n\n'.join(lines))
@@ -192,12 +211,16 @@ for input_file_name in os.listdir(INPUT_PATH):
         swagger_index = 0
         for column in columns:
             type = 'String'
+            property_name = column['name']
             define = 'val'
             required = True
             hidden = False
             lineText = ''
             if column['type'] == 'bigint':
                 type = 'Long'
+            elif column['type'] == 'tinyint' and column['name'].startswith('is_'):
+                type = 'Boolean'
+                property_name = column['name'][3:]
             elif column['type'] == 'tinyint' or column['type'] == 'int':
                 type = 'Int'
             elif column['type'] == 'datetime' or column['type'] == 'time' or column['type'] == 'date':
@@ -215,10 +238,10 @@ for input_file_name in os.listdir(INPUT_PATH):
             if column['name'] == 'id':
                 type += ' = 0'
             if required:
-                lineText += '        @NotNull(message = "%s 不能为空")\n' % (inflection.camelize(column['name'], False))
+                lineText += '        @NotNull(message = "%s 不能为空")\n' % (inflection.camelize(property_name, False))
             lineText += '        @ApiModelProperty(position = %s, notes = "%s", required = %s, hidden = %s)\n' % (swagger_index, column['comment'], 'true' if required else 'false', 'true'
                                                                                                                   if hidden else 'false')
-            lineText += '        %s %s: %s' % (define, inflection.camelize(column['name'], False), type)
+            lineText += '        %s %s: %s' % (define, inflection.camelize(property_name, False), type)
             lines.append(lineText)
             swagger_index += 1
         content += '%s\n' % (',\n\n'.join(lines))
@@ -242,12 +265,16 @@ for input_file_name in os.listdir(INPUT_PATH):
             if column['name'] == 'id' or column['name'] == 'sort_weight' or column['name'] == 'is_delete':
                 continue
             type = 'String?'
+            property_name = column['name']
             define = 'val'
             required = True
             hidden = False
             lineText = ''
             if column['type'] == 'bigint':
                 type = 'Long?'
+            elif column['type'] == 'tinyint' and column['name'].startswith('is_'):
+                type = 'Boolean?'
+                property_name = column['name'][3:]
             elif column['type'] == 'tinyint' or column['type'] == 'int':
                 type = 'Int?'
             elif column['type'] == 'datetime' or column['type'] == 'time' or column['type'] == 'date':
@@ -263,7 +290,7 @@ for input_file_name in os.listdir(INPUT_PATH):
                 continue
 
             lineText += '        @ApiModelProperty(position = %s, notes = "%s")\n' % (swagger_index, column['comment'])
-            lineText += '        %s %s: %s' % (define, inflection.camelize(column['name'], False), type)
+            lineText += '        %s %s: %s' % (define, inflection.camelize(property_name, False), type)
             lines.append(lineText)
             swagger_index += 1
         lineText = '        @ApiModelProperty(position = %s, notes = "分页(默认第1页，每页显示10条)")\n' % (swagger_index)
@@ -298,9 +325,12 @@ for input_file_name in os.listdir(INPUT_PATH):
         t = string.Template(content)
         columns_data = []
         for column in columns:
+            property_name = column['name']
             if column['name'] == 'create_time' or column['name'] == 'update_time' or column['name'] == 'is_delete':
                 continue
-            columns_data.append('                %s = request.%s' % (inflection.camelize(column['name'], False), inflection.camelize(column['name'], False)))
+            if column['name'].startswith('is_'):
+                property_name = column['name'][3:]
+            columns_data.append('                %s = request.%s' % (inflection.camelize(property_name, False), inflection.camelize(property_name, False)))
         content = t.substitute(
             package_name=PACKAGE_NAME, model_upper_camelcase=inflection.camelize(table_name), model_camelcase=inflection.camelize(table_name, False), columns_data=',\n'.join(columns_data))
 
