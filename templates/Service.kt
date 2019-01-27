@@ -8,7 +8,7 @@ import ${package_name}.viewmodels.${model_camelcase}.${model_upper_camelcase}Edi
 import ${package_name}.viewmodels.${model_camelcase}.${model_upper_camelcase}SearchRequest
 
 @Component
-open class ${model_upper_camelcase}Service {
+class ${model_upper_camelcase}Service {
     @Autowired
     private lateinit var ${model_camelcase}Mapper: ${model_upper_camelcase}Mapper
 

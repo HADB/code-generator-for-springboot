@@ -25,9 +25,9 @@ class ${model_upper_camelcase}Controller {
      */
     @ApiOperation(value = "新增 ${model_upper_camelcase}")
     @PostMapping
-    fun add(@RequestBody request: ${model_upper_camelcase}EditRequest): Response<Any> {
-        ${model_camelcase}Service.edit${model_upper_camelcase}(request)
-        return Response.success()
+    fun add(@RequestBody request: ${model_upper_camelcase}EditRequest): Response<Long> {
+        val ${model_camelcase}Id = ${model_camelcase}Service.edit${model_upper_camelcase}(request)
+        return Response.success(${model_camelcase}Id)
     }
 
     /*

@@ -113,7 +113,7 @@ for input_file_name in os.listdir(INPUT_PATH):
         for column in columns:
             if column['name'] == 'id' or column['name'] == 'is_delete':
                 continue
-            elif column['name'] == 'create_time' or column['name'] == 'update_time':
+            elif column['name'] == 'create_time' or column['name'] == 'update_time' or column['name'] == 'created_time' or column['name'] == 'updated_time':
                 lines.append('        NOW()')
             elif column['name'].startswith('is_'):
                 lines.append('        #{%s.%s}' % (inflection.camelize(table_name, False), inflection.camelize(column['name'][3:], False)))
@@ -123,10 +123,10 @@ for input_file_name in os.listdir(INPUT_PATH):
 
         lines = []
         for column in columns:
-            if column['name'] == 'id' or column['name'] == 'create_time' or column['name'] == 'is_delete':
+            if column['name'] == 'id' or column['name'] == 'create_time' or column['name'] == 'created_time' or column['name'] == 'is_delete':
                 continue
-            elif column['name'] == 'update_time':
-                lines.append('        `update_time` = NOW()')
+            elif column['name'] == 'update_time' or column['name'] == 'updated_time':
+                lines.append('        `%s` = NOW()' % (column['name']))
             elif column['name'].startswith('is_'):
                 lines.append('        `%s` = #{%s.%s}' % (column['name'], inflection.camelize(table_name, False), inflection.camelize(column['name'][3:], False)))
             else:
@@ -156,6 +156,7 @@ for input_file_name in os.listdir(INPUT_PATH):
         file_write.close()
 
         # [Model].kt
+        # TODO: 读取并添加默认值
         content = ''
         content += 'package %s.models\n\n' % (PACKAGE_NAME)
         content += 'import io.swagger.annotations.ApiModelProperty\n'
@@ -184,7 +185,7 @@ for input_file_name in os.listdir(INPUT_PATH):
 
                 if column['nullable']:
                     type += '?'
-                if column['name'] == 'create_time' or column['name'] == 'update_time':
+                if column['name'] == 'create_time' or column['name'] == 'update_time' or column['name'] == 'created_time' or column['name'] == 'updated_time':
                     type += ' = null'
                 if column['name'] == 'id' or column['name'] == 'is_delete':
                     type += ' = 0'
@@ -233,7 +234,7 @@ for input_file_name in os.listdir(INPUT_PATH):
                 define = 'var'
                 required = False
                 hidden = True
-            if column['name'] == 'create_time' or column['name'] == 'update_time' or column['name'] == 'is_delete':
+            if column['name'] == 'create_time' or column['name'] == 'update_time' or column['name'] == 'created_time' or column['name'] == 'updated_time' or column['name'] == 'is_delete':
                 continue
             if column['name'] == 'id':
                 type += ' = 0'
@@ -326,7 +327,7 @@ for input_file_name in os.listdir(INPUT_PATH):
         columns_data = []
         for column in columns:
             property_name = column['name']
-            if column['name'] == 'create_time' or column['name'] == 'update_time' or column['name'] == 'is_delete':
+            if column['name'] == 'create_time' or column['name'] == 'update_time' or column['name'] == 'created_time' or column['name'] == 'updated_time' or column['name'] == 'is_delete':
                 continue
             if column['name'].startswith('is_'):
                 property_name = column['name'][3:]
