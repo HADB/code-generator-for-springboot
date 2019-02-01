@@ -175,6 +175,8 @@ for input_file_name in os.listdir(INPUT_PATH):
                 property_name = column['name']
                 if column['type'] == 'bigint':
                     type = 'Long'
+                elif column['type'] == 'double':
+                    type = 'Double'
                 elif column['type'] == 'tinyint' and column['name'].startswith('is_'):
                     type = 'Boolean'
                     property_name = column['name'][3:]
@@ -184,9 +186,7 @@ for input_file_name in os.listdir(INPUT_PATH):
                     type = 'Date'
 
                 if column['nullable']:
-                    type += '?'
-                if column['name'] == 'create_time' or column['name'] == 'update_time' or column['name'] == 'created_time' or column['name'] == 'updated_time':
-                    type += ' = null'
+                    type += '? = null'
                 if column['name'] == 'id' or column['name'] == 'is_delete':
                     type += ' = 0'
                 lineText += '        @ApiModelProperty(position = %s, notes = "%s")\n' % (swagger_index, column['comment'])
@@ -219,6 +219,8 @@ for input_file_name in os.listdir(INPUT_PATH):
             lineText = ''
             if column['type'] == 'bigint':
                 type = 'Long'
+            elif column['type'] == 'double':
+                type = 'Double'
             elif column['type'] == 'tinyint' and column['name'].startswith('is_'):
                 type = 'Boolean'
                 property_name = column['name'][3:]
@@ -228,7 +230,7 @@ for input_file_name in os.listdir(INPUT_PATH):
                 type = 'Date'
 
             if column['nullable']:
-                type += '?'
+                type += '? = null'
                 required = False
             if column['name'] == 'id':
                 define = 'var'
@@ -265,21 +267,23 @@ for input_file_name in os.listdir(INPUT_PATH):
         for column in columns:
             if column['name'] == 'id' or column['name'] == 'sort_weight' or column['name'] == 'is_delete':
                 continue
-            type = 'String?'
+            type = 'String? = null'
             property_name = column['name']
             define = 'val'
             required = True
             hidden = False
             lineText = ''
             if column['type'] == 'bigint':
-                type = 'Long?'
+                type = 'Long? = null'
+            elif column['type'] == 'double':
+                type = 'Double? = null'
             elif column['type'] == 'tinyint' and column['name'].startswith('is_'):
-                type = 'Boolean?'
+                type = 'Boolean? = null'
                 property_name = column['name'][3:]
             elif column['type'] == 'tinyint' or column['type'] == 'int':
-                type = 'Int?'
+                type = 'Int? = null'
             elif column['type'] == 'datetime' or column['type'] == 'time' or column['type'] == 'date':
-                type = 'Date?'
+                type = 'Date? = null'
                 lineText = '        @ApiModelProperty(position = %s, notes = "%s From")\n' % (swagger_index, column['comment'])
                 lineText += '        %s %s: %s' % (define, inflection.camelize(column['name'] + "From", False), type)
                 lines.append(lineText)
