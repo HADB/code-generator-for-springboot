@@ -21,6 +21,8 @@ for name, value in opts:
         PACKAGE_NAME = value
 
 OUTPUT_PATH = os.path.join(CURRENT_PATH, 'outputs')  #输出路径
+if not os.path.exists(OUTPUT_PATH):
+    os.mkdir(OUTPUT_PATH)
 shutil.rmtree(OUTPUT_PATH)
 KOTLIN_OUTPUT_PATH = os.path.join(OUTPUT_PATH, 'main', 'kotlin', *PACKAGE_NAME.split('.'))
 MYBATIS_OUTPUT_PATH = os.path.join(OUTPUT_PATH, 'main', 'resources', 'mybatis')
@@ -28,6 +30,9 @@ MYBATIS_OUTPUT_PATH = os.path.join(OUTPUT_PATH, 'main', 'resources', 'mybatis')
 for input_file_name in os.listdir(INPUT_PATH):
     input_file_path = os.path.join(INPUT_PATH, input_file_name)
     if not os.path.isdir(input_file_path):
+        print(input_file_name)
+        if not input_file_name.endswith('.sql'):
+            continue
         file_name = os.path.splitext(input_file_name)[0].strip()
         table_name = file_name[2:]
         file_read = open(input_file_path, 'r')
@@ -91,7 +96,7 @@ for input_file_name in os.listdir(INPUT_PATH):
             if column['type'] == 'varchar' or column['type'] == 'text':
                 lines.append('        <if test="request.%s != null and request.%s !=\'\'">' % (inflection.camelize(column['name'], False), inflection.camelize(column['name'], False)))
             elif column['name'].startswith('is_'):
-                lines.append('        <if test="request.%s != null">' % (inflection.camelize(column['name'][3:], False)))                
+                lines.append('        <if test="request.%s != null">' % (inflection.camelize(column['name'][3:], False)))
             else:
                 lines.append('        <if test="request.%s != null">' % (inflection.camelize(column['name'], False)))
             if column['name'].startswith('is_'):
