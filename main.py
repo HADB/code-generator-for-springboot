@@ -34,7 +34,7 @@ for input_file_name in os.listdir(INPUT_PATH):
         if not input_file_name.endswith('.sql'):
             continue
         file_name = os.path.splitext(input_file_name)[0].strip()
-        table_name = file_name[2:]
+        table_name = file_name
         table_description = table_name
         file_read = open(input_file_path, 'r')
         columns = []
