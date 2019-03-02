@@ -9,10 +9,10 @@ import string
 import shutil
 import inflection
 
-CURRENT_PATH = os.getcwd()  #当前路径
-INPUT_PATH = os.path.join(CURRENT_PATH, 'inputs')  #输入路径
-TEMPLATE_PATH = os.path.join(CURRENT_PATH, 'templates')  #模板路径
-PACKAGE_NAME = 'demo.package.name'
+CURRENT_PATH = os.getcwd()  #当前目录
+INPUT_PATH = os.path.join(CURRENT_PATH, 'inputs')  #输入目录
+TEMPLATE_PATH = os.path.join(CURRENT_PATH, 'templates')  #模板目录
+PACKAGE_NAME = 'demo.package.name'  #包名
 
 OPTS, ARGS = getopt.getopt(sys.argv[1:], 'p:')
 for name, value in OPTS:
@@ -20,12 +20,12 @@ for name, value in OPTS:
         print(name, value)
         PACKAGE_NAME = value
 
-OUTPUT_PATH = os.path.join(CURRENT_PATH, 'outputs')  #输出路径
+OUTPUT_PATH = os.path.join(CURRENT_PATH, 'outputs')  #输出目录
 if not os.path.exists(OUTPUT_PATH):
     os.mkdir(OUTPUT_PATH)
-shutil.rmtree(OUTPUT_PATH)
-KOTLIN_OUTPUT_PATH = os.path.join(OUTPUT_PATH, 'main', 'kotlin', *PACKAGE_NAME.split('.'))
-MYBATIS_OUTPUT_PATH = os.path.join(OUTPUT_PATH, 'main', 'resources', 'mybatis')
+shutil.rmtree(OUTPUT_PATH)  #清空输出目录
+KOTLIN_OUTPUT_PATH = os.path.join(OUTPUT_PATH, 'main', 'kotlin', *PACKAGE_NAME.split('.'))  #kotlin 输出目录
+MYBATIS_OUTPUT_PATH = os.path.join(OUTPUT_PATH, 'main', 'resources', 'mybatis')  #mybatis 输出目录
 
 for input_file_name in os.listdir(INPUT_PATH):
     input_file_path = os.path.join(INPUT_PATH, input_file_name)
@@ -33,34 +33,36 @@ for input_file_name in os.listdir(INPUT_PATH):
         print(input_file_name)
         if not input_file_name.endswith('.sql'):
             continue
-        file_name = os.path.splitext(input_file_name)[0].strip()
-        table_name = file_name
-        table_description = table_name
+        file_name = os.path.splitext(input_file_name)[0].strip()  #文件名
+        table_name = file_name  #表名默认为文件名
+        table_description = table_name  #表注释默认为文件名
         file_read = open(input_file_path, 'r')
-        columns = []
+        columns = []  #字段数组
         for line in file_read:
-            if line.find('CREATE TABLE') >= 0:
-                table_name = line.strip().split()[2].strip('`')[2:]
+            if line.find('CREATE TABLE ') >= 0:
+                table_name = line.strip().split()[2].strip('`')[2:]  #读取表名
                 continue
             if line.find(' KEY ') >= 0:
-                continue
+                continue  #跳过索引
             if line.find('CHARSET=') >= 0:
-                table_description = line[line.find('COMMENT') + 8:].split('\'')[1]
+                table_description = line[line.find('COMMENT') + 8:].split('\'')[1]  #读取表注释
                 continue
             column = {}
-            column['name'] = line.strip().split()[0].strip('`')
-            column['type'] = line.strip().split()[1].split('(')[0].lower()
-            if line.find('NOT NULL') > 0:
-                column['nullable'] = False
+            column['name'] = line.strip().split()[0].strip('`')  #字段名
+            column['type'] = line.strip().split()[1].split('(')[0].lower()  #字段类型
+            if line.find('NOT NULL ') > 0:
+                column['nullable'] = False  #字段是否可空
             else:
                 column['nullable'] = True
 
-            if line.find('DEFAULT') > 0:
-                column['default'] = line[line.find('DEFAULT') + 8:].split()[0]
+            if line.find('DEFAULT ') > 0:
+                column['default'] = line[line.find('DEFAULT ') + 8:].split()[0].replace('\'', '"')  #字段默认值
+                if column['default'] == 'NULL':
+                    column['default'] = 'null'
             else:
                 column['default'] = None
 
-            column['comment'] = line[line.find('COMMENT') + 8:].split('\'')[1]
+            column['comment'] = line[line.find('COMMENT') + 8:].split('\'')[1]  #字段注释
             columns.append(column)
         file_read.close()
 
@@ -150,17 +152,7 @@ for input_file_name in os.listdir(INPUT_PATH):
         file_read = open(os.path.join(TEMPLATE_PATH, 'Mapper.xml'), 'r')
         content = file_read.read()
         t = string.Template(content)
-        content = t.substitute(
-            table_name='t_' + table_name,
-            package_name=PACKAGE_NAME,
-            model_upper_camelcase=inflection.camelize(table_name),
-            model_camelcase=inflection.camelize(table_name, False),
-            column_list=column_list,
-            search_where=search_where,
-            orders=orders,
-            name_list=name_list,
-            value_list=value_list,
-            update_list=update_list)
+        content = t.substitute(table_name='t_' + table_name, package_name=PACKAGE_NAME, model_upper_camelcase=inflection.camelize(table_name), model_camelcase=inflection.camelize(table_name, False), column_list=column_list, search_where=search_where, orders=orders, name_list=name_list, value_list=value_list, update_list=update_list)
 
         output_mybatis_path = os.path.join(MYBATIS_OUTPUT_PATH, 'mapper')
         if not os.path.exists(output_mybatis_path):
@@ -170,7 +162,6 @@ for input_file_name in os.listdir(INPUT_PATH):
         file_write.close()
 
         # [Model].kt
-        # TODO: 读取并添加默认值
         content = ''
         content += 'package %s.models\n\n' % (PACKAGE_NAME)
         content += 'import io.swagger.annotations.ApiModelProperty\n'
@@ -200,8 +191,10 @@ for input_file_name in os.listdir(INPUT_PATH):
                     type = 'Date'
 
                 if column['nullable']:
-                    type += '? = null'
-                if column['name'] == 'id' or column['name'] == 'is_delete':
+                    type += '?'
+                if column['default']:
+                    type += ' = ' + column['default']
+                if column['name'] == 'id':
                     type += ' = 0'
                 lineText += '        @ApiModelProperty(position = %s, notes = "%s")\n' % (swagger_index, column['comment'])
                 lineText += '        val %s: %s' % (inflection.camelize(property_name, False), type)
@@ -256,8 +249,7 @@ for input_file_name in os.listdir(INPUT_PATH):
                 type += ' = 0'
             if required:
                 lineText += '        @NotNull(message = "%s 不能为空")\n' % (inflection.camelize(property_name, False))
-            lineText += '        @ApiModelProperty(position = %s, notes = "%s", required = %s, hidden = %s)\n' % (swagger_index, column['comment'], 'true' if required else 'false', 'true'
-                                                                                                                  if hidden else 'false')
+            lineText += '        @ApiModelProperty(position = %s, notes = "%s", required = %s, hidden = %s)\n' % (swagger_index, column['comment'], 'true' if required else 'false', 'true' if hidden else 'false')
             lineText += '        %s %s: %s' % (define, inflection.camelize(property_name, False), type)
             lines.append(lineText)
             swagger_index += 1
@@ -350,8 +342,7 @@ for input_file_name in os.listdir(INPUT_PATH):
             if column['name'].startswith('is_'):
                 property_name = column['name'][3:]
             columns_data.append('                %s = request.%s' % (inflection.camelize(property_name, False), inflection.camelize(property_name, False)))
-        content = t.substitute(
-            package_name=PACKAGE_NAME, model_upper_camelcase=inflection.camelize(table_name), model_camelcase=inflection.camelize(table_name, False), columns_data=',\n'.join(columns_data))
+        content = t.substitute(package_name=PACKAGE_NAME, model_upper_camelcase=inflection.camelize(table_name), model_camelcase=inflection.camelize(table_name, False), columns_data=',\n'.join(columns_data))
 
         output_services_path = os.path.join(KOTLIN_OUTPUT_PATH, 'services')
         if not os.path.exists(output_services_path):
@@ -364,8 +355,7 @@ for input_file_name in os.listdir(INPUT_PATH):
         file_read = open(os.path.join(TEMPLATE_PATH, 'Controller.kt'), 'r')
         content = file_read.read()
         t = string.Template(content)
-        content = t.substitute(
-            package_name=PACKAGE_NAME, model_dasherize=inflection.dasherize(table_name), model_upper_camelcase=inflection.camelize(table_name), model_camelcase=inflection.camelize(table_name, False), model_description=table_description)
+        content = t.substitute(package_name=PACKAGE_NAME, model_dasherize=inflection.dasherize(table_name), model_upper_camelcase=inflection.camelize(table_name), model_camelcase=inflection.camelize(table_name, False), model_description=table_description)
 
         output_controllers_path = os.path.join(KOTLIN_OUTPUT_PATH, 'controllers')
         if not os.path.exists(output_controllers_path):
