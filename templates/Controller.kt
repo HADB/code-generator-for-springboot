@@ -12,7 +12,7 @@ import ${package_name}.viewmodels.common.SearchResponse
 import ${package_name}.viewmodels.${model_camelcase}.${model_upper_camelcase}EditRequest
 import ${package_name}.viewmodels.${model_camelcase}.${model_upper_camelcase}SearchRequest
 
-@Api(tags = ["${model_upper_camelcase}"])
+@Api(tags = ["${model_description}"])
 @CrossOrigin
 @RestController
 @RequestMapping("/${model_dasherize}")
@@ -23,7 +23,7 @@ class ${model_upper_camelcase}Controller {
     /*
      * 新增
      */
-    @ApiOperation(value = "新增 ${model_upper_camelcase}")
+    @ApiOperation(value = "新增「${model_description}」")
     @PostMapping
     fun add(@RequestBody request: ${model_upper_camelcase}EditRequest): Response<Long> {
         val ${model_camelcase}Id = ${model_camelcase}Service.edit${model_upper_camelcase}(request)
@@ -33,7 +33,7 @@ class ${model_upper_camelcase}Controller {
     /*
      * 修改
      */
-    @ApiOperation(value = "修改 ${model_upper_camelcase}")
+    @ApiOperation(value = "修改「${model_description}」")
     @ApiImplicitParam(name = "id", value = "${model_upper_camelcase} ID", required = true, dataType = "Long")
     @PutMapping("/{id}")
     fun edit(@PathVariable("id") id: Long, @RequestBody request: ${model_upper_camelcase}EditRequest): Response<Any> {
@@ -46,7 +46,7 @@ class ${model_upper_camelcase}Controller {
     /*
      * 删除
      */
-    @ApiOperation(value = "删除 ${model_upper_camelcase}")
+    @ApiOperation(value = "删除「${model_description}」")
     @ApiImplicitParam(name = "id", value = "${model_upper_camelcase} ID", required = true, dataType = "Long")
     @DeleteMapping("/{id}")
     fun delete(@PathVariable("id") id: Long): Response<Any> {
@@ -57,7 +57,7 @@ class ${model_upper_camelcase}Controller {
     /*
      * 获取详情
      */
-    @ApiOperation(value = "获取 ${model_upper_camelcase} 详情")
+    @ApiOperation(value = "获取「${model_description}」详情")
     @ApiImplicitParam(name = "id", value = "${model_upper_camelcase} ID", required = true, dataType = "Long")
     @GetMapping("/{id}")
     fun get(@PathVariable("id") id: Long): Response<${model_upper_camelcase}> {
@@ -68,7 +68,7 @@ class ${model_upper_camelcase}Controller {
     /*
      * 搜索
      */
-    @ApiOperation(value = "搜索 ${model_upper_camelcase}")
+    @ApiOperation(value = "搜索「${model_description}」")
     @PostMapping("/search")
     fun search(@RequestBody request: ${model_upper_camelcase}SearchRequest): Response<SearchResponse<${model_upper_camelcase}>> {
         val results = ${model_camelcase}Service.searchPaging${model_upper_camelcase}s(request)

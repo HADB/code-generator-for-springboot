@@ -5,17 +5,17 @@ crud-code-generator-for-springboot
 import os
 import sys
 import getopt
-import inflection
 import string
 import shutil
+import inflection
 
 CURRENT_PATH = os.getcwd()  #当前路径
 INPUT_PATH = os.path.join(CURRENT_PATH, 'inputs')  #输入路径
 TEMPLATE_PATH = os.path.join(CURRENT_PATH, 'templates')  #模板路径
 PACKAGE_NAME = 'demo.package.name'
 
-opts, args = getopt.getopt(sys.argv[1:], 'p:')
-for name, value in opts:
+OPTS, ARGS = getopt.getopt(sys.argv[1:], 'p:')
+for name, value in OPTS:
     if name == '-p':
         print(name, value)
         PACKAGE_NAME = value
@@ -35,9 +35,18 @@ for input_file_name in os.listdir(INPUT_PATH):
             continue
         file_name = os.path.splitext(input_file_name)[0].strip()
         table_name = file_name[2:]
+        table_description = table_name
         file_read = open(input_file_path, 'r')
         columns = []
         for line in file_read:
+            if line.find('CREATE TABLE') >= 0:
+                table_name = line.strip().split()[2].strip('`')[2:]
+                continue
+            if line.find(' KEY ') >= 0:
+                continue
+            if line.find('CHARSET=') >= 0:
+                table_description = line[line.find('COMMENT') + 8:].split('\'')[1]
+                continue
             column = {}
             column['name'] = line.strip().split()[0].strip('`')
             column['type'] = line.strip().split()[1].split('(')[0].lower()
@@ -356,7 +365,7 @@ for input_file_name in os.listdir(INPUT_PATH):
         content = file_read.read()
         t = string.Template(content)
         content = t.substitute(
-            package_name=PACKAGE_NAME, model_dasherize=inflection.dasherize(table_name), model_upper_camelcase=inflection.camelize(table_name), model_camelcase=inflection.camelize(table_name, False))
+            package_name=PACKAGE_NAME, model_dasherize=inflection.dasherize(table_name), model_upper_camelcase=inflection.camelize(table_name), model_camelcase=inflection.camelize(table_name, False), model_description=table_description)
 
         output_controllers_path = os.path.join(KOTLIN_OUTPUT_PATH, 'controllers')
         if not os.path.exists(output_controllers_path):
