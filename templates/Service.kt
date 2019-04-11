@@ -24,6 +24,15 @@ ${columns_data}
         return ${model_camelcase}.id
     }
 
+    fun edit${model_upper_camelcase}(${model_camelcase}: ${model_upper_camelcase}): Long {
+        if (${model_camelcase}.id == 0L) {
+            ${model_camelcase}Mapper.insert${model_upper_camelcase}(${model_camelcase})
+        } else {
+            ${model_camelcase}Mapper.update${model_upper_camelcase}(${model_camelcase})
+        }
+        return ${model_camelcase}.id
+    }
+
     fun delete${model_upper_camelcase}(id: Long) {
         ${model_camelcase}Mapper.delete${model_upper_camelcase}(id)
     }
