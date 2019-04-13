@@ -239,8 +239,10 @@ for input_file_name in os.listdir(INPUT_PATH):
                 type = 'Date'
 
             if column['nullable']:
-                type += '? = null'
+                type += '?'
                 required = False
+            if column['default']:
+                type += ' = ' + column['default']
             if column['name'] == 'id':
                 define = 'var'
                 required = False
