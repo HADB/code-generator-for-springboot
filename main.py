@@ -61,6 +61,11 @@ for input_file_name in os.listdir(INPUT_PATH):
                     column['default'] = 'null'
                 if (column['type'].find('int') >= 0 or column['type'].find('double') >= 0) and column['default'].find('"') >= 0:
                     column['default'] = column['default'].replace('"', '')
+                if column['type'] == 'tinyint' and column['name'].startswith('is_'):
+                    if column['default'] == '0':
+                        column['default'] = 'false'
+                    else:
+                        column['default'] = 'true'
             else:
                 column['default'] = None
 
