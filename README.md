@@ -4,19 +4,19 @@
 
 项目做多了之后，会发现有很多简单的增删改查的基础代码，没有技术含量，却要花费很多时间去写，浪费生命
 
-于是有了这样一个脚本，根据数据库结构生成对应的 Model、Mapper、Service、Controller 等代码
+于是有了这样一个脚本，根据数据库结构生成对应的 `Model`、`Mapper`、`Service`、`Controller` 等代码
 
-代码基于 Kotlin，细节可根据个人喜好调整，目前是按照我的项目风格生成的
+代码基于 `Kotlin`，细节可根据个人喜好调整，目前是按照我的项目风格生成的
 
 ## 使用方式
 
-安装`inflection`
+安装 `inflection`
 
 ```bash
 pip install inflection
 ```
 
-在`inputs`文件夹下放好 sql 文件，例如：
+在 `inputs\xxx.xxx.xxx` 文件夹下放好 `sql` 文件，`xxx.xxx.xxx` 为包名，例如：
 
 ```sql
 CREATE TABLE `t_credit_plan` (
@@ -44,7 +44,7 @@ CREATE TABLE `t_credit_plan` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='充值计划';
 ```
 
-执行 `python main.py -p demo.package.name`
+执行 `python main.py`
 
 
-输出文件在 outputs 文件夹下。
+输出文件在 `outputs` 对应的包名文件夹下。

@@ -16,12 +16,7 @@ class ${model_upper_camelcase}Service {
         val ${model_camelcase} = ${model_upper_camelcase}(
 ${columns_data}
         )
-        if (${model_camelcase}.id == 0L) {
-            ${model_camelcase}Mapper.insert${model_upper_camelcase}(${model_camelcase})
-        } else {
-            ${model_camelcase}Mapper.update${model_upper_camelcase}(${model_camelcase})
-        }
-        return ${model_camelcase}.id
+        return edit${model_upper_camelcase}(${model_camelcase})
     }
 
     fun edit${model_upper_camelcase}(${model_camelcase}: ${model_upper_camelcase}): Long {
