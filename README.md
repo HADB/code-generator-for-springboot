@@ -19,29 +19,23 @@ pip install inflection
 在 `inputs\xxx.xxx.xxx` 文件夹下放好 `sql` 文件，`xxx.xxx.xxx` 为包名，例如：
 
 ```sql
-CREATE TABLE `t_credit_plan` (
-    `id`                        bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
-    `name`                      varchar(64)         NOT NULL                COMMENT '名称',
-    `province_code`             varchar(8)          DEFAULT NULL            COMMENT '省份编码',
-    `city_code`                 varchar(8)          DEFAULT NULL            COMMENT '城市编码',
-    `district_code`             varchar(8)          DEFAULT NULL            COMMENT '区县编码',
-    `min_amount`                int(11)             NOT NULL                COMMENT '最低充值金额(单位:分)',
-    `give_away_amount`          int(11)             NOT NULL                COMMENT '赠送金额(单位:分)',
-    `enable_time`               datetime            DEFAULT NULL            COMMENT '计划启用时间',
-    `expire_time`               datetime            DEFAULT NULL            COMMENT '计划过期时间',
-    `create_time`               datetime            DEFAULT NULL            COMMENT '创建时间',
-    `update_time`               datetime            DEFAULT NULL            COMMENT '更新时间',
-    `is_delete`                 tinyint(4)          NOT NULL DEFAULT '0'    COMMENT '是否删除(0:否, 1:是)',
-    PRIMARY KEY                         (`id`),
-    KEY         `idx_province_code`     (`province_code`),
-    KEY         `idx_city_code`         (`city_code`),
-    KEY         `idx_district_code`     (`district_code`),
-    KEY         `idx_enable_time`       (`enable_time`),
-    KEY         `idx_expire_time`       (`expire_time`),
-    KEY         `idx_create_time`       (`create_time`),
-    KEY         `idx_update_time`       (`update_time`),
-    KEY         `idx_is_delete`         (`is_delete`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='充值计划';
+CREATE TABLE `t_shop` (
+    `id`                    bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
+    `number`                varchar(64)         NOT NULL                COMMENT '编号',
+    `floor`                 tinyint(4)          NOT NULL                COMMENT '楼层',
+    `location`              varchar(64)         DEFAULT NULL            COMMENT '位置',
+    `gross_floor_area`      double(10,2)        DEFAULT NULL            COMMENT '建筑面积(单位:㎡)',
+    `net_floor_area`        double(10,2)        DEFAULT NULL            COMMENT '使用面积(单位:㎡)',
+    `create_time`           datetime            DEFAULT NULL            COMMENT '创建时间',
+    `update_time`           datetime            DEFAULT NULL            COMMENT '更新时间',
+    `is_delete`             tinyint(4)          NOT NULL DEFAULT '0'    COMMENT '是否删除(0:否, 1:是)',
+    PRIMARY KEY                             (`id`),
+    KEY         `idx_number`                (`number`),
+    KEY         `idx_floor`                 (`floor`),
+    KEY         `idx_create_time`           (`create_time`),
+    KEY         `idx_update_time`           (`update_time`),
+    KEY         `idx_is_delete`             (`is_delete`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='商铺';
 ```
 
 执行 `python main.py`
