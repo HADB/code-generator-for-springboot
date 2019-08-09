@@ -57,7 +57,14 @@ ${update_list}
         <where>
             <include refid="${model_camelcase}SearchWhere"/>
         </where>
-        ORDER BY ${orders}
+        <choose>
+            <when test="request.sortBy != null and request.sortOrder != null">
+                ORDER BY `${model_camelcase}`.`#{request.sortBy}` #{request.sortOrder}
+            </when>
+            <otherwise>
+                ORDER BY ${orders}
+            </otherwise>
+        </choose>
         LIMIT #{request.paging.offset}, #{request.paging.pageSize}
     </select>
 

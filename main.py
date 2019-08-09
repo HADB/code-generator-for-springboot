@@ -3,8 +3,6 @@
 crud-code-generator-for-springboot
 """
 import os
-import sys
-import getopt
 import string
 import shutil
 import inflection
@@ -127,7 +125,7 @@ def run_package(package_name):
                 if column['name'] == 'sort_weight':
                     lines.append('`%s`.`sort_weight` DESC' % (inflection.camelize(table_name, False)))
             if (not lines):
-                lines.append('`%s`.`id` ASC' % (inflection.camelize(table_name, False)))
+                lines.append('`%s`.`id` DESC' % (inflection.camelize(table_name, False)))
             orders = ', '.join(lines)
 
             lines = []
@@ -238,7 +236,7 @@ def run_package(package_name):
                 elif column['type'] == 'double':
                     type = 'Double'
                 elif column['type'] == 'decimal':
-                        type = 'BigDecimal'
+                    type = 'BigDecimal'
                 elif column['type'] == 'tinyint' and column['name'].startswith('is_'):
                     type = 'Boolean'
                     property_name = column['name'][3:]
@@ -319,6 +317,17 @@ def run_package(package_name):
                 lineText += '        %s %s: %s' % (define, inflection.camelize(property_name, False), type)
                 lines.append(lineText)
                 swagger_index += 1
+
+            lineText = '        @ApiModelProperty(position = %s, notes = "排序字段")\n' % (swagger_index)
+            lineText += ('        val sortBy: String? = null')
+            lines.append(lineText)
+            swagger_index += 1
+
+            lineText = '        @ApiModelProperty(position = %s, notes = "排序顺序")\n' % (swagger_index)
+            lineText += ('        val sortOrder: String? = null')
+            lines.append(lineText)
+            swagger_index += 1
+            
             lineText = '        @ApiModelProperty(position = %s, notes = "分页(默认第1页，每页显示10条)")\n' % (swagger_index)
             lineText += ('        val paging: Paging = Paging(1,10)')
             lines.append(lineText)

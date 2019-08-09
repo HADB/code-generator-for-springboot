@@ -18,7 +18,7 @@ import ${package_name}.viewmodels.${model_camelcase}.${model_upper_camelcase}Sea
 @RequestMapping("/${model_dasherize}")
 class ${model_upper_camelcase}Controller {
     @Autowired
-    lateinit var ${model_camelcase}Service: ${model_upper_camelcase}Service
+    private lateinit var ${model_camelcase}Service: ${model_upper_camelcase}Service
 
     /*
      * 新增
