@@ -7,10 +7,10 @@ import string
 import shutil
 import inflection
 
-CURRENT_PATH = os.getcwd()  #当前目录
-INPUT_PATH = os.path.join(CURRENT_PATH, 'inputs')  #输入目录
-OUTPUT_PATH = os.path.join(CURRENT_PATH, 'outputs')  #输出目录
-TEMPLATE_PATH = os.path.join(CURRENT_PATH, 'templates')  #模板目录
+CURRENT_PATH = os.getcwd()  # 当前目录
+INPUT_PATH = os.path.join(CURRENT_PATH, 'inputs')  # 输入目录
+OUTPUT_PATH = os.path.join(CURRENT_PATH, 'outputs')  # 输出目录
+TEMPLATE_PATH = os.path.join(CURRENT_PATH, 'templates')  # 模板目录
 
 
 def run_package(package_name):
@@ -18,8 +18,8 @@ def run_package(package_name):
     output_path = os.path.join(OUTPUT_PATH, package_name)
     if not os.path.exists(output_path):
         os.mkdir(output_path)
-    kotlin_output_path = os.path.join(output_path, 'main', 'kotlin', *package_name.split('.'))  #kotlin 输出目录
-    mybatis_output_path = os.path.join(output_path, 'main', 'resources', 'mybatis')  #mybatis 输出目录
+    kotlin_output_path = os.path.join(output_path, 'main', 'kotlin', *package_name.split('.'))  # kotlin 输出目录
+    mybatis_output_path = os.path.join(output_path, 'main', 'resources', 'mybatis')  # mybatis 输出目录
 
     for input_file_name in os.listdir(input_path):
         input_file_path = os.path.join(input_path, input_file_name)
@@ -28,31 +28,31 @@ def run_package(package_name):
                 print('skip: ' + input_file_name)
                 continue
             print('work: ' + input_file_name)
-            file_name = os.path.splitext(input_file_name)[0].strip()  #文件名
-            table_name = file_name  #表名默认为文件名
-            table_description = table_name  #表注释默认为文件名
+            file_name = os.path.splitext(input_file_name)[0].strip()  # 文件名
+            table_name = file_name  # 表名默认为文件名
+            table_description = table_name  # 表注释默认为文件名
             file_read = open(input_file_path, 'r')
-            columns = []  #字段数组
+            columns = []  # 字段数组
 
             for line in file_read:
                 if line.find('CREATE TABLE ') >= 0:
-                    table_name = line.strip().split()[2].strip('`')[2:]  #读取表名
+                    table_name = line.strip().split()[2].strip('`')[2:]  # 读取表名
                     continue
                 if line.find(' KEY ') >= 0:
-                    continue  #跳过索引
+                    continue  # 跳过索引
                 if line.find('CHARSET=') >= 0:
-                    table_description = line[line.find('COMMENT') + 8:].split('\'')[1]  #读取表注释
+                    table_description = line[line.find('COMMENT') + 8:].split('\'')[1]  # 读取表注释
                     continue
                 column = {}
-                column['name'] = line.strip().split()[0].strip('`')  #字段名
-                column['type'] = line.strip().split()[1].split('(')[0].lower()  #字段类型
+                column['name'] = line.strip().split()[0].strip('`')  # 字段名
+                column['type'] = line.strip().split()[1].split('(')[0].lower()  # 字段类型
                 if line.find('NOT NULL ') > 0:
-                    column['nullable'] = False  #字段是否可空
+                    column['nullable'] = False  # 字段是否可空
                 else:
                     column['nullable'] = True
 
                 if line.find('DEFAULT ') > 0:
-                    column['default'] = line[line.find('DEFAULT ') + 8:].split()[0].replace('\'', '"')  #字段默认值
+                    column['default'] = line[line.find('DEFAULT ') + 8:].split()[0].replace('\'', '"')  # 字段默认值
                     if column['default'] == 'NULL':
                         column['default'] = 'null'
                     if (column['type'].find('int') >= 0 or column['type'].find('double') >= 0 or column['type'].find('decimal') >= 0) and column['default'].find('"') >= 0:
@@ -65,7 +65,7 @@ def run_package(package_name):
                 else:
                     column['default'] = None
 
-                column['comment'] = line[line.find('COMMENT') + 8:].split('\'')[1]  #字段注释
+                column['comment'] = line[line.find('COMMENT') + 8:].split('\'')[1]  # 字段注释
                 columns.append(column)
             file_read.close()
 
@@ -327,7 +327,7 @@ def run_package(package_name):
             lineText += ('        val sortOrder: String? = null')
             lines.append(lineText)
             swagger_index += 1
-            
+
             lineText = '        @ApiModelProperty(position = %s, notes = "分页(默认第1页，每页显示10条)")\n' % (swagger_index)
             lineText += ('        val paging: Paging = Paging(1,10)')
             lines.append(lineText)
@@ -390,9 +390,10 @@ def run_package(package_name):
 
 
 if __name__ == '__main__':
-    if os.path.exists(OUTPUT_PATH):
-        shutil.rmtree(OUTPUT_PATH)
-    os.mkdir(OUTPUT_PATH)
+    # if os.path.exists(OUTPUT_PATH):
+    #     shutil.rmtree(OUTPUT_PATH)
+    if not os.path.exists(OUTPUT_PATH):
+        os.mkdir(OUTPUT_PATH)
     for root, dirs, files in os.walk(INPUT_PATH):
         for package_name in dirs:
             run_package(package_name)
