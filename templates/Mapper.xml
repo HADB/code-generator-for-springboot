@@ -59,7 +59,7 @@ ${update_list}
         </where>
         <choose>
             <when test="request.sortBy != null and request.sortOrder != null">
-                ORDER BY `${model_camelcase}`.`#{request.sortBy}` #{request.sortOrder}
+                ORDER BY `${model_camelcase}`.`$${request.sortBy}` $${request.sortOrder}
             </when>
             <otherwise>
                 ORDER BY ${orders}
