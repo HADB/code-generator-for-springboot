@@ -3,6 +3,8 @@
 crud-code-generator-for-springboot
 """
 import os
+import sys
+import getopt
 import string
 import shutil
 import inflection
@@ -394,6 +396,13 @@ if __name__ == '__main__':
     #     shutil.rmtree(OUTPUT_PATH)
     if not os.path.exists(OUTPUT_PATH):
         os.mkdir(OUTPUT_PATH)
-    for root, dirs, files in os.walk(INPUT_PATH):
-        for package_name in dirs:
-            run_package(package_name)
+    OPTS, ARGS = getopt.getopt(sys.argv[1:], 'p:')
+    for name, value in OPTS:
+        if name == '-p':
+            print(name, value)
+            PACKAGE_NAME = value
+            run_package(PACKAGE_NAME)
+
+    # for root, dirs, files in os.walk(INPUT_PATH):
+    #     for package_name in dirs:
+    #         run_package(package_name)
