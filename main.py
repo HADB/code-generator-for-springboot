@@ -320,17 +320,17 @@ def run_package(package_name):
                 lines.append(lineText)
                 swagger_index += 1
 
-            lineText = '        @ApiModelProperty(position = %s, notes = "排序字段")\n' % (swagger_index)
+            lineText = '        @ApiModelProperty(position = %s, notes = "排序字段")\n' % (97)
             lineText += ('        val sortBy: String? = null')
             lines.append(lineText)
             swagger_index += 1
 
-            lineText = '        @ApiModelProperty(position = %s, notes = "排序顺序")\n' % (swagger_index)
+            lineText = '        @ApiModelProperty(position = %s, notes = "排序顺序")\n' % (98)
             lineText += ('        val sortOrder: String? = null')
             lines.append(lineText)
             swagger_index += 1
 
-            lineText = '        @ApiModelProperty(position = %s, notes = "分页(默认第1页，每页显示10条)")\n' % (swagger_index)
+            lineText = '        @ApiModelProperty(position = %s, notes = "分页(默认第1页，每页显示10条)")\n' % (99)
             lineText += ('        val paging: Paging = Paging(1,10)')
             lines.append(lineText)
             content += '%s\n' % (',\n\n'.join(lines))
