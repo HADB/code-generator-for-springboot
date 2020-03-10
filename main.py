@@ -2,11 +2,11 @@
 """
 crud-code-generator-for-springboot
 """
-import os
-import sys
 import getopt
+import os
 import string
-import shutil
+import sys
+
 import inflection
 
 CURRENT_PATH = os.getcwd()  # 当前目录
@@ -55,7 +55,7 @@ def run_package(package_name):
 
                 if line.find('DEFAULT ') > 0:
                     column['default'] = line[line.find('DEFAULT ') + 8:].split()[0].replace('\'', '"')  # 字段默认值
-                    if column['default'] == 'NULL':
+                    if column['default'] == 'NULL' or column['default'] == 'CURRENT_TIMESTAMP':
                         column['default'] = 'null'
                     if (column['type'].find('int') >= 0 or column['type'].find('double') >= 0 or column['type'].find('decimal') >= 0) and column['default'].find('"') >= 0:
                         column['default'] = column['default'].replace('"', '')
