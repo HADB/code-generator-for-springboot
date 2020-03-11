@@ -33,7 +33,7 @@ def run_package(package_name):
             file_name = os.path.splitext(input_file_name)[0].strip()  # 文件名
             table_name = file_name  # 表名默认为文件名
             table_description = table_name  # 表注释默认为文件名
-            file_read = open(input_file_path, 'r')
+            file_read = open(input_file_path, 'r', encoding='UTF-8')
             columns = []  # 字段数组
 
             for line in file_read:
@@ -377,7 +377,7 @@ def run_package(package_name):
             file_write.close()
 
             # [Model]Controller.kt
-            file_read = open(os.path.join(TEMPLATE_PATH, 'Controller.kt'), 'r')
+            file_read = open(os.path.join(TEMPLATE_PATH, 'Controller.kt'), 'r', encoding='UTF-8')
             content = file_read.read()
             t = string.Template(content)
             content = t.substitute(package_name=package_name, model_dasherize=inflection.dasherize(table_name), model_upper_camelcase=inflection.camelize(table_name), model_camelcase=inflection.camelize(table_name, False), model_description=table_description)
