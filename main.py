@@ -21,7 +21,7 @@ def run_package(package_name):
     if not os.path.exists(output_path):
         os.mkdir(output_path)
     kotlin_output_path = os.path.join(output_path, 'main', 'kotlin', *package_name.split('.'))  # kotlin 输出目录
-    mybatis_output_path = os.path.join(output_path, 'main', 'resources', 'mybatis')  # mybatis 输出目录
+    mapper_output_path = os.path.join(output_path, 'main', 'resources', 'mapper')  # mapper 输出目录
 
     for input_file_name in os.listdir(input_path):
         input_file_path = os.path.join(input_path, input_file_name)
@@ -159,11 +159,10 @@ def run_package(package_name):
             t = string.Template(content)
             content = t.substitute(table_name='t_' + table_name, package_name=package_name, model_upper_camelcase=inflection.camelize(table_name), model_camelcase=inflection.camelize(table_name, False), column_list=column_list, search_where=search_where, orders=orders, name_list=name_list, value_list=value_list, update_list=update_list)
 
-            output_mybatis_path = os.path.join(mybatis_output_path, 'mapper')
-            if not os.path.exists(output_mybatis_path):
-                os.makedirs(output_mybatis_path)
+            if not os.path.exists(mapper_output_path):
+                os.makedirs(mapper_output_path)
 
-            file_write = open(os.path.join(output_mybatis_path, inflection.camelize(table_name) + 'Mapper.xml'), 'w')
+            file_write = open(os.path.join(mapper_output_path, inflection.camelize(table_name) + 'Mapper.xml'), 'w')
             file_write.write(content)
             file_write.close()
 
