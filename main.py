@@ -154,7 +154,7 @@ def run_package(package_name):
                     lines.append('        `%s` = #{%s.%s}' % (column['name'], inflection.camelize(table_name, False), inflection.camelize(column['name'], False)))
             update_list = ',\n'.join(lines)
 
-            file_read = open(os.path.join(TEMPLATE_PATH, 'Mapper.xml'), 'r')
+            file_read = open(os.path.join(TEMPLATE_PATH, 'Mapper.xml'), 'r', encoding='UTF-8')
             content = file_read.read()
             t = string.Template(content)
             content = t.substitute(table_name='t_' + table_name, package_name=package_name, model_upper_camelcase=inflection.camelize(table_name), model_camelcase=inflection.camelize(table_name, False), column_list=column_list, search_where=search_where, orders=orders, name_list=name_list, value_list=value_list, update_list=update_list)
@@ -162,7 +162,7 @@ def run_package(package_name):
             if not os.path.exists(mapper_output_path):
                 os.makedirs(mapper_output_path)
 
-            file_write = open(os.path.join(mapper_output_path, inflection.camelize(table_name) + 'Mapper.xml'), 'w')
+            file_write = open(os.path.join(mapper_output_path, inflection.camelize(table_name) + 'Mapper.xml'), 'w', encoding='UTF-8')
             file_write.write(content)
             file_write.close()
 
@@ -214,7 +214,7 @@ def run_package(package_name):
             output_models_path = os.path.join(kotlin_output_path, 'models')
             if not os.path.exists(output_models_path):
                 os.makedirs(output_models_path)
-            file_write = open(os.path.join(output_models_path, inflection.camelize(table_name) + '.kt'), 'w')
+            file_write = open(os.path.join(output_models_path, inflection.camelize(table_name) + '.kt'), 'w', encoding='UTF-8')
             file_write.write(content)
             file_write.close()
 
@@ -271,7 +271,7 @@ def run_package(package_name):
             output_viewmodels_path = os.path.join(kotlin_output_path, 'viewmodels', inflection.camelize(table_name, False))
             if not os.path.exists(output_viewmodels_path):
                 os.makedirs(output_viewmodels_path)
-            file_write = open(os.path.join(output_viewmodels_path, inflection.camelize(table_name) + 'EditRequest.kt'), 'w')
+            file_write = open(os.path.join(output_viewmodels_path, inflection.camelize(table_name) + 'EditRequest.kt'), 'w', encoding='UTF-8')
             file_write.write(content)
             file_write.close()
 
@@ -338,12 +338,12 @@ def run_package(package_name):
             output_viewmodels_path = os.path.join(kotlin_output_path, 'viewmodels', inflection.camelize(table_name, False))
             if not os.path.exists(output_viewmodels_path):
                 os.makedirs(output_viewmodels_path)
-            file_write = open(os.path.join(output_viewmodels_path, inflection.camelize(table_name) + 'SearchRequest.kt'), 'w')
+            file_write = open(os.path.join(output_viewmodels_path, inflection.camelize(table_name) + 'SearchRequest.kt'), 'w', encoding='UTF-8')
             file_write.write(content)
             file_write.close()
 
             # [Model]Mapper.kt
-            file_read = open(os.path.join(TEMPLATE_PATH, 'Mapper.kt'), 'r')
+            file_read = open(os.path.join(TEMPLATE_PATH, 'Mapper.kt'), 'r', encoding='UTF-8')
             content = file_read.read()
             t = string.Template(content)
             content = t.substitute(package_name=package_name, model_upper_camelcase=inflection.camelize(table_name), model_camelcase=inflection.camelize(table_name, False))
@@ -351,12 +351,12 @@ def run_package(package_name):
             output_mappers_path = os.path.join(kotlin_output_path, 'mappers')
             if not os.path.exists(output_mappers_path):
                 os.makedirs(output_mappers_path)
-            file_write = open(os.path.join(output_mappers_path, inflection.camelize(table_name) + 'Mapper.kt'), 'w')
+            file_write = open(os.path.join(output_mappers_path, inflection.camelize(table_name) + 'Mapper.kt'), 'w', encoding='UTF-8')
             file_write.write(content)
             file_write.close()
 
             # [Model]Service.kt
-            file_read = open(os.path.join(TEMPLATE_PATH, 'Service.kt'), 'r')
+            file_read = open(os.path.join(TEMPLATE_PATH, 'Service.kt'), 'r', encoding='UTF-8')
             content = file_read.read()
             t = string.Template(content)
             columns_data = []
@@ -372,7 +372,7 @@ def run_package(package_name):
             output_services_path = os.path.join(kotlin_output_path, 'services')
             if not os.path.exists(output_services_path):
                 os.makedirs(output_services_path)
-            file_write = open(os.path.join(output_services_path, inflection.camelize(table_name) + 'Service.kt'), 'w')
+            file_write = open(os.path.join(output_services_path, inflection.camelize(table_name) + 'Service.kt'), 'w', encoding='UTF-8')
             file_write.write(content)
             file_write.close()
 
@@ -385,7 +385,7 @@ def run_package(package_name):
             output_controllers_path = os.path.join(kotlin_output_path, 'controllers')
             if not os.path.exists(output_controllers_path):
                 os.makedirs(output_controllers_path)
-            file_write = open(os.path.join(output_controllers_path, inflection.camelize(table_name) + 'Controller.kt'), 'w')
+            file_write = open(os.path.join(output_controllers_path, inflection.camelize(table_name) + 'Controller.kt'), 'w', encoding='UTF-8')
             file_write.write(content)
             file_write.close()
 
