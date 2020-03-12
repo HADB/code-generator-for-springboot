@@ -396,8 +396,6 @@ def run_package(package_name):
 
 
 if __name__ == '__main__':
-    # if os.path.exists(OUTPUT_PATH):
-    #     shutil.rmtree(OUTPUT_PATH)
     if not os.path.exists(OUTPUT_PATH):
         os.makedirs(OUTPUT_PATH)
     OPTS, ARGS = getopt.getopt(sys.argv[1:], 'p:')
@@ -406,7 +404,3 @@ if __name__ == '__main__':
             print(name, value)
             PACKAGE_NAME = value
             run_package(PACKAGE_NAME)
-
-    # for root, dirs, files in os.walk(INPUT_PATH):
-    #     for package_name in dirs:
-    #         run_package(package_name)
