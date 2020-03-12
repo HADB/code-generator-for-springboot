@@ -4,6 +4,7 @@ crud-code-generator-for-springboot
 """
 import getopt
 import os
+import shutil
 import string
 import sys
 
@@ -19,9 +20,13 @@ def run_package(package_name):
     input_path = os.path.join(INPUT_PATH, package_name)
     output_path = os.path.join(OUTPUT_PATH, package_name)
     if not os.path.exists(output_path):
-        os.mkdir(output_path)
+        os.makedirs(output_path)
     kotlin_output_path = os.path.join(output_path, 'main', 'kotlin', *package_name.split('.'))  # kotlin 输出目录
     mapper_output_path = os.path.join(output_path, 'main', 'resources', 'mapper')  # mapper 输出目录
+    if os.path.exists(kotlin_output_path):
+        shutil.rmtree(kotlin_output_path)
+    if os.path.exists(mapper_output_path):
+        shutil.rmtree(mapper_output_path)
 
     for input_file_name in os.listdir(input_path):
         input_file_path = os.path.join(input_path, input_file_name)
@@ -394,7 +399,7 @@ if __name__ == '__main__':
     # if os.path.exists(OUTPUT_PATH):
     #     shutil.rmtree(OUTPUT_PATH)
     if not os.path.exists(OUTPUT_PATH):
-        os.mkdir(OUTPUT_PATH)
+        os.makedirs(OUTPUT_PATH)
     OPTS, ARGS = getopt.getopt(sys.argv[1:], 'p:')
     for name, value in OPTS:
         if name == '-p':
