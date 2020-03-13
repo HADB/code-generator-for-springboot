@@ -16,6 +16,25 @@ OUTPUT_PATH = os.path.join(CURRENT_PATH, 'outputs')  # 输出目录
 TEMPLATE_PATH = os.path.join(CURRENT_PATH, 'templates')  # 模板目录
 
 
+def get_column_type_property_name(column):
+    column_type = 'String'
+    property_name = column['name']
+    if column['type'] == 'bigint':
+        column_type = 'Long'
+    elif column['type'] == 'double':
+        column_type = 'Double'
+    elif column['type'] == 'decimal':
+        column_type = 'BigDecimal'
+    elif column['type'] == 'tinyint' and column['name'].startswith('is_'):
+        column_type = 'Boolean'
+        property_name = column['name'][3:]
+    elif column['type'] == 'tinyint' or column['type'] == 'int':
+        column_type = 'Int'
+    elif column['type'] == 'datetime' or column['type'] == 'time' or column['type'] == 'date':
+        column_type = 'Date'
+    return column_type, property_name
+
+
 def run_package(package_name):
     input_path = os.path.join(INPUT_PATH, package_name)
     output_path = os.path.join(OUTPUT_PATH, package_name)
@@ -50,9 +69,10 @@ def run_package(package_name):
                 if line.find('CHARSET=') >= 0:
                     table_description = line[line.find('COMMENT') + 8:].split('\'')[1]  # 读取表注释
                     continue
-                column = {}
-                column['name'] = line.strip().split()[0].strip('`')  # 字段名
-                column['type'] = line.strip().split()[1].split('(')[0].lower()  # 字段类型
+                column = {
+                    'name': line.strip().split()[0].strip('`'),
+                    'type': line.strip().split()[1].split('(')[0].lower()
+                }
                 if line.find('NOT NULL ') > 0:
                     column['nullable'] = False  # 字段是否可空
                 else:
@@ -90,17 +110,6 @@ def run_package(package_name):
 
             lines = []
             for column in columns:
-                property_name = column['name']
-                if column['name'] == 'id' or column['name'] == 'is_delete':
-                    continue
-                if column['name'].startswith('is_'):
-                    property_name = column['name'][3:]
-
-                lines.append('        `%s`' % (column['name']))
-            name_list = ',\n'.join(lines)
-
-            lines = []
-            for column in columns:
                 if column['name'] == 'id' or column['name'] == 'sort_weight':
                     continue
                 if column['type'] == 'datetime' or column['type'] == 'time' or column['type'] == 'date':
@@ -129,11 +138,10 @@ def run_package(package_name):
 
             lines = []
             for column in columns:
-                if column['name'] == 'sort_weight':
-                    lines.append('`%s`.`sort_weight` DESC' % (inflection.camelize(table_name, False)))
-            if (not lines):
-                lines.append('`%s`.`id` DESC' % (inflection.camelize(table_name, False)))
-            orders = ', '.join(lines)
+                if column['name'] == 'id' or column['name'] == 'is_delete':
+                    continue
+                lines.append('        `%s`' % (column['name']))
+            name_list = ',\n'.join(lines)
 
             lines = []
             for column in columns:
@@ -159,6 +167,14 @@ def run_package(package_name):
                     lines.append('        `%s` = #{%s.%s}' % (column['name'], inflection.camelize(table_name, False), inflection.camelize(column['name'], False)))
             update_list = ',\n'.join(lines)
 
+            lines = []
+            for column in columns:
+                if column['name'] == 'sort_weight':
+                    lines.append('`%s`.`sort_weight` DESC' % (inflection.camelize(table_name, False)))
+            if not lines:
+                lines.append('`%s`.`id` DESC' % (inflection.camelize(table_name, False)))
+            orders = ', '.join(lines)
+
             file_read = open(os.path.join(TEMPLATE_PATH, 'Mapper.xml'), 'r', encoding='UTF-8')
             content = file_read.read()
             t = string.Template(content)
@@ -173,9 +189,9 @@ def run_package(package_name):
 
             # [Model].kt
             content = ''
-            content += 'package %s.models\n\n' % (package_name)
+            content += 'package %s.models\n\n' % package_name
             content += 'import io.swagger.annotations.ApiModelProperty\n'
-            content += 'import %s.annotations.NoArg\n' % (package_name)
+            content += 'import %s.annotations.NoArg\n' % package_name
             content += 'import java.math.BigDecimal\n'
             content += 'import java.util.*\n\n'
             content += '@NoArg\n'
@@ -183,35 +199,21 @@ def run_package(package_name):
             lines = []
             swagger_index = 0
             for column in columns:
-                lineText = ''
+                line_text = ''
                 if column['name'] == 'is_delete':
                     continue
                 else:
-                    type = 'String'
-                    property_name = column['name']
-                    if column['type'] == 'bigint':
-                        type = 'Long'
-                    elif column['type'] == 'double':
-                        type = 'Double'
-                    elif column['type'] == 'decimal':
-                        type = 'BigDecimal'
-                    elif column['type'] == 'tinyint' and column['name'].startswith('is_'):
-                        type = 'Boolean'
-                        property_name = column['name'][3:]
-                    elif column['type'] == 'tinyint' or column['type'] == 'int':
-                        type = 'Int'
-                    elif column['type'] == 'datetime' or column['type'] == 'time' or column['type'] == 'date':
-                        type = 'Date'
+                    column_type, property_name = get_column_type_property_name(column)
 
                     if column['nullable']:
-                        type += '?'
+                        column_type += '?'
                     if column['default']:
-                        type += ' = ' + column['default']
+                        column_type += ' = ' + column['default']
                     if column['name'] == 'id':
-                        type += ' = 0'
-                    lineText += '        @ApiModelProperty(position = %s, notes = "%s")\n' % (swagger_index, column['comment'])
-                    lineText += '        val %s: %s' % (inflection.camelize(property_name, False), type)
-                    lines.append(lineText)
+                        column_type += ' = 0'
+                    line_text += '        @ApiModelProperty(position = %s, notes = "%s")\n' % (swagger_index, column['comment'])
+                    line_text += '        val %s: %s' % (inflection.camelize(property_name, False), column_type)
+                    lines.append(line_text)
                     swagger_index += 1
             content += '%s\n' % (',\n\n'.join(lines))
             content += ')\n'
@@ -231,31 +233,17 @@ def run_package(package_name):
             lines = []
             swagger_index = 0
             for column in columns:
-                type = 'String'
-                property_name = column['name']
                 define = 'val'
                 required = True
                 hidden = False
-                lineText = ''
-                if column['type'] == 'bigint':
-                    type = 'Long'
-                elif column['type'] == 'double':
-                    type = 'Double'
-                elif column['type'] == 'decimal':
-                    type = 'BigDecimal'
-                elif column['type'] == 'tinyint' and column['name'].startswith('is_'):
-                    type = 'Boolean'
-                    property_name = column['name'][3:]
-                elif column['type'] == 'tinyint' or column['type'] == 'int':
-                    type = 'Int'
-                elif column['type'] == 'datetime' or column['type'] == 'time' or column['type'] == 'date':
-                    type = 'Date'
+                line_text = ''
+                column_type, property_name = get_column_type_property_name(column)
 
                 if column['nullable']:
-                    type += '?'
+                    column_type += '?'
                     required = False
                 if column['default']:
-                    type += ' = ' + column['default']
+                    column_type += ' = ' + column['default']
                 if column['name'] == 'id':
                     define = 'var'
                     required = False
@@ -263,12 +251,12 @@ def run_package(package_name):
                 if column['name'] == 'create_time' or column['name'] == 'update_time' or column['name'] == 'created_time' or column['name'] == 'updated_time' or column['name'] == 'is_delete':
                     continue
                 if column['name'] == 'id':
-                    type += ' = 0'
+                    column_type += ' = 0'
                 if required:
-                    lineText += '        @NotNull(message = "%s 不能为空")\n' % (inflection.camelize(property_name, False))
-                lineText += '        @ApiModelProperty(position = %s, notes = "%s", required = %s, hidden = %s)\n' % (swagger_index, column['comment'], 'true' if required else 'false', 'true' if hidden else 'false')
-                lineText += '        %s %s: %s' % (define, inflection.camelize(property_name, False), type)
-                lines.append(lineText)
+                    line_text += '        @NotNull(message = "%s 不能为空")\n' % (inflection.camelize(property_name, False))
+                line_text += '        @ApiModelProperty(position = %s, notes = "%s", required = %s, hidden = %s)\n' % (swagger_index, column['comment'], 'true' if required else 'false', 'true' if hidden else 'false')
+                line_text += '        %s %s: %s' % (define, inflection.camelize(property_name, False), column_type)
+                lines.append(line_text)
                 swagger_index += 1
             content += '%s\n' % (',\n\n'.join(lines))
             content += ')\n'
@@ -283,60 +271,58 @@ def run_package(package_name):
             # [Model]SearchRequest.kt
             content = ''
             content += 'package %s.viewmodels.%s\n\n' % (package_name, inflection.camelize(table_name, False))
-            content += 'import io.swagger.annotations.ApiModelProperty\nimport %s.models.Paging\nimport java.math.BigDecimal\nimport java.util.*\n\n' % (package_name)
+            content += 'import io.swagger.annotations.ApiModelProperty\nimport %s.models.Paging\nimport java.math.BigDecimal\nimport java.util.*\n\n' % package_name
             content += 'data class %sSearchRequest(\n' % (inflection.camelize(table_name))
             lines = []
             swagger_index = 0
             for column in columns:
                 if column['name'] == 'id' or column['name'] == 'sort_weight' or column['name'] == 'is_delete':
                     continue
-                type = 'String? = null'
+                column_type = 'String? = null'
                 property_name = column['name']
                 define = 'val'
-                required = True
-                hidden = False
-                lineText = ''
+                line_text = ''
                 if column['type'] == 'bigint':
-                    type = 'Long? = null'
+                    column_type = 'Long? = null'
                 elif column['type'] == 'double':
-                    type = 'Double? = null'
+                    column_type = 'Double? = null'
                 elif column['type'] == 'decimal':
-                    type = 'BigDecimal? = null'
+                    column_type = 'BigDecimal? = null'
                 elif column['type'] == 'tinyint' and column['name'].startswith('is_'):
-                    type = 'Boolean? = null'
+                    column_type = 'Boolean? = null'
                     property_name = column['name'][3:]
                 elif column['type'] == 'tinyint' or column['type'] == 'int':
-                    type = 'Int? = null'
+                    column_type = 'Int? = null'
                 elif column['type'] == 'datetime' or column['type'] == 'time' or column['type'] == 'date':
-                    type = 'Date? = null'
-                    lineText = '        @ApiModelProperty(position = %s, notes = "%s From")\n' % (swagger_index, column['comment'])
-                    lineText += '        %s %s: %s' % (define, inflection.camelize(column['name'] + "From", False), type)
-                    lines.append(lineText)
+                    column_type = 'Date? = null'
+                    line_text = '        @ApiModelProperty(position = %s, notes = "%s From")\n' % (swagger_index, column['comment'])
+                    line_text += '        %s %s: %s' % (define, inflection.camelize(column['name'] + "From", False), column_type)
+                    lines.append(line_text)
                     swagger_index += 1
-                    lineText = '        @ApiModelProperty(position = %s, notes = "%s To")\n' % (swagger_index, column['comment'])
-                    lineText += '        %s %s: %s' % (define, inflection.camelize(column['name'] + "To", False), type)
-                    lines.append(lineText)
+                    line_text = '        @ApiModelProperty(position = %s, notes = "%s To")\n' % (swagger_index, column['comment'])
+                    line_text += '        %s %s: %s' % (define, inflection.camelize(column['name'] + "To", False), column_type)
+                    lines.append(line_text)
                     swagger_index += 1
                     continue
 
-                lineText += '        @ApiModelProperty(position = %s, notes = "%s")\n' % (swagger_index, column['comment'])
-                lineText += '        %s %s: %s' % (define, inflection.camelize(property_name, False), type)
-                lines.append(lineText)
+                line_text += '        @ApiModelProperty(position = %s, notes = "%s")\n' % (swagger_index, column['comment'])
+                line_text += '        %s %s: %s' % (define, inflection.camelize(property_name, False), column_type)
+                lines.append(line_text)
                 swagger_index += 1
 
-            lineText = '        @ApiModelProperty(position = %s, notes = "排序字段")\n' % (97)
-            lineText += ('        val sortBy: String? = null')
-            lines.append(lineText)
+            line_text = '        @ApiModelProperty(position = %s, notes = "排序字段")\n' % 97
+            line_text += '        val sortBy: String? = null'
+            lines.append(line_text)
             swagger_index += 1
 
-            lineText = '        @ApiModelProperty(position = %s, notes = "排序顺序")\n' % (98)
-            lineText += ('        val sortOrder: String? = null')
-            lines.append(lineText)
+            line_text = '        @ApiModelProperty(position = %s, notes = "排序顺序")\n' % 98
+            line_text += '        val sortOrder: String? = null'
+            lines.append(line_text)
             swagger_index += 1
 
-            lineText = '        @ApiModelProperty(position = %s, notes = "分页(默认第1页，每页显示10条)")\n' % (99)
-            lineText += ('        val paging: Paging = Paging(1,10)')
-            lines.append(lineText)
+            line_text = '        @ApiModelProperty(position = %s, notes = "分页(默认第1页，每页显示10条)")\n' % 99
+            line_text += '        val paging: Paging = Paging(1,10)'
+            lines.append(line_text)
             content += '%s\n' % (',\n\n'.join(lines))
             content += ')\n'
 
