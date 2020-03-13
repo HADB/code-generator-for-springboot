@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="${package}.mappers.UserMapper">
+    <sql id="userColumnsBasic">
+        `user`.`id` as `id`,
+        `user`.`mobile` as `mobile`,
+        `user`.`open_id` as `openId`,
+        `user`.`nickname` as `nickname`,
+        `user`.`avatar_url` as `avatarUrl`,
+        `user`.`role` as `role`,
+        `user`.`create_time` as `createTime`,
+        `user`.`update_time` as `updateTime`
+    </sql>
+
+    <sql id="userColumnsPassword">
+        `user`.`password` as `password`,
+        `user`.`salt` as `salt`
+    </sql>
+
+    <sql id="userColumns">
+        <include refid="userColumnsBasic"/>
+    </sql>
+
+    <sql id="userColumnsWithPassword">
+        <include refid="userColumnsBasic"/>,
+        <include refid="userColumnsPassword"/>
+    </sql>
+
+    <sql id="userTables">
+        `t_user` `user`
+    </sql>
+
+    <sql id="userSearchWhere">
+        <if test="request.mobile != null and request.mobile !=''">
+            AND `user`.`mobile` = #{request.mobile}
+        </if>
+        <if test="request.openId != null and request.openId !=''">
+            AND `user`.`open_id` = #{request.openId}
+        </if>
+        <if test="request.nickname != null and request.nickname !=''">
+            AND `user`.`nickname` = #{request.nickname}
+        </if>
+        <if test="request.avatarUrl != null and request.avatarUrl !=''">
+            AND `user`.`avatar_url` = #{request.avatarUrl}
+        </if>
+        <if test="request.role != null and request.role !=''">
+            AND `user`.`role` = #{request.role}
+        </if>
+        <if test="request.createTimeFrom != null">
+            AND `user`.`create_time` &gt;= #{request.createTimeFrom}
+        </if>
+        <if test="request.createTimeTo != null">
+            AND `user`.`create_time` &lt;= #{request.createTimeTo}
+        </if>
+        <if test="request.updateTimeFrom != null">
+            AND `user`.`update_time` &gt;= #{request.updateTimeFrom}
+        </if>
+        <if test="request.updateTimeTo != null">
+            AND `user`.`update_time` &lt;= #{request.updateTimeTo}
+        </if>
+        AND `user`.`is_delete` = 0
+    </sql>
+
+
+    <insert id="insertUser" useGeneratedKeys="true" keyProperty="user.id">
+        INSERT INTO `t_user`(
+        `mobile`,
+        `open_id`,
+        `password`,
+        `salt`,
+        `nickname`,
+        `avatar_url`,
+        `role`,
+        `create_time`,
+        `update_time`)
+        VALUES(
+        #{user.mobile},
+        #{user.openId},
+        #{user.password},
+        #{user.salt},
+        #{user.nickname},
+        #{user.avatarUrl},
+        #{user.role},
+        NOW(),
+        NOW())
+    </insert>
+
+    <update id="updateUser">
+        UPDATE `t_user` SET
+        `mobile` = #{user.mobile},
+        `open_id` = #{user.openId},
+        `password` = #{user.password},
+        `salt` = #{user.salt},
+        `nickname` = #{user.nickname},
+        `avatar_url` = #{user.avatarUrl},
+        `role` = #{user.role},
+        `update_time` = NOW()
+        WHERE `id` = #{user.id}
+        AND `is_delete` = 0
+    </update>
+
+    <update id="updateUserWechatInfo">
+        UPDATE `t_user` SET
+        `open_id` = #{user.openId},
+        `nickname` = #{user.nickname},
+        `avatar_url` = #{user.avatarUrl}
+        WHERE `id` = #{user.id}
+    </update>
+
+    <update id="updateUserMobile">
+        UPDATE `t_user` SET
+        `mobile` = #{user.mobile}
+        WHERE `id` = #{user.id}
+    </update>
+
+    <update id="updateUserOpenId">
+        UPDATE `t_user` SET
+        `open_id` = #{user.openId}
+        WHERE `id` = #{user.id}
+    </update>
+
+    <update id="updateUserPassword">
+        UPDATE `t_user` SET
+        `password` = #{user.password},
+        `salt` = #{user.salt}
+        WHERE `id` = #{user.id}
+    </update>
+
+    <update id="deleteUser">
+        UPDATE `t_user`
+        SET `mobile` = CONCAT('delete-', `id`, `-`, `mobile`)
+        SET `open_id` = CONCAT('delete-', `id`, `-`, `open_id`)
+        SET `is_delete` = 1
+        <where>
+            AND `id` = #{id}
+            AND `is_delete` = 0
+        </where>
+    </update>
+
+    <select id="selectUserById" resultType="${package}.models.User">
+        SELECT
+        <include refid="userColumns"/>
+        FROM
+        <include refid="userTables"/>
+        <where>
+            AND `user`.`id` = #{id}
+            AND `user`.`is_delete` = 0
+        </where>
+        LIMIT 1
+    </select>
+
+    <select id="selectUserByMobile" resultType="${package}.models.User">
+        SELECT
+        <include refid="userColumns"/>
+        FROM
+        <include refid="userTables"/>
+        <where>
+            AND `user`.`mobile` = #{mobile}
+            AND `user`.`is_delete` = 0
+        </where>
+        LIMIT 1
+    </select>
+
+    <select id="selectUserByOpenId" resultType="${package}.models.User">
+        SELECT
+        <include refid="userColumns"/>
+        FROM
+        <include refid="userTables"/>
+        <where>
+            AND `user`.`open_id` = #{openId}
+            AND `user`.`is_delete` = 0
+        </where>
+        LIMIT 1
+    </select>
+
+    <select id="selectPagingUsers" resultType="${package}.models.User">
+        SELECT
+        <include refid="userColumns"/>
+        FROM
+        <include refid="userTables"/>
+        <where>
+            <include refid="userSearchWhere"/>
+        </where>
+        <choose>
+            <when test="request.sortBy != null and request.sortOrder != null">
+                ORDER BY `user`.`${request.sortBy}` ${request.sortOrder}
+            </when>
+            <otherwise>
+                ORDER BY `user`.`id` DESC
+            </otherwise>
+        </choose>
+        LIMIT #{request.paging.offset}, #{request.paging.pageSize}
+    </select>
+
+    <select id="selectPagingUsersCount" resultType="Long">
+        SELECT COUNT(*)
+        FROM
+        <include refid="userTables"/>
+        <where>
+            <include refid="userSearchWhere"/>
+        </where>
+    </select>
+
+    <select id="selectUserByUsername" resultType="${package}.models.User">
+        SELECT
+        <include refid="userColumnsWithPassword"/>
+        FROM
+        <include refid="userTables"/>
+        <where>
+            AND `user`.`username` = #{username}
+            AND `user`.`is_delete` = 0
+        </where>
+        LIMIT 1
+    </select>
+</mapper>
