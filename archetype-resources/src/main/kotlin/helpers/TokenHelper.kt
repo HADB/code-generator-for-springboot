@@ -1,4 +1,3 @@
-#set( $dollar = '$' )
 package ${package}.helpers
 
 import ${package}.constants.AppConstants
@@ -16,7 +15,7 @@ class TokenHelper {
     // 创建Token与UserId的双向映射
     fun createToken(system: String?, userId: Long): String {
         deleteToken(system, userId) // 删除老Token
-        val token = "${dollar}{system ?: AppConstants.Service.DEFAULT}-${dollar}{UUID.randomUUID().toString().replace("-", "")}"
+        val token = "${system ?: AppConstants.Service.DEFAULT}-${UUID.randomUUID().toString().replace("-", "")}"
         redisHelper.set(RedisKey.token(system, userId.toString()), token, AppConstants.TOKEN_EXPIRES_HOUR, TimeUnit.HOURS)
         redisHelper.set(RedisKey.userId(system, token), userId.toString(), AppConstants.TOKEN_EXPIRES_HOUR, TimeUnit.HOURS)
         return token
