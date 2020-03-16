@@ -179,7 +179,7 @@ def run_package(package_name):
                     lines.append('        </if>')
                 else:
                     if column['type'] == 'varchar' or column['type'] == 'text':
-                        lines.append('        <if test="request.%s != null and request.%s !=\'\'">' % (inflection.camelize(column['name'], False), inflection.camelize(column['name'], False)))
+                        lines.append('        <if test="%s.%s != null and %s.%s !=\'\'">' % (inflection.camelize(table_name, False), inflection.camelize(column['name'], False), inflection.camelize(table_name, False), inflection.camelize(column['name'], False)))
                     else:
                         lines.append('        <if test="request.%s != null">' % (inflection.camelize(column['name'], False)))
                     lines.append('            `%s` = #{%s.%s},' % (column['name'], inflection.camelize(table_name, False), inflection.camelize(column['name'], False)))
