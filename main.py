@@ -169,6 +169,25 @@ def run_package(package_name):
 
             lines = []
             for column in columns:
+                if column['name'] == 'id' or column['name'] == 'create_time' or column['name'] == 'created_time' or column['name'] == 'is_delete':
+                    continue
+                elif column['name'] == 'update_time' or column['name'] == 'updated_time':
+                    lines.append('        `%s` = NOW()' % (column['name']))
+                elif column['name'].startswith('is_'):
+                    lines.append('        <if test="request.%s != null">' % (inflection.camelize(column['name'][3:], False)))
+                    lines.append('            `%s` = #{%s.%s},' % (column['name'], inflection.camelize(table_name, False), inflection.camelize(column['name'][3:], False)))
+                    lines.append('        </if>')
+                else:
+                    if column['type'] == 'varchar' or column['type'] == 'text':
+                        lines.append('        <if test="request.%s != null and request.%s !=\'\'">' % (inflection.camelize(column['name'], False), inflection.camelize(column['name'], False)))
+                    else:
+                        lines.append('        <if test="request.%s != null">' % (inflection.camelize(column['name'], False)))
+                    lines.append('            `%s` = #{%s.%s},' % (column['name'], inflection.camelize(table_name, False), inflection.camelize(column['name'], False)))
+                    lines.append('        </if>')
+            update_partly_list = '\n'.join(lines)
+
+            lines = []
+            for column in columns:
                 if column['name'] == 'sort_weight':
                     lines.append('`%s`.`sort_weight` DESC' % (inflection.camelize(table_name, False)))
             if not lines:
@@ -178,7 +197,7 @@ def run_package(package_name):
             file_read = open(os.path.join(TEMPLATE_PATH, 'Mapper.xml'), 'r', encoding='UTF-8')
             content = file_read.read()
             t = string.Template(content)
-            content = t.substitute(table_name='t_' + table_name, package_name=package_name, model_upper_camelcase=inflection.camelize(table_name), model_camelcase=inflection.camelize(table_name, False), column_list=column_list, search_where=search_where, orders=orders, name_list=name_list, value_list=value_list, update_list=update_list)
+            content = t.substitute(table_name='t_' + table_name, package_name=package_name, model_upper_camelcase=inflection.camelize(table_name), model_camelcase=inflection.camelize(table_name, False), column_list=column_list, search_where=search_where, orders=orders, name_list=name_list, value_list=value_list, update_list=update_list, update_partly_list=update_partly_list)
 
             if not os.path.exists(mapper_output_path):
                 os.makedirs(mapper_output_path)
