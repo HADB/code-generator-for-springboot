@@ -175,14 +175,14 @@ def run_package(package_name):
                     lines.append('        `%s` = NOW()' % (column['name']))
                 elif column['name'].startswith('is_'):
                     lines.append('        <if test="request.%s != null">' % (inflection.camelize(column['name'][3:], False)))
-                    lines.append('            `%s` = #{%s.%s},' % (column['name'], inflection.camelize(table_name, False), inflection.camelize(column['name'][3:], False)))
+                    lines.append('            `%s` = #{request.%s},' % (column['name'], inflection.camelize(column['name'][3:], False)))
                     lines.append('        </if>')
                 else:
                     if column['type'] == 'varchar' or column['type'] == 'text':
-                        lines.append('        <if test="%s.%s != null and %s.%s !=\'\'">' % (inflection.camelize(table_name, False), inflection.camelize(column['name'], False), inflection.camelize(table_name, False), inflection.camelize(column['name'], False)))
+                        lines.append('        <if test="request.%s != null and request.%s !=\'\'">' % (inflection.camelize(column['name'], False), inflection.camelize(column['name'], False)))
                     else:
                         lines.append('        <if test="request.%s != null">' % (inflection.camelize(column['name'], False)))
-                    lines.append('            `%s` = #{%s.%s},' % (column['name'], inflection.camelize(table_name, False), inflection.camelize(column['name'], False)))
+                    lines.append('            `%s` = #{request.%s},' % (column['name'], inflection.camelize(column['name'], False)))
                     lines.append('        </if>')
             update_partly_list = '\n'.join(lines)
 
@@ -207,8 +207,7 @@ def run_package(package_name):
             file_write.close()
 
             # [Model].kt
-            content = ''
-            content += 'package %s.models\n\n' % package_name
+            content = 'package %s.models\n\n' % package_name
             content += 'import io.swagger.annotations.ApiModelProperty\n'
             content += 'import %s.annotations.NoArg\n' % package_name
             content += 'import java.math.BigDecimal\n'
@@ -218,7 +217,6 @@ def run_package(package_name):
             lines = []
             swagger_index = 0
             for column in columns:
-                line_text = ''
                 if column['name'] == 'is_delete':
                     continue
                 else:
@@ -230,7 +228,7 @@ def run_package(package_name):
                         column_type += ' = ' + column['default']
                     if column['name'] == 'id':
                         column_type += ' = 0'
-                    line_text += '        @ApiModelProperty(position = %s, notes = "%s")\n' % (swagger_index, column['comment'])
+                    line_text = '        @ApiModelProperty(position = %s, notes = "%s")\n' % (swagger_index, column['comment'])
                     line_text += '        val %s: %s' % (inflection.camelize(property_name, False), column_type)
                     lines.append(line_text)
                     swagger_index += 1
@@ -245,8 +243,7 @@ def run_package(package_name):
             file_write.close()
 
             # [Model]EditRequest.kt
-            content = ''
-            content += 'package %s.viewmodels.%s\n\n' % (package_name, inflection.camelize(table_name, False))
+            content = 'package %s.viewmodels.%s\n\n' % (package_name, inflection.camelize(table_name, False))
             content += 'import io.swagger.annotations.ApiModelProperty\nimport java.math.BigDecimal\nimport java.util.*\nimport javax.validation.constraints.NotNull\n\n'
             content += 'data class %sEditRequest(\n' % (inflection.camelize(table_name))
             lines = []
@@ -287,9 +284,35 @@ def run_package(package_name):
             file_write.write(content)
             file_write.close()
 
+            # [Model]PartlyEditRequest.kt
+            content = 'package %s.viewmodels.%s\n\n' % (package_name, inflection.camelize(table_name, False))
+            content += 'import io.swagger.annotations.ApiModelProperty\nimport java.math.BigDecimal\nimport java.util.*\nimport javax.validation.constraints.NotNull\n\n'
+            content += 'data class %sPartlyEditRequest(\n' % (inflection.camelize(table_name))
+            lines = []
+            swagger_index = 0
+            for column in columns:
+                if column['name'] == 'create_time' or column['name'] == 'update_time' or column['name'] == 'created_time' or column['name'] == 'updated_time' or column['name'] == 'is_delete':
+                    continue
+                column_type, property_name = get_column_type_property_name(column)
+                if column['name'] != 'id':
+                    column_type += '? = null'
+                define = 'val'
+                line_text = '        @ApiModelProperty(position = %s, notes = "%s")\n' % (swagger_index, column['comment'])
+                line_text += '        %s %s: %s' % (define, inflection.camelize(property_name, False), column_type)
+                lines.append(line_text)
+                swagger_index += 1
+            content += '%s\n' % (',\n\n'.join(lines))
+            content += ')\n'
+
+            output_viewmodels_path = os.path.join(kotlin_output_path, 'viewmodels', inflection.camelize(table_name, False))
+            if not os.path.exists(output_viewmodels_path):
+                os.makedirs(output_viewmodels_path)
+            file_write = open(os.path.join(output_viewmodels_path, inflection.camelize(table_name) + 'PartlyEditRequest.kt'), 'w', encoding='UTF-8')
+            file_write.write(content)
+            file_write.close()
+
             # [Model]SearchRequest.kt
-            content = ''
-            content += 'package %s.viewmodels.%s\n\n' % (package_name, inflection.camelize(table_name, False))
+            content = 'package %s.viewmodels.%s\n\n' % (package_name, inflection.camelize(table_name, False))
             content += 'import io.swagger.annotations.ApiModelProperty\nimport %s.models.Paging\nimport java.math.BigDecimal\nimport java.util.*\n\n' % package_name
             content += 'data class %sSearchRequest(\n' % (inflection.camelize(table_name))
             lines = []
@@ -297,23 +320,10 @@ def run_package(package_name):
             for column in columns:
                 if column['name'] == 'id' or column['name'] == 'sort_weight' or column['name'] == 'is_delete':
                     continue
-                column_type = 'String? = null'
-                property_name = column['name']
+                column_type, property_name = get_column_type_property_name(column)
+                column_type += '? = null'
                 define = 'val'
-                line_text = ''
-                if column['type'] == 'bigint':
-                    column_type = 'Long? = null'
-                elif column['type'] == 'double':
-                    column_type = 'Double? = null'
-                elif column['type'] == 'decimal':
-                    column_type = 'BigDecimal? = null'
-                elif column['type'] == 'tinyint' and column['name'].startswith('is_'):
-                    column_type = 'Boolean? = null'
-                    property_name = column['name'][3:]
-                elif column['type'] == 'tinyint' or column['type'] == 'int':
-                    column_type = 'Int? = null'
-                elif column['type'] == 'datetime' or column['type'] == 'time' or column['type'] == 'date':
-                    column_type = 'Date? = null'
+                if column['type'] == 'datetime' or column['type'] == 'time' or column['type'] == 'date':
                     line_text = '        @ApiModelProperty(position = %s, notes = "%s From")\n' % (swagger_index, column['comment'])
                     line_text += '        %s %s: %s' % (define, inflection.camelize(column['name'] + "From", False), column_type)
                     lines.append(line_text)
@@ -324,7 +334,7 @@ def run_package(package_name):
                     swagger_index += 1
                     continue
 
-                line_text += '        @ApiModelProperty(position = %s, notes = "%s")\n' % (swagger_index, column['comment'])
+                line_text = '        @ApiModelProperty(position = %s, notes = "%s")\n' % (swagger_index, column['comment'])
                 line_text += '        %s %s: %s' % (define, inflection.camelize(property_name, False), column_type)
                 lines.append(line_text)
                 swagger_index += 1

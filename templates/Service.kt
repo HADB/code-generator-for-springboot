@@ -28,13 +28,9 @@ ${columns_data}
         return ${model_camelcase}.id
     }
 
-    fun edit${model_upper_camelcase}Partly(${model_camelcase}: ${model_upper_camelcase}): Long {
-        if (${model_camelcase}.id == 0L) {
-            ${model_camelcase}Mapper.insert${model_upper_camelcase}(${model_camelcase})
-        } else {
-            ${model_camelcase}Mapper.update${model_upper_camelcase}Partly(${model_camelcase})
-        }
-        return ${model_camelcase}.id
+    fun edit${model_upper_camelcase}Partly(request: ${model_upper_camelcase}PartlyEditRequest): Long {
+        ${model_camelcase}Mapper.update${model_upper_camelcase}Partly(request)
+        return request.id
     }
 
     fun delete${model_upper_camelcase}(id: Long) {

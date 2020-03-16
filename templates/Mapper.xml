@@ -31,7 +31,7 @@ ${update_list}
     <update id="update${model_upper_camelcase}Partly">
         UPDATE `${table_name}` SET
 ${update_partly_list}
-        WHERE `id` = #{${model_camelcase}.id}
+        WHERE `id` = #{request.id}
         AND `is_delete` = 0
     </update>
 
