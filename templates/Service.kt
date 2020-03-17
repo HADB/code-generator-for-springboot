@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component
 import ${package_name}.mappers.${model_upper_camelcase}Mapper
 import ${package_name}.models.${model_upper_camelcase}
 import ${package_name}.viewmodels.${model_camelcase}.${model_upper_camelcase}EditRequest
+import ${package_name}.viewmodels.${model_camelcase}.${model_upper_camelcase}PartlyEditRequest
 import ${package_name}.viewmodels.${model_camelcase}.${model_upper_camelcase}SearchRequest
 
 @Component
