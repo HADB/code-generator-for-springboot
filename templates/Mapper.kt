@@ -1,14 +1,12 @@
 package ${package_name}.mappers
 
-import org.apache.ibatis.annotations.Mapper
-import org.apache.ibatis.annotations.Param
 import ${package_name}.models.${model_upper_camelcase}
 import ${package_name}.viewmodels.${model_camelcase}.${model_upper_camelcase}PartlyEditRequest
 import ${package_name}.viewmodels.${model_camelcase}.${model_upper_camelcase}SearchRequest
-import org.springframework.stereotype.Repository
+import org.apache.ibatis.annotations.Mapper
+import org.apache.ibatis.annotations.Param
 
 @Mapper
-@Repository
 interface ${model_upper_camelcase}Mapper {
     fun insert${model_upper_camelcase}(@Param("${model_camelcase}") ${model_camelcase}: ${model_upper_camelcase})
     fun update${model_upper_camelcase}(@Param("${model_camelcase}") ${model_camelcase}: ${model_upper_camelcase})

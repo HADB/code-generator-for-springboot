@@ -3,21 +3,21 @@ package ${package_name}.controllers
 import io.swagger.annotations.Api
 import io.swagger.annotations.ApiImplicitParam
 import io.swagger.annotations.ApiOperation
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.web.bind.annotation.*
 import ${package_name}.models.Response
 import ${package_name}.models.${model_upper_camelcase}
 import ${package_name}.services.${model_upper_camelcase}Service
 import ${package_name}.viewmodels.common.SearchResponse
 import ${package_name}.viewmodels.${model_camelcase}.${model_upper_camelcase}EditRequest
 import ${package_name}.viewmodels.${model_camelcase}.${model_upper_camelcase}SearchRequest
+import org.springframework.web.bind.annotation.*
+import javax.annotation.Resource
 
 @Api(tags = ["${model_description}"])
 @CrossOrigin
 @RestController
 @RequestMapping("/${model_dasherize}")
 class ${model_upper_camelcase}Controller {
-    @Autowired
+    @Resource
     private lateinit var ${model_camelcase}Service: ${model_upper_camelcase}Service
 
     /*
