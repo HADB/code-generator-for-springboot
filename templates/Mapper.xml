@@ -28,6 +28,13 @@ ${update_list}
         AND `is_delete` = 0
     </update>
 
+    <update id="update${model_upper_camelcase}Partly">
+        UPDATE `${table_name}` SET
+${update_partly_list}
+        WHERE `id` = #{request.id}
+        AND `is_delete` = 0
+    </update>
+
     <update id="delete${model_upper_camelcase}">
         UPDATE `${table_name}`
         SET `is_delete` = 1

@@ -1,15 +1,16 @@
 package ${package_name}.services
 
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.stereotype.Component
 import ${package_name}.mappers.${model_upper_camelcase}Mapper
 import ${package_name}.models.${model_upper_camelcase}
 import ${package_name}.viewmodels.${model_camelcase}.${model_upper_camelcase}EditRequest
+import ${package_name}.viewmodels.${model_camelcase}.${model_upper_camelcase}PartlyEditRequest
 import ${package_name}.viewmodels.${model_camelcase}.${model_upper_camelcase}SearchRequest
+import org.springframework.stereotype.Component
+import javax.annotation.Resource
 
 @Component
 class ${model_upper_camelcase}Service {
-    @Autowired
+    @Resource
     private lateinit var ${model_camelcase}Mapper: ${model_upper_camelcase}Mapper
 
     fun edit${model_upper_camelcase}(request: ${model_upper_camelcase}EditRequest): Long {
@@ -26,6 +27,11 @@ ${columns_data}
             ${model_camelcase}Mapper.update${model_upper_camelcase}(${model_camelcase})
         }
         return ${model_camelcase}.id
+    }
+
+    fun edit${model_upper_camelcase}Partly(request: ${model_upper_camelcase}PartlyEditRequest): Long {
+        ${model_camelcase}Mapper.update${model_upper_camelcase}Partly(request)
+        return request.id
     }
 
     fun delete${model_upper_camelcase}(id: Long) {
