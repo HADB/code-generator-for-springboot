@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit
 
 @Component
 class TokenHelper {
-    @Autowired
+    @Resource
     private lateinit var redisHelper: RedisHelper
 
     // 创建Token与UserId的双向映射

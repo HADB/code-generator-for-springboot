@@ -19,22 +19,22 @@ import java.util.concurrent.TimeUnit
 
 @Component
 class UserService {
-    @Autowired
+    @Resource
     private lateinit var userMapper: UserMapper
 
-    @Autowired
+    @Resource
     private lateinit var tokenHelper: TokenHelper
 
-    @Autowired
+    @Resource
     private lateinit var passwordHelper: PasswordHelper
 
-    @Autowired
+    @Resource
     private lateinit var redisHelper: RedisHelper
 
-    @Autowired
+    @Resource
     private lateinit var wechatHelper: WechatHelper
 
-    @Autowired
+    @Resource
     private lateinit var appConfiguration: AppConfiguration
 
     fun editUser(request: UserEditRequest): Long {

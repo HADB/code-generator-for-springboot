@@ -7,7 +7,7 @@ import ${package_name}.configurations.AppConfiguration
 
 @Component
 class OthersService {
-    @Autowired
+    @Resource
     private lateinit var appConfiguration: AppConfiguration
 
     fun getQiniuToken(): String {

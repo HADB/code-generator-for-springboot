@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletResponse
 
 @Component
 class ResponseHelper {
-    @Autowired
+    @Resource
     lateinit var jacksonMapper: ObjectMapper
 
     fun setResponse(httpResponse: HttpServletResponse, response: Response<Any>) {

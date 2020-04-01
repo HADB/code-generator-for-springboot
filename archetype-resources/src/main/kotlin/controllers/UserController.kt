@@ -21,10 +21,10 @@ import springfox.documentation.annotations.ApiIgnore
 @RestController
 @RequestMapping("/user")
 class UserController {
-    @Autowired
+    @Resource
     private lateinit var userService: UserService
 
-    @Autowired
+    @Resource
     private lateinit var passwordHelper: PasswordHelper
 
     /*

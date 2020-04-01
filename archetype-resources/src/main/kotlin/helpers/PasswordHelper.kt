@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit
 
 @Component
 class PasswordHelper {
-    @Autowired
+    @Resource
     private lateinit var redisHelper: RedisHelper
 
     val salt: String

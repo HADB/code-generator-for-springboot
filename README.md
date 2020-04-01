@@ -23,7 +23,7 @@ $ python main.py \
 --version=1.0.0 \
 --port=9019 \
 --package-name=net.yuanfen.op.mateo \
---project-path=/Users/bean/Projects/OP/test-api \
+--project-path=/Users/bean/Projects/OP/mateo-api \
 --description=足球录像带-API
 ```
 

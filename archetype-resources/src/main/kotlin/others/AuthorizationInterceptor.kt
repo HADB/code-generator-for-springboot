@@ -19,13 +19,13 @@ import javax.servlet.http.HttpServletResponse
 @Component
 class AuthorizationInterceptor : HandlerInterceptor {
 
-    @Autowired
+    @Resource
     lateinit var tokenHelper: TokenHelper
 
-    @Autowired
+    @Resource
     lateinit var responseHelper: ResponseHelper
 
-    @Autowired
+    @Resource
     lateinit var userService: UserService
 
     override fun preHandle(request: HttpServletRequest, response: HttpServletResponse, handler: Any): Boolean {

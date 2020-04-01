@@ -14,7 +14,7 @@ import ${package_name}.services.UserService
 
 @Component
 class CurrentUserResolver : HandlerMethodArgumentResolver {
-    @Autowired
+    @Resource
     lateinit var userService: UserService
 
     override fun supportsParameter(parameter: MethodParameter): Boolean {

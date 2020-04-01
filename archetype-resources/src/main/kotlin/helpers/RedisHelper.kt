@@ -7,7 +7,7 @@ import java.util.concurrent.TimeUnit
 
 @Component
 class RedisHelper {
-    @Autowired
+    @Resource
     lateinit var redis: StringRedisTemplate
 
     fun set(key: String, value: String) {

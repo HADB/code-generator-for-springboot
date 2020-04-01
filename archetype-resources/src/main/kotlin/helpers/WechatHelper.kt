@@ -30,13 +30,13 @@ import javax.crypto.spec.SecretKeySpec
 
 @Component
 class WechatHelper {
-    @Autowired
+    @Resource
     private lateinit var objectMapper: ObjectMapper
 
-    @Autowired
+    @Resource
     private lateinit var appConfiguration: AppConfiguration
 
-    @Autowired
+    @Resource
     private lateinit var redisHelper: RedisHelper
 
     private val logger = LoggerFactory.getLogger(this.javaClass)

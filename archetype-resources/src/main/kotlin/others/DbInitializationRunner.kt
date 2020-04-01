@@ -9,7 +9,7 @@ import ${package_name}.viewmodels.user.UserEditRequest
 
 @Component
 class DbInitializationRunner : CommandLineRunner {
-    @Autowired
+    @Resource
     private lateinit var userService: UserService
 
     private val logger = LoggerFactory.getLogger(this.javaClass)

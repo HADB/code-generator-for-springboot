@@ -11,8 +11,6 @@ import sys
 import inflection
 
 CURRENT_PATH = os.getcwd()  # 当前目录
-INPUT_PATH = os.path.join(CURRENT_PATH, 'inputs')  # 输入目录
-OUTPUT_PATH = os.path.join(CURRENT_PATH, 'outputs')  # 输出目录
 TEMPLATE_PATH = os.path.join(CURRENT_PATH, 'templates')  # 模板目录
 ARCHETYPE_RESOURCE_PATH = os.path.join(CURRENT_PATH, 'archetype-resources')  # 原型资源目录
 
@@ -45,8 +43,6 @@ def get_column_type_property_name(column):
 
 
 def copy_archetype_resources():
-    if not os.path.exists(project_path):
-        os.makedirs(project_path)
     g = os.walk(ARCHETYPE_RESOURCE_PATH)
     for path, dir_list, file_list in g:
         for file_name in file_list:
@@ -56,7 +52,7 @@ def copy_archetype_resources():
             with open(os.path.join(path, file_name), 'r', encoding='utf-8') as file_read:
                 directory_path = os.path.join(project_path, sub_path)
                 if 'src/main/kotlin' in path:
-                    directory_path = os.path.join(project_path, 'src/main/kotlin', package_name.replace('.', '/'), sub_path[len('src/main/kotlin') + 1:])
+                    directory_path = os.path.join(project_path, 'src/main/kotlin', *package_name.split('.'), sub_path[len('src/main/kotlin') + 1:])
                 if not os.path.exists(directory_path):
                     os.makedirs(directory_path)
                 file_path = os.path.join(directory_path, file_name)
@@ -70,12 +66,9 @@ def copy_archetype_resources():
 
 
 def run_package():
-    input_path = os.path.join(INPUT_PATH, package_name)
-    output_path = os.path.join(OUTPUT_PATH, package_name)
-    if not os.path.exists(output_path):
-        os.makedirs(output_path)
-    kotlin_output_path = os.path.join(output_path, 'main', 'kotlin', *package_name.split('.'))  # kotlin 输出目录
-    mapper_output_path = os.path.join(output_path, 'main', 'resources', 'mapper')  # mapper 输出目录
+    input_path = os.path.join(project_path, 'src/main/resources/sql')
+    kotlin_output_path = os.path.join(project_path, 'src', 'main', 'kotlin', *package_name.split('.'))  # kotlin 输出目录
+    mapper_output_path = os.path.join(project_path, 'src', 'main', 'resources', 'mapper')  # mapper 输出目录
     if os.path.exists(kotlin_output_path):
         shutil.rmtree(kotlin_output_path)
     if os.path.exists(mapper_output_path):
@@ -86,6 +79,9 @@ def run_package():
         if not os.path.isdir(input_file_path):
             if not input_file_name.endswith('.sql'):
                 print('skip: ' + input_file_name)
+                continue
+            if input_file_name == 't_user.sql':
+                print('暂不处理 t_user.sql')
                 continue
             print('work: ' + input_file_name)
             file_name = os.path.splitext(input_file_name)[0].strip()  # 文件名
@@ -229,6 +225,7 @@ def run_package():
             orders = ', '.join(lines)
 
             file_read = open(os.path.join(TEMPLATE_PATH, 'Mapper.xml'), 'r', encoding='UTF-8')
+
             content = file_read.read()
             t = string.Template(content)
             content = t.substitute(table_name='t_' + table_name, package_name=package_name, model_upper_camelcase=inflection.camelize(table_name), model_camelcase=inflection.camelize(table_name, False), column_list=column_list, search_where=search_where, orders=orders, name_list=name_list, value_list=value_list, update_list=update_list, update_partly_list=update_partly_list)
@@ -462,4 +459,8 @@ if __name__ == '__main__':
         elif name == '--description':
             description = value
     print(group_id, artifact_id, version, port, package_name, project_path, description)
+    if not os.path.exists(project_path):
+        os.makedirs(project_path)
+
+    run_package()
     copy_archetype_resources()
