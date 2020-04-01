@@ -1,4 +1,4 @@
-package ${package}.configurations
+package ${package_name}.configurations
 
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
@@ -15,16 +15,16 @@ import org.springframework.data.redis.core.RedisTemplate
 
 @Configuration
 class RedisConfiguration {
-    @Value("\${spring.redis.primary.host}")
+    @Value("\$${spring.redis.primary.host}")
     private lateinit var primaryHost: String
 
-    @Value("\${spring.redis.primary.port}")
+    @Value("\$${spring.redis.primary.port}")
     private var primaryPort: Int = 0
 
-    @Value("\${spring.redis.primary.password}")
+    @Value("\$${spring.redis.primary.password}")
     private lateinit var primaryPassword: String
 
-    @Value("\${spring.redis.primary.database}")
+    @Value("\$${spring.redis.primary.database}")
     private var primaryDatabase: Int = 0
 
     @Bean

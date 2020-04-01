@@ -1,4 +1,4 @@
-package ${package}.helpers
+package ${package_name}.helpers
 
 import org.springframework.stereotype.Component
 import java.time.Duration

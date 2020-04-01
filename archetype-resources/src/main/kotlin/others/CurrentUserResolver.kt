@@ -1,6 +1,6 @@
-package ${package}.others
+package ${package_name}.others
 
-import ${package}.constants.AppConstants
+import ${package_name}.constants.AppConstants
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.MethodParameter
 import org.springframework.stereotype.Component
@@ -9,8 +9,8 @@ import org.springframework.web.context.request.NativeWebRequest
 import org.springframework.web.context.request.RequestAttributes
 import org.springframework.web.method.support.HandlerMethodArgumentResolver
 import org.springframework.web.method.support.ModelAndViewContainer
-import ${package}.models.User
-import ${package}.services.UserService
+import ${package_name}.models.User
+import ${package_name}.services.UserService
 
 @Component
 class CurrentUserResolver : HandlerMethodArgumentResolver {
@@ -18,7 +18,7 @@ class CurrentUserResolver : HandlerMethodArgumentResolver {
     lateinit var userService: UserService
 
     override fun supportsParameter(parameter: MethodParameter): Boolean {
-        if (parameter.parameterType.isAssignableFrom(User::class.java) && parameter.hasParameterAnnotation(${package}.annotations.CurrentUser::class.java)) {
+        if (parameter.parameterType.isAssignableFrom(User::class.java) && parameter.hasParameterAnnotation(${package_name}.annotations.CurrentUser::class.java)) {
             return true
         }
         return false

@@ -1,12 +1,12 @@
-package ${package}.others
+package ${package_name}.others
 
-import ${package}.constants.AppConstants
-import ${package}.helpers.TokenHelper
-import ${package}.services.UserService
-import ${package}.annotations.AllowAnonymous
-import ${package}.annotations.Permission
-import ${package}.helpers.ResponseHelper
-import ${package}.models.Response
+import ${package_name}.constants.AppConstants
+import ${package_name}.helpers.TokenHelper
+import ${package_name}.services.UserService
+import ${package_name}.annotations.AllowAnonymous
+import ${package_name}.annotations.Permission
+import ${package_name}.helpers.ResponseHelper
+import ${package_name}.models.Response
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import org.springframework.web.bind.annotation.RequestMethod

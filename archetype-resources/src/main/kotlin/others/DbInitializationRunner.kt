@@ -1,11 +1,11 @@
-package ${package}.others
+package ${package_name}.others
 
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.CommandLineRunner
 import org.springframework.stereotype.Component
-import ${package}.services.UserService
-import ${package}.viewmodels.user.UserEditRequest
+import ${package_name}.services.UserService
+import ${package_name}.viewmodels.user.UserEditRequest
 
 @Component
 class DbInitializationRunner : CommandLineRunner {

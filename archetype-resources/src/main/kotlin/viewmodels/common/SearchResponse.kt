@@ -1,4 +1,4 @@
-package ${package}.viewmodels.common
+package ${package_name}.viewmodels.common
 
 import io.swagger.annotations.ApiModelProperty
 

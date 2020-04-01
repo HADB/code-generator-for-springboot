@@ -1,6 +1,6 @@
-package ${package}.models
+package ${package_name}.models
 
-import ${package}.annotations.NoArg
+import ${package_name}.annotations.NoArg
 
 @NoArg
 data class Paging(

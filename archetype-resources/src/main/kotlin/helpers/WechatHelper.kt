@@ -1,16 +1,16 @@
-package ${package}.helpers
+package ${package_name}.helpers
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.google.common.base.Joiner
-import ${package}.configurations.AppConfiguration
-import ${package}.constants.WechatConstants
-import ${package}.models.WechatAccessTokenResult
-import ${package}.models.WechatPhoneNumberInfo
-import ${package}.models.WechatSessionResult
-import ${package}.models.WechatUserInfo
-import ${package}.others.PKCS7Encoder
-import ${package}.others.RedisKey
+import ${package_name}.configurations.AppConfiguration
+import ${package_name}.constants.WechatConstants
+import ${package_name}.models.WechatAccessTokenResult
+import ${package_name}.models.WechatPhoneNumberInfo
+import ${package_name}.models.WechatSessionResult
+import ${package_name}.models.WechatUserInfo
+import ${package_name}.others.PKCS7Encoder
+import ${package_name}.others.RedisKey
 import org.apache.commons.codec.binary.Base64
 import org.apache.http.client.methods.HttpGet
 import org.apache.http.client.methods.HttpPost

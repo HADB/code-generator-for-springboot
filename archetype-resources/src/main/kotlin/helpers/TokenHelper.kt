@@ -1,9 +1,9 @@
-package ${package}.helpers
+package ${package_name}.helpers
 
-import ${package}.constants.AppConstants
+import ${package_name}.constants.AppConstants
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
-import ${package}.others.RedisKey
+import ${package_name}.others.RedisKey
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -15,7 +15,7 @@ class TokenHelper {
     // 创建Token与UserId的双向映射
     fun createToken(system: String?, userId: Long): String {
         deleteToken(system, userId) // 删除老Token
-        val token = "${system ?: AppConstants.Service.DEFAULT}-${UUID.randomUUID().toString().replace("-", "")}"
+        val token = "$${system ?: AppConstants.Service.DEFAULT}-$${UUID.randomUUID().toString().replace("-", "")}"
         redisHelper.set(RedisKey.token(system, userId.toString()), token, AppConstants.TOKEN_EXPIRES_HOUR, TimeUnit.HOURS)
         redisHelper.set(RedisKey.userId(system, token), userId.toString(), AppConstants.TOKEN_EXPIRES_HOUR, TimeUnit.HOURS)
         return token

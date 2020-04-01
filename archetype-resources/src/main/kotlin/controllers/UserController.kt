@@ -1,19 +1,19 @@
-package ${package}.controllers
+package ${package_name}.controllers
 
 import io.swagger.annotations.Api
 import io.swagger.annotations.ApiImplicitParam
 import io.swagger.annotations.ApiOperation
-import ${package}.annotations.AllowAnonymous
-import ${package}.annotations.CurrentUser
-import ${package}.constants.AppConstants
-import ${package}.helpers.PasswordHelper
+import ${package_name}.annotations.AllowAnonymous
+import ${package_name}.annotations.CurrentUser
+import ${package_name}.constants.AppConstants
+import ${package_name}.helpers.PasswordHelper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
-import ${package}.models.Response
-import ${package}.models.User
-import ${package}.services.UserService
-import ${package}.viewmodels.common.SearchResponse
-import ${package}.viewmodels.user.*
+import ${package_name}.models.Response
+import ${package_name}.models.User
+import ${package_name}.services.UserService
+import ${package_name}.viewmodels.common.SearchResponse
+import ${package_name}.viewmodels.user.*
 import springfox.documentation.annotations.ApiIgnore
 
 @Api(tags = ["用户"])

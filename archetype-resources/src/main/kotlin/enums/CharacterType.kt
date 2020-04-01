@@ -1,4 +1,4 @@
-package ${package}.enums
+package ${package_name}.enums
 
 enum class CharacterType {
     Number,

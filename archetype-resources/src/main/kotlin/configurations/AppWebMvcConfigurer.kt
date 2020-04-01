@@ -1,7 +1,7 @@
-package ${package}.configurations
+package ${package_name}.configurations
 
-import ${package}.others.AuthorizationInterceptor
-import ${package}.others.CurrentUserResolver
+import ${package_name}.others.AuthorizationInterceptor
+import ${package_name}.others.CurrentUserResolver
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Configuration
 import org.springframework.web.method.support.HandlerMethodArgumentResolver

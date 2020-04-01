@@ -1,7 +1,7 @@
-package ${package}.models
+package ${package_name}.models
 
 import io.swagger.annotations.ApiModelProperty
-import ${package}.annotations.NoArg
+import ${package_name}.annotations.NoArg
 import java.math.BigDecimal
 import java.util.*
 

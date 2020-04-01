@@ -1,4 +1,4 @@
-package ${package}.configurations
+package ${package_name}.configurations
 
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.web.servlet.FilterRegistrationBean
@@ -10,18 +10,18 @@ import org.springframework.web.filter.CorsFilter
 
 @Configuration
 class AppConfiguration {
-    @Value("\${app.qiniu.bucket}")
+    @Value("\$${app.qiniu.bucket}")
     lateinit var qiniuBucket: String
 
-    @Value("\${app.qiniu.access-key}")
+    @Value("\$${app.qiniu.access-key}")
     lateinit var qiniuAccessKey: String
 
-    @Value("\${app.qiniu.secret-key}")
+    @Value("\$${app.qiniu.secret-key}")
     lateinit var qiniuSecretKey: String
 
-    @Value("\${app.wxAppId}")
+    @Value("\$${app.wxAppId}")
     lateinit var wxAppId: String
 
-    @Value("\${app.wxAppSecret}")
+    @Value("\$${app.wxAppSecret}")
     lateinit var wxAppSecret: String
 }

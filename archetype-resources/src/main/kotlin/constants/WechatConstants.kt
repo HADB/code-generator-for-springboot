@@ -1,4 +1,4 @@
-package ${package}.constants
+package ${package_name}.constants
 
 class WechatConstants {
     companion object {

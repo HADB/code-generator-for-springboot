@@ -1,9 +1,9 @@
-package ${package}.mappers
+package ${package_name}.mappers
 
 import org.apache.ibatis.annotations.Mapper
 import org.apache.ibatis.annotations.Param
-import ${package}.models.User
-import ${package}.viewmodels.user.UserSearchRequest
+import ${package_name}.models.User
+import ${package_name}.viewmodels.user.UserSearchRequest
 import org.springframework.stereotype.Repository
 
 @Mapper

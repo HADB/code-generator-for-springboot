@@ -1,4 +1,4 @@
-package ${package}.annotations
+package ${package_name}.annotations
 
 import kotlin.annotation.Retention
 

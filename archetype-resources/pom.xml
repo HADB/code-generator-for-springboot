@@ -4,10 +4,10 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>${groupId}</groupId>
-    <artifactId>${artifactId}</artifactId>
+    <groupId>${group_id}</groupId>
+    <artifactId>${artifact_id}</artifactId>
     <version>${version}</version>
-    <name>${name}</name>
+    <name>${description}</name>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -35,12 +35,12 @@
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-stdlib-jdk8</artifactId>
-            <version>${kotlin.version}</version>
+            <version>$${kotlin.version}</version>
         </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-reflect</artifactId>
-            <version>${kotlin.version}</version>
+            <version>$${kotlin.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -135,7 +135,7 @@
         </dependency>
     </dependencies>
     <build>
-        <sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
+        <sourceDirectory>$${project.basedir}/src/main/kotlin</sourceDirectory>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
@@ -144,7 +144,7 @@
             <plugin>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-maven-plugin</artifactId>
-                <version>${kotlin.version}</version>
+                <version>$${kotlin.version}</version>
                 <configuration>
                     <args>
                         <arg>-Xjsr305=strict</arg>
@@ -154,19 +154,19 @@
                         <plugin>no-arg</plugin>
                     </compilerPlugins>
                     <pluginOptions>
-                        <option>no-arg:annotation=${package}.annotations.NoArg</option>
+                        <option>no-arg:annotation=${package_name}.annotations.NoArg</option>
                     </pluginOptions>
                 </configuration>
                 <dependencies>
                     <dependency>
                         <groupId>org.jetbrains.kotlin</groupId>
                         <artifactId>kotlin-maven-noarg</artifactId>
-                        <version>${kotlin.version}</version>
+                        <version>$${kotlin.version}</version>
                     </dependency>
                     <dependency>
                         <groupId>org.jetbrains.kotlin</groupId>
                         <artifactId>kotlin-maven-allopen</artifactId>
-                        <version>${kotlin.version}</version>
+                        <version>$${kotlin.version}</version>
                     </dependency>
                 </dependencies>
             </plugin>
@@ -190,7 +190,7 @@
                             <goal>push</goal>
                         </goals>
                         <configuration>
-                            <tag>${project.version}</tag>
+                            <tag>$${project.version}</tag>
                         </configuration>
                     </execution>
                     <execution>
@@ -206,11 +206,11 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <repository>registry.cn-hangzhou.aliyuncs.com/yuanfen/${project.artifactId}</repository>
-                    <tag>${project.version}</tag>
+                    <repository>registry.cn-hangzhou.aliyuncs.com/yuanfen/$${project.artifactId}</repository>
+                    <tag>$${project.version}</tag>
                     <useMavenSettingsForAuth>true</useMavenSettingsForAuth>
                     <buildArgs>
-                        <JAR_FILE>target/${project.build.finalName}.jar</JAR_FILE>
+                        <JAR_FILE>target/$${project.build.finalName}.jar</JAR_FILE>
                     </buildArgs>
                 </configuration>
             </plugin>

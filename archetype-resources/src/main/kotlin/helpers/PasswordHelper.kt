@@ -1,9 +1,9 @@
-package ${package}.helpers
+package ${package_name}.helpers
 
 import org.apache.commons.codec.binary.Hex
-import ${package}.enums.CharacterType
-import ${package}.models.User
-import ${package}.others.RedisKey
+import ${package_name}.enums.CharacterType
+import ${package_name}.models.User
+import ${package_name}.others.RedisKey
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import java.security.MessageDigest

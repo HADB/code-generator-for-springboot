@@ -13,7 +13,18 @@
 安装 `inflection`
 
 ```bash
-pip install inflection
+$ pip install inflection
+```
+
+```bash
+$ python main.py \
+--group-id=net.yuanfen.op.mateo \
+--artifact-id=mateo-api \
+--version=1.0.0 \
+--port=9019 \
+--package-name=net.yuanfen.op.mateo \
+--project-path=/Users/bean/Projects/OP/test-api \
+--description=足球录像带-API
 ```
 
 在 `inputs\xxx.xxx.xxx` 文件夹下放好 `sql` 文件，`xxx.xxx.xxx` 为包名，例如：

@@ -1,25 +1,25 @@
-package ${package}.others
+package ${package_name}.others
 
-import ${package}.constants.AppConstants
+import ${package_name}.constants.AppConstants
 
 class RedisKey {
     companion object {
-        const val ACCESS_TOKEN = "${AppConstants.REDIS_PREFIX}:AccessToken"
+        const val ACCESS_TOKEN = "$${AppConstants.REDIS_PREFIX}:AccessToken"
 
         fun token(service: String?, userId: String): String {
-            return "${AppConstants.REDIS_PREFIX}:${service ?: AppConstants.Service.DEFAULT}:user-id:$userId:token"
+            return "$${AppConstants.REDIS_PREFIX}:$${service ?: AppConstants.Service.DEFAULT}:user-id:$$userId:token"
         }
 
         fun userId(service: String?, token: String): String {
-            return "${AppConstants.REDIS_PREFIX}:${service ?: AppConstants.Service.DEFAULT}:token:$token:user-id"
+            return "$${AppConstants.REDIS_PREFIX}:$${service ?: AppConstants.Service.DEFAULT}:token:$$token:user-id"
         }
 
         fun sessionKey(openId: String?): String {
-            return "${AppConstants.REDIS_PREFIX}:OpenId:$openId:SessionKey"
+            return "$${AppConstants.REDIS_PREFIX}:OpenId:$$openId:SessionKey"
         }
 
         fun passwordErrorTimes(mobile: String?): String {
-            return "${AppConstants.REDIS_PREFIX}:Mobile:$mobile:PasswordErrorTimes"
+            return "$${AppConstants.REDIS_PREFIX}:Mobile:$$mobile:PasswordErrorTimes"
         }
     }
 }

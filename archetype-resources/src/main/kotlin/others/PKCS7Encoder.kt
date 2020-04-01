@@ -1,4 +1,4 @@
-package ${package}.others
+package ${package_name}.others
 
 import java.nio.charset.Charset
 import java.util.Arrays

@@ -1,4 +1,4 @@
-package ${package}.configurations
+package ${package_name}.configurations
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -21,11 +21,11 @@ class SwaggerConfiguration {
     fun api(): Docket {
         return Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(ApiInfoBuilder()
-                        .title("${name} API 文档")
+                        .title("${description} API 文档")
                         .version("1.0.0")
                         .build())
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("${package}.controllers"))
+                .apis(RequestHandlerSelectors.basePackage("${package_name}.controllers"))
                 .paths(PathSelectors.any())
                 .build()
                 .securityContexts(listOf(securityContext()))

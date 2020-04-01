@@ -1,4 +1,4 @@
-package ${package}.viewmodels.user
+package ${package_name}.viewmodels.user
 
 data class PasswordSignInRequest(
         val username: String,

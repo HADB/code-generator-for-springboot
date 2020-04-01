@@ -1,7 +1,7 @@
-package ${package}.viewmodels.user
+package ${package_name}.viewmodels.user
 
 import io.swagger.annotations.ApiModelProperty
-import ${package}.models.Paging
+import ${package_name}.models.Paging
 import java.math.BigDecimal
 import java.util.*
 

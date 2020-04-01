@@ -14,6 +14,15 @@ CURRENT_PATH = os.getcwd()  # 当前目录
 INPUT_PATH = os.path.join(CURRENT_PATH, 'inputs')  # 输入目录
 OUTPUT_PATH = os.path.join(CURRENT_PATH, 'outputs')  # 输出目录
 TEMPLATE_PATH = os.path.join(CURRENT_PATH, 'templates')  # 模板目录
+ARCHETYPE_RESOURCE_PATH = os.path.join(CURRENT_PATH, 'archetype-resources')  # 原型资源目录
+
+project_path = None
+package_name = None
+group_id = None
+artifact_id = None
+version = None
+description = None
+port = None
 
 
 def get_column_type_property_name(column):
@@ -35,7 +44,32 @@ def get_column_type_property_name(column):
     return column_type, property_name
 
 
-def run_package(package_name):
+def copy_archetype_resources():
+    if not os.path.exists(project_path):
+        os.makedirs(project_path)
+    g = os.walk(ARCHETYPE_RESOURCE_PATH)
+    for path, dir_list, file_list in g:
+        for file_name in file_list:
+            sub_path = path[len(ARCHETYPE_RESOURCE_PATH) + 1:]
+            print(sub_path)
+
+            with open(os.path.join(path, file_name), 'r', encoding='utf-8') as file_read:
+                directory_path = os.path.join(project_path, sub_path)
+                if 'src/main/kotlin' in path:
+                    directory_path = os.path.join(project_path, 'src/main/kotlin', package_name.replace('.', '/'), sub_path[len('src/main/kotlin') + 1:])
+                if not os.path.exists(directory_path):
+                    os.makedirs(directory_path)
+                file_path = os.path.join(directory_path, file_name)
+                print(file_path)
+                content = file_read.read()
+                t = string.Template(content)
+                content = t.substitute(package_name=package_name, group_id=group_id, artifact_id=artifact_id, version=version, description=description, port=port)
+                with open(file_path, 'w', encoding='utf-8') as file_write:
+                    file_write.write(content)
+    return
+
+
+def run_package():
     input_path = os.path.join(INPUT_PATH, package_name)
     output_path = os.path.join(OUTPUT_PATH, package_name)
     if not os.path.exists(output_path):
@@ -411,11 +445,21 @@ def run_package(package_name):
 
 
 if __name__ == '__main__':
-    if not os.path.exists(OUTPUT_PATH):
-        os.makedirs(OUTPUT_PATH)
-    OPTS, ARGS = getopt.getopt(sys.argv[1:], 'p:')
+    OPTS, ARGS = getopt.getopt(sys.argv[1:], '', ['group-id=', 'artifact-id=', 'version=', 'port=', 'package-name=', 'project-path=', 'description='])
     for name, value in OPTS:
-        if name == '-p':
-            print(name, value)
-            PACKAGE_NAME = value
-            run_package(PACKAGE_NAME)
+        if name == '--group-id':
+            group_id = value
+        elif name == '--artifact-id':
+            artifact_id = value
+        elif name == '--version':
+            version = value
+        elif name == '--port':
+            port = value
+        elif name == '--package-name':
+            package_name = value
+        elif name == '--project-path':
+            project_path = value
+        elif name == '--description':
+            description = value
+    print(group_id, artifact_id, version, port, package_name, project_path, description)
+    copy_archetype_resources()

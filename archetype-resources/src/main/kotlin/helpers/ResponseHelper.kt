@@ -1,9 +1,9 @@
-package ${package}.helpers
+package ${package_name}.helpers
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
-import ${package}.models.Response
+import ${package_name}.models.Response
 import javax.servlet.http.HttpServletResponse
 
 @Component
