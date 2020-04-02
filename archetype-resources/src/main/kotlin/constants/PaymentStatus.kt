@@ -1,4 +1,4 @@
-package net.yuanfen.op.mateo.constants
+package ${package_name}.constants
 
 class PaymentStatus {
     companion object {

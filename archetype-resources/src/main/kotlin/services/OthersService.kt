@@ -1,9 +1,9 @@
 package ${package_name}.services
 
 import com.qiniu.util.Auth
-import org.springframework.beans.factory.annotation.Autowired
+import net.yuanfen.op.mateo.configurations.AppConfiguration
 import org.springframework.stereotype.Component
-import ${package_name}.configurations.AppConfiguration
+import javax.annotation.Resource
 
 @Component
 class OthersService {

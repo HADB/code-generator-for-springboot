@@ -6,7 +6,7 @@ data class WechatUserInfo(
         @JsonProperty("openId")
         val openId: String?,
 
-        @JsonProperty("nickname")
+        @JsonProperty("nickName")
         val nickname: String?,
 
         @JsonProperty("gender")

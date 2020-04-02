@@ -1,7 +1,8 @@
 package ${package_name}.others
 
 import ${package_name}.constants.AppConstants
-import org.springframework.beans.factory.annotation.Autowired
+import ${package_name}.models.User
+import ${package_name}.services.UserService
 import org.springframework.core.MethodParameter
 import org.springframework.stereotype.Component
 import org.springframework.web.bind.support.WebDataBinderFactory
@@ -9,8 +10,7 @@ import org.springframework.web.context.request.NativeWebRequest
 import org.springframework.web.context.request.RequestAttributes
 import org.springframework.web.method.support.HandlerMethodArgumentResolver
 import org.springframework.web.method.support.ModelAndViewContainer
-import ${package_name}.models.User
-import ${package_name}.services.UserService
+import javax.annotation.Resource
 
 @Component
 class CurrentUserResolver : HandlerMethodArgumentResolver {
@@ -25,13 +25,10 @@ class CurrentUserResolver : HandlerMethodArgumentResolver {
     }
 
     override fun resolveArgument(parameter: MethodParameter, mavContainer: ModelAndViewContainer?, webRequest: NativeWebRequest, binderFactory: WebDataBinderFactory?): Any? {
-        if (webRequest.getAttribute(AppConstants.USER_ID, RequestAttributes.SCOPE_REQUEST) == null) {
-            return null
-        }
-        val currentUserId = webRequest.getAttribute(AppConstants.USER_ID, RequestAttributes.SCOPE_REQUEST)?.toString()?.toLong()
+        val key = webRequest.getAttribute(AppConstants.KEY, RequestAttributes.SCOPE_REQUEST)?.toString()
         val service = webRequest.getAttribute(AppConstants.SERVICE, RequestAttributes.SCOPE_REQUEST)?.toString()
-        if (currentUserId != null) {
-            return userService.getUserById(currentUserId)
+        if (service != null && key != null) {
+            return userService.getUserByKey(service, key)
         }
         return null
     }

@@ -1,18 +1,18 @@
 package ${package_name}.others
 
-import ${package_name}.constants.AppConstants
-import ${package_name}.helpers.TokenHelper
-import ${package_name}.services.UserService
 import ${package_name}.annotations.AllowAnonymous
 import ${package_name}.annotations.Permission
+import ${package_name}.constants.AppConstants
 import ${package_name}.helpers.ResponseHelper
+import ${package_name}.helpers.TokenHelper
 import ${package_name}.models.Response
-import org.springframework.beans.factory.annotation.Autowired
+import ${package_name}.services.UserService
 import org.springframework.stereotype.Component
 import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.method.HandlerMethod
 import org.springframework.web.servlet.HandlerInterceptor
 import org.springframework.web.servlet.ModelAndView
+import javax.annotation.Resource
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
@@ -44,15 +44,15 @@ class AuthorizationInterceptor : HandlerInterceptor {
             return false
         }
 
-        // 允许匿名访问，直接通过
-        if (allowAnonymous) {
-            return true
-        }
-
         // 设置终端类型
         val service = request.getHeader(AppConstants.SERVICE)
         if (service != null && service.isNotBlank()) {
             request.setAttribute(AppConstants.SERVICE, service)
+        }
+
+        // 允许匿名访问，直接通过
+        if (allowAnonymous) {
+            return true
         }
 
         val token = request.getHeader(AppConstants.TOKEN)
@@ -68,22 +68,22 @@ class AuthorizationInterceptor : HandlerInterceptor {
             return true
         }
 
-        val userId = tokenHelper.getUserIdFromToken(service, token)
+        val key = tokenHelper.getTokenKey(service, token)
 
-        // Token失效
-        if (userId == null) {
+        // Token 失效
+        if (key == null) {
             responseHelper.setResponse(response, Response.Errors.tokenInvalid())
             return false
         }
 
         // Token有效
-        request.setAttribute(AppConstants.USER_ID, userId)
+        request.setAttribute(AppConstants.KEY, key)
 
         // 需要验证权限
-        if (permission != null && permission.roleKeys.isNotEmpty()) {
-            for (roleKey in permission.roleKeys) {
+        if (permission != null && permission.roles.isNotEmpty()) {
+            for (role in permission.roles) {
                 // 拥有其中一种权限则通过
-                if (hasPermission(userId, roleKey)) {
+                if (hasPermission(service, key, role)) {
                     return true
                 }
             }
@@ -100,8 +100,8 @@ class AuthorizationInterceptor : HandlerInterceptor {
 
     override fun afterCompletion(request: HttpServletRequest, response: HttpServletResponse, handler: Any, ex: Exception?) = Unit
 
-    private fun hasPermission(id: Long, roleKey: String): Boolean {
-        val user = userService.getUserById(id)
-        return user?.role == roleKey
+    private fun hasPermission(service: String, key: String, role: String): Boolean {
+        val user = userService.getUserByKey(service, key)
+        return user?.role == role
     }
 }

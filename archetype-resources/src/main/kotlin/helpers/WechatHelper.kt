@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.google.common.base.Joiner
 import ${package_name}.configurations.AppConfiguration
+import ${package_name}.configurations.WxConfiguration
 import ${package_name}.constants.WechatConstants
 import ${package_name}.models.WechatAccessTokenResult
 import ${package_name}.models.WechatPhoneNumberInfo
@@ -18,12 +19,12 @@ import org.apache.http.entity.StringEntity
 import org.apache.http.impl.client.HttpClients
 import org.apache.http.util.EntityUtils
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import java.nio.charset.StandardCharsets
 import java.security.AlgorithmParameters
 import java.util.*
 import java.util.concurrent.TimeUnit
+import javax.annotation.Resource
 import javax.crypto.Cipher
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
@@ -35,6 +36,9 @@ class WechatHelper {
 
     @Resource
     private lateinit var appConfiguration: AppConfiguration
+
+    @Resource
+    private lateinit var wxConfiguration: WxConfiguration
 
     @Resource
     private lateinit var redisHelper: RedisHelper
@@ -93,8 +97,8 @@ class WechatHelper {
             return redisValue
         } else {
             val params = HashMap<String, String>()
-            params["appid"] = appConfiguration.wxAppId
-            params["secret"] = appConfiguration.wxAppSecret
+            params["appid"] = wxConfiguration.wxAppId
+            params["secret"] = wxConfiguration.wxAppSecret
             params["grant_type"] = "client_credential"
 
             val queryParams = Joiner.on("&").withKeyValueSeparator("=").join(params)

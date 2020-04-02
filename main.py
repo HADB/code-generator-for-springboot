@@ -46,6 +46,8 @@ def copy_archetype_resources():
     g = os.walk(ARCHETYPE_RESOURCE_PATH)
     for path, dir_list, file_list in g:
         for file_name in file_list:
+            if file_name == '.DS_Store':
+                continue
             sub_path = path[len(ARCHETYPE_RESOURCE_PATH) + 1:]
             print(sub_path)
 

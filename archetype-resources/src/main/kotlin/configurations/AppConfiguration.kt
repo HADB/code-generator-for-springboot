@@ -18,10 +18,4 @@ class AppConfiguration {
 
     @Value("\$${app.qiniu.secret-key}")
     lateinit var qiniuSecretKey: String
-
-    @Value("\$${app.wxAppId}")
-    lateinit var wxAppId: String
-
-    @Value("\$${app.wxAppSecret}")
-    lateinit var wxAppSecret: String
 }

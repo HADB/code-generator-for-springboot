@@ -1,6 +1,6 @@
 package ${package_name}.services
 
-import ${package_name}.configurations.AppConfiguration
+import ${package_name}.configurations.WxConfiguration
 import ${package_name}.constants.AppConstants
 import ${package_name}.helpers.PasswordHelper
 import ${package_name}.helpers.RedisHelper
@@ -9,13 +9,10 @@ import ${package_name}.helpers.WechatHelper
 import ${package_name}.mappers.UserMapper
 import ${package_name}.models.User
 import ${package_name}.others.RedisKey
-import ${package_name}.viewmodels.user.SignInResponse
-import ${package_name}.viewmodels.user.UserEditRequest
-import ${package_name}.viewmodels.user.UserSearchRequest
-import ${package_name}.viewmodels.user.WechatEncryptedDataRequest
-import org.springframework.beans.factory.annotation.Autowired
+import ${package_name}.viewmodels.user.*
 import org.springframework.stereotype.Component
 import java.util.concurrent.TimeUnit
+import javax.annotation.Resource
 
 @Component
 class UserService {
@@ -35,7 +32,7 @@ class UserService {
     private lateinit var wechatHelper: WechatHelper
 
     @Resource
-    private lateinit var appConfiguration: AppConfiguration
+    private lateinit var wxConfiguration: WxConfiguration
 
     fun editUser(request: UserEditRequest): Long {
         val user = User(
@@ -47,7 +44,8 @@ class UserService {
                 password = request.password,
                 salt = request.salt,
                 avatarUrl = request.avatarUrl,
-                role = request.role
+                role = request.role,
+                balanceSeconds = request.balanceSeconds
         )
         return editUser(user)
     }
@@ -61,12 +59,25 @@ class UserService {
         return user.id
     }
 
+    fun editUserPartly(request: UserPartlyEditRequest): Long {
+        userMapper.updateUserPartly(request)
+        return request.id
+    }
+
     fun deleteUser(id: Long) {
         userMapper.deleteUser(id)
     }
 
     fun getUserById(id: Long): User? {
         return userMapper.selectUserById(id)
+    }
+
+    fun getUserByKey(service: String, key: String): User? {
+        when (service) {
+            AppConstants.Service.DEFAULT -> return userMapper.selectUserById(key.toLong())
+            AppConstants.Service.WXAPP_C -> return userMapper.selectUserByOpenId(key)
+        }
+        return null
     }
 
     fun searchPagingUsers(request: UserSearchRequest): List<User> {
@@ -108,31 +119,32 @@ class UserService {
         return userMapper.selectUserByUsername(username)
     }
 
-
-    fun signIn(user: User): SignInResponse {
-        val token = tokenHelper.createToken(AppConstants.Service.DEFAULT, user.id)
+    fun signIn(service: String, user: User): SignInResponse {
+        val token = tokenHelper.createToken(service, user.id.toString())
         return SignInResponse(
-                username = user.username,
                 token = token
         )
     }
 
-    fun wxappSignIn(code: String): SignInResponse? {
-        val sessionResult = wechatHelper.getSessionResultByCode(code, appConfiguration.wxAppId, appConfiguration.wxAppSecret)
-        val user = getUserByOpenId(sessionResult.openId)
-        if (user != null) {
-            val token = tokenHelper.createToken(AppConstants.Service.DEFAULT, user.id)
-            redisHelper.set(RedisKey.sessionKey(sessionResult.openId), sessionResult.sessionKey, 15, TimeUnit.MINUTES)
+    fun signOut(service: String, user: User) {
+        tokenHelper.deleteToken(service, user.id.toString())
+    }
 
-            val response = SignInResponse(token = token)
-            response.nickname = user.nickname
-            return response
+    fun wxappSignIn(service: String, code: String): SignInResponse? {
+        val sessionResult = wechatHelper.getSessionResultByCode(code, wxConfiguration.wxAppId, wxConfiguration.wxAppSecret)
+        val token = tokenHelper.createToken(service, sessionResult.openId)
+        val response = SignInResponse(token = token)
+        val user = getUserByOpenId(sessionResult.openId)
+        redisHelper.set(RedisKey.sessionKey(sessionResult.openId), sessionResult.sessionKey, 15, TimeUnit.MINUTES)
+        if (user != null) {
+            response.userExists = true
+            response.mobileBound = user.mobile != null
         }
-        return null
+        return response
     }
 
     fun wxappRegister(request: WechatEncryptedDataRequest, openId: String) {
-        val sessionKey = redisHelper.get(RedisKey.sessionKey(openId))!! // TODO: session_key 会过期
+        val sessionKey = redisHelper.get(RedisKey.sessionKey(openId))!! // TODO: session_key 会过期，需处理一下
         val userInfo = wechatHelper.decryptUserInfo(sessionKey, request.encryptedData, request.iv)
         val user = User(
                 nickname = userInfo.nickname,
@@ -142,7 +154,36 @@ class UserService {
         userMapper.insertUser(user)
     }
 
-    fun signOut(user: User) {
-        tokenHelper.deleteToken(AppConstants.Service.DEFAULT, user.id)
+    fun wxappSignOut(service: String, user: User) {
+        tokenHelper.deleteToken(service, user.openId)
+    }
+
+    fun bindMobile(request: WechatEncryptedDataRequest, openId: String) {
+        val sessionKey = redisHelper.get(RedisKey.sessionKey(openId))!! // TODO: session_key 会过期，需处理一下
+        val mobile = wechatHelper.decryptPhoneNumber(sessionKey, request.encryptedData, request.iv)
+        val mobileUser = getUserByMobile(mobile)
+        val currentUser = getUserByOpenId(openId)!!
+        if (mobileUser != null) {
+            mobileUser.openId = currentUser.openId
+            mobileUser.nickname = currentUser.nickname
+            mobileUser.avatarUrl = currentUser.avatarUrl
+            mobileUser.username = currentUser.username
+            mobileUser.password = currentUser.password
+            mobileUser.salt = currentUser.salt
+            mobileUser.role = currentUser.role
+            mobileUser.balanceSeconds = currentUser.balanceSeconds
+
+            if (currentUser.id != mobileUser.id) {
+                userMapper.deleteUser(currentUser.id)
+            }
+            userMapper.updateUser(mobileUser)
+        } else {
+            currentUser.mobile = mobile
+            userMapper.updateUser(currentUser)
+        }
+    }
+
+    fun getUserByMobile(mobile: String): User? {
+        return userMapper.selectUserByMobile(mobile)
     }
 }

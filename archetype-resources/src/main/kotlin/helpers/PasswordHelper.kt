@@ -1,14 +1,14 @@
 package ${package_name}.helpers
 
-import org.apache.commons.codec.binary.Hex
 import ${package_name}.enums.CharacterType
 import ${package_name}.models.User
 import ${package_name}.others.RedisKey
-import org.springframework.beans.factory.annotation.Autowired
+import org.apache.commons.codec.binary.Hex
 import org.springframework.stereotype.Component
 import java.security.MessageDigest
 import java.util.*
 import java.util.concurrent.TimeUnit
+import javax.annotation.Resource
 
 @Component
 class PasswordHelper {

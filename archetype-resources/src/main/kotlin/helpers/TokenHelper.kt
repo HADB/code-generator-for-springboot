@@ -1,48 +1,48 @@
 package ${package_name}.helpers
 
 import ${package_name}.constants.AppConstants
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.stereotype.Component
 import ${package_name}.others.RedisKey
+import org.springframework.stereotype.Component
 import java.util.*
 import java.util.concurrent.TimeUnit
+import javax.annotation.Resource
 
 @Component
 class TokenHelper {
     @Resource
     private lateinit var redisHelper: RedisHelper
 
-    // 创建Token与UserId的双向映射
-    fun createToken(system: String?, userId: Long): String {
-        deleteToken(system, userId) // 删除老Token
+    // 创建 Token 与 Key 的双向映射
+    fun createToken(system: String?, key: String): String {
+        deleteToken(system, key) // 删除老Token
         val token = "$${system ?: AppConstants.Service.DEFAULT}-$${UUID.randomUUID().toString().replace("-", "")}"
-        redisHelper.set(RedisKey.token(system, userId.toString()), token, AppConstants.TOKEN_EXPIRES_HOUR, TimeUnit.HOURS)
-        redisHelper.set(RedisKey.userId(system, token), userId.toString(), AppConstants.TOKEN_EXPIRES_HOUR, TimeUnit.HOURS)
+        redisHelper.set(RedisKey.token(system, key), token, AppConstants.TOKEN_EXPIRES_HOUR, TimeUnit.HOURS)
+        redisHelper.set(RedisKey.key(system, token), key, AppConstants.TOKEN_EXPIRES_HOUR, TimeUnit.HOURS)
         return token
     }
 
-    // 根据Token获取UserId
-    fun getUserIdFromToken(system: String?, token: String): Long? {
-        val userId = redisHelper.get(RedisKey.userId(system, token))
-        if (userId != null) {
-            updateTokenUserId(system, token, userId) // 验证成功，延长 Token 的过期时间
+    // 根据 Token 获取 Key
+    fun getTokenKey(system: String?, token: String): String? {
+        val key = redisHelper.get(RedisKey.key(system, token))
+        if (key != null) {
+            updateToken(system, token, key) // 验证成功，延长 Token 的过期时间
         }
-        return userId?.toLong()
+        return key
     }
 
-    // 刷新Token和UserId的双向映射
-    fun updateTokenUserId(system: String?, token: String, userId: String) {
-        redisHelper.set(RedisKey.token(system, userId), token, AppConstants.TOKEN_EXPIRES_HOUR, TimeUnit.HOURS)
-        redisHelper.set(RedisKey.userId(system, token), userId, AppConstants.TOKEN_EXPIRES_HOUR, TimeUnit.HOURS)
+    // 刷新 Token 和 Key 的双向映射
+    fun updateToken(system: String?, token: String, key: String) {
+        redisHelper.set(RedisKey.token(system, key), token, AppConstants.TOKEN_EXPIRES_HOUR, TimeUnit.HOURS)
+        redisHelper.set(RedisKey.key(system, token), key, AppConstants.TOKEN_EXPIRES_HOUR, TimeUnit.HOURS)
     }
 
-    // 删除token
-    fun deleteToken(system: String?, userId: Long?) {
-        if (userId != null) {
-            val token = redisHelper.get(RedisKey.token(system, userId.toString()))
+    // 删除 Token
+    fun deleteToken(system: String?, key: String?) {
+        if (key != null) {
+            val token = redisHelper.get(RedisKey.token(system, key))
             if (token != null) {
-                redisHelper.delete(RedisKey.token(system, userId.toString()))
-                redisHelper.delete(RedisKey.userId(system, token))
+                redisHelper.delete(RedisKey.token(system, key))
+                redisHelper.delete(RedisKey.key(system, token))
             }
         }
     }

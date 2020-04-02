@@ -6,20 +6,25 @@ class RedisKey {
     companion object {
         const val ACCESS_TOKEN = "$${AppConstants.REDIS_PREFIX}:AccessToken"
 
-        fun token(service: String?, userId: String): String {
-            return "$${AppConstants.REDIS_PREFIX}:$${service ?: AppConstants.Service.DEFAULT}:user-id:$$userId:token"
+        fun token(service: String?, key: String): String {
+            return "$${AppConstants.REDIS_PREFIX}:$${service ?: AppConstants.Service.DEFAULT}:key:$$key:token"
         }
 
-        fun userId(service: String?, token: String): String {
-            return "$${AppConstants.REDIS_PREFIX}:$${service ?: AppConstants.Service.DEFAULT}:token:$$token:user-id"
+        fun key(service: String?, token: String): String {
+            return "$${AppConstants.REDIS_PREFIX}:$${service ?: AppConstants.Service.DEFAULT}:token:$$token:key"
         }
 
         fun sessionKey(openId: String?): String {
-            return "$${AppConstants.REDIS_PREFIX}:OpenId:$$openId:SessionKey"
+            return "$${AppConstants.REDIS_PREFIX}:open-id:$$openId:session-key"
         }
 
         fun passwordErrorTimes(mobile: String?): String {
-            return "$${AppConstants.REDIS_PREFIX}:Mobile:$$mobile:PasswordErrorTimes"
+            return "$${AppConstants.REDIS_PREFIX}:mobile:$$mobile:password-error-times"
         }
+
+        fun lock(type: String, id: String, name: String): String {
+            return "$${AppConstants.REDIS_PREFIX}:lock:$$type:$$id:$$name"
+        }
+
     }
 }
