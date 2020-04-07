@@ -8,27 +8,33 @@
 
 代码基于 `Kotlin`，细节可根据个人喜好调整，目前是按照我的项目风格生成的
 
+已集成小程序登录、密码登录、绑定手机号、微信支付相关内容
+
 ## 使用方式
 
-安装 `inflection`
+#### 安装 `inflection`
 
 ```bash
 $ pip install inflection
 ```
 
+#### 项目执行命令
 ```bash
 $ python main.py \
---group-id=net.yuanfen.op.mateo \
---artifact-id=mateo-api \
---version=1.0.0 \
---port=9019 \
---package-name=net.yuanfen.op.mateo \
---project-path=/Users/bean/Projects/OP/mateo-api \
---description=足球录像带-API
+--group_id=${group_id} \
+--artifact_id=${artifact_id} \
+--version=${version} \
+--port=${port} \
+--package_name=${package_name} \
+--project_path=${project_path} \
+--description=${description} \
+--registry_username=${registry_username} \
+--registry_password=${registry_password}
 ```
 
-在 `inputs\xxx.xxx.xxx` 文件夹下放好 `sql` 文件，`xxx.xxx.xxx` 为包名，例如：
+首次执行会初始化项目，在 `src/main/resources/sql` 文件夹内是 `.sql` 文件，新增文件后会自动生成新的 CRUD 代码，注意文件名必须为：`t_xxx.sql`
 
+#### .sql 文件示例
 ```sql
 CREATE TABLE `t_shop` (
     `id`                    bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
@@ -49,7 +55,4 @@ CREATE TABLE `t_shop` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='商铺';
 ```
 
-执行 `python main.py`
-
-
-输出文件在 `outputs` 对应的包名文件夹下。
+建议自动生成的代码放到单独的分支管理，每次生成后合并到主分支

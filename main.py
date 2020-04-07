@@ -25,6 +25,27 @@ registry_username = None
 registry_password = None
 
 
+def init_project():
+    print('初始化项目，复制 .sql 文件')
+    g = os.walk(ARCHETYPE_RESOURCE_PATH)
+    for path, dir_list, file_list in g:
+        for file_name in file_list:
+            if file_name == '.DS_Store':
+                continue
+            sub_path = path[len(ARCHETYPE_RESOURCE_PATH) + 1:]
+
+            with open(os.path.join(path, file_name), 'r', encoding='utf-8') as file_read:
+                if 'src/main/resources/sql' in path:
+                    directory_path = os.path.join(project_path, sub_path)
+                    if not os.path.exists(directory_path):
+                        os.makedirs(directory_path)
+                    file_path = os.path.join(directory_path, file_name)
+                    print(file_path)
+                    content = file_read.read()
+                    with open(file_path, 'w', encoding='utf-8') as file_write:
+                        file_write.write(content)
+
+
 def get_column_type_property_name(column):
     column_type = 'String'
     property_name = column['name']
@@ -45,13 +66,13 @@ def get_column_type_property_name(column):
 
 
 def copy_archetype_resources():
+    print('复制骨架资源文件')
     g = os.walk(ARCHETYPE_RESOURCE_PATH)
     for path, dir_list, file_list in g:
         for file_name in file_list:
             if file_name == '.DS_Store':
                 continue
             sub_path = path[len(ARCHETYPE_RESOURCE_PATH) + 1:]
-            print(sub_path)
 
             with open(os.path.join(path, file_name), 'r', encoding='utf-8') as file_read:
                 directory_path = os.path.join(project_path, sub_path)
@@ -60,19 +81,19 @@ def copy_archetype_resources():
                 if not os.path.exists(directory_path):
                     os.makedirs(directory_path)
                 file_path = os.path.join(directory_path, file_name)
-                print(file_path)
                 if os.path.exists(file_path) and os.path.splitext(file_name)[-1] == '.sql':
                     print('跳过:' + file_path)
                     continue
                 content = file_read.read()
                 t = string.Template(content)
-                content = t.substitute(package_name=package_name, group_id=group_id, artifact_id=artifact_id, version=version, description=description, port=port, registry_username=registry_username, registry_password=registry_password)
+                content = t.substitute(package_name=package_name, group_id=group_id, artifact_id=artifact_id, version=version, description=description, port=port, registry_username=registry_username, registry_password=registry_password, project_path=project_path)
                 with open(file_path, 'w', encoding='utf-8') as file_write:
                     file_write.write(content)
-    return
+                    print('已复制:' + file_path)
 
 
 def run_package():
+    print('执行 CRUD')
     input_path = os.path.join(project_path, 'src/main/resources/sql')
     kotlin_output_path = os.path.join(project_path, 'src', 'main', 'kotlin', *package_name.split('.'))  # kotlin 输出目录
     mapper_output_path = os.path.join(project_path, 'src', 'main', 'resources', 'mapper')  # mapper 输出目录
@@ -85,12 +106,9 @@ def run_package():
         input_file_path = os.path.join(input_path, input_file_name)
         if not os.path.isdir(input_file_path):
             if not input_file_name.endswith('.sql'):
-                print('skip: ' + input_file_name)
+                print('跳过: ' + input_file_name)
                 continue
-            # if input_file_name == 't_user.sql':
-            #     print('暂不处理 t_user.sql')
-            #     continue
-            print('work: ' + input_file_name)
+            print('处理: ' + input_file_name)
             file_name = os.path.splitext(input_file_name)[0].strip()  # 文件名
             table_name = file_name  # 表名默认为文件名
             table_description = table_name  # 表注释默认为文件名
@@ -486,19 +504,19 @@ def run_package():
 
 
 if __name__ == '__main__':
-    OPTS, ARGS = getopt.getopt(sys.argv[1:], '', ['group-id=', 'artifact-id=', 'version=', 'port=', 'package-name=', 'project-path=', 'description=', 'registry_username=', 'registry_password='])
+    OPTS, ARGS = getopt.getopt(sys.argv[1:], '', ['group_id=', 'artifact_id=', 'version=', 'port=', 'package_name=', 'project_path=', 'description=', 'registry_username=', 'registry_password='])
     for name, value in OPTS:
-        if name == '--group-id':
+        if name == '--group_id':
             group_id = value
-        elif name == '--artifact-id':
+        elif name == '--artifact_id':
             artifact_id = value
         elif name == '--version':
             version = value
         elif name == '--port':
             port = value
-        elif name == '--package-name':
+        elif name == '--package_name':
             package_name = value
-        elif name == '--project-path':
+        elif name == '--project_path':
             project_path = value
         elif name == '--description':
             description = value
@@ -510,5 +528,8 @@ if __name__ == '__main__':
     if not os.path.exists(project_path):
         os.makedirs(project_path)
 
+    if not os.path.exists(os.path.join(project_path, 'pom.xml')):
+        # 初始化项目（复制 .sql 文件）
+        init_project()
     run_package()
     copy_archetype_resources()
