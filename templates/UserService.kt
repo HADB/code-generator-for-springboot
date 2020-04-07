@@ -36,16 +36,7 @@ class UserService {
 
     fun editUser(request: UserEditRequest): Long {
         val user = User(
-                id = request.id,
-                mobile = request.mobile,
-                openId = request.openId,
-                nickname = request.nickname,
-                username = request.username,
-                password = request.password,
-                salt = request.salt,
-                avatarUrl = request.avatarUrl,
-                role = request.role,
-                balanceSeconds = request.balanceSeconds
+${columns_data}
         )
         return editUser(user)
     }
@@ -164,14 +155,7 @@ class UserService {
         val mobileUser = getUserByMobile(mobile)
         val currentUser = getUserByOpenId(openId)!!
         if (mobileUser != null) {
-            mobileUser.openId = currentUser.openId
-            mobileUser.nickname = currentUser.nickname
-            mobileUser.avatarUrl = currentUser.avatarUrl
-            mobileUser.username = currentUser.username
-            mobileUser.password = currentUser.password
-            mobileUser.salt = currentUser.salt
-            mobileUser.role = currentUser.role
-            mobileUser.balanceSeconds = currentUser.balanceSeconds
+${bile_mobile_columns_data}
 
             if (currentUser.id != mobileUser.id) {
                 userMapper.deleteUser(currentUser.id)

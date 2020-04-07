@@ -21,6 +21,8 @@ artifact_id = None
 version = None
 description = None
 port = None
+registry_username = None
+registry_password = None
 
 
 def get_column_type_property_name(column):
@@ -59,9 +61,12 @@ def copy_archetype_resources():
                     os.makedirs(directory_path)
                 file_path = os.path.join(directory_path, file_name)
                 print(file_path)
+                if os.path.exists(file_path) and os.path.splitext(file_name)[-1] == '.sql':
+                    print('跳过:' + file_path)
+                    continue
                 content = file_read.read()
                 t = string.Template(content)
-                content = t.substitute(package_name=package_name, group_id=group_id, artifact_id=artifact_id, version=version, description=description, port=port)
+                content = t.substitute(package_name=package_name, group_id=group_id, artifact_id=artifact_id, version=version, description=description, port=port, registry_username=registry_username, registry_password=registry_password)
                 with open(file_path, 'w', encoding='utf-8') as file_write:
                     file_write.write(content)
     return
@@ -82,9 +87,9 @@ def run_package():
             if not input_file_name.endswith('.sql'):
                 print('skip: ' + input_file_name)
                 continue
-            if input_file_name == 't_user.sql':
-                print('暂不处理 t_user.sql')
-                continue
+            # if input_file_name == 't_user.sql':
+            #     print('暂不处理 t_user.sql')
+            #     continue
             print('work: ' + input_file_name)
             file_name = os.path.splitext(input_file_name)[0].strip()  # 文件名
             table_name = file_name  # 表名默认为文件名
@@ -130,6 +135,7 @@ def run_package():
 
             # [Model]Mapper.xml
             lines = []
+            lines_without_password = []
             for column in columns:
                 property_name = column['name']
                 if column['name'] == 'is_delete':
@@ -138,11 +144,15 @@ def run_package():
                     property_name = column['name'][3:]
 
                 lines.append('        `%s`.`%s` as `%s`' % (inflection.camelize(table_name, False), column['name'], inflection.camelize(property_name, False)))
+                if table_name == 'user' and column['name'] != 'password' and column['name'] != 'salt':
+                    lines_without_password.append('        `%s`.`%s` as `%s`' % (inflection.camelize(table_name, False), column['name'], inflection.camelize(property_name, False)))
             column_list = ',\n'.join(lines)
+            if table_name == 'user':
+                column_list_without_password = ',\n'.join(lines_without_password)
 
             lines = []
             for column in columns:
-                if column['name'] == 'id' or column['name'] == 'sort_weight':
+                if column['name'] == 'id' or column['name'] == 'sort_weight' or (table_name == 'user' and (column['name'] == 'password' or column['name'] == 'salt')):
                     continue
                 if column['type'] == 'datetime' or column['type'] == 'time' or column['type'] == 'date':
                     lines.append('        <if test="request.%sFrom != null">' % (inflection.camelize(column['name'], False)))
@@ -226,11 +236,17 @@ def run_package():
                 lines.append('`%s`.`id` DESC' % (inflection.camelize(table_name, False)))
             orders = ', '.join(lines)
 
-            file_read = open(os.path.join(TEMPLATE_PATH, 'Mapper.xml'), 'r', encoding='UTF-8')
+            if table_name == 'user':
+                file_read = open(os.path.join(TEMPLATE_PATH, 'UserMapper.xml'), 'r', encoding='UTF-8')
+            else:
+                file_read = open(os.path.join(TEMPLATE_PATH, 'Mapper.xml'), 'r', encoding='UTF-8')
 
             content = file_read.read()
             t = string.Template(content)
-            content = t.substitute(table_name='t_' + table_name, package_name=package_name, model_upper_camelcase=inflection.camelize(table_name), model_camelcase=inflection.camelize(table_name, False), column_list=column_list, search_where=search_where, orders=orders, name_list=name_list, value_list=value_list, update_list=update_list, update_partly_list=update_partly_list)
+            if table_name == 'user':
+                content = t.substitute(package_name=package_name, column_list_without_password=column_list_without_password, search_where=search_where, orders=orders, name_list=name_list, value_list=value_list, update_list=update_list, update_partly_list=update_partly_list)
+            else:
+                content = t.substitute(table_name='t_' + table_name, package_name=package_name, model_upper_camelcase=inflection.camelize(table_name), model_camelcase=inflection.camelize(table_name, False), column_list=column_list, search_where=search_where, orders=orders, name_list=name_list, value_list=value_list, update_list=update_list, update_partly_list=update_partly_list)
 
             if not os.path.exists(mapper_output_path):
                 os.makedirs(mapper_output_path)
@@ -262,7 +278,16 @@ def run_package():
                     if column['name'] == 'id':
                         column_type += ' = 0'
                     line_text = '        @ApiModelProperty(position = %s, notes = "%s")\n' % (swagger_index, column['comment'])
-                    line_text += '        val %s: %s' % (inflection.camelize(property_name, False), column_type)
+
+                    # 特殊处理 for Payment.kt
+                    if table_name == 'payment' and (property_name == 'status' or property_name == 'wx_transaction_id' or property_name == 'wx_payment_open_id' or property_name == 'message' or property_name == 'payment_time'):
+                        line_text += '        var %s: %s' % (inflection.camelize(property_name, False), column_type)
+
+                    # 特殊处理 for User.kt
+                    elif table_name == 'user' and (property_name != 'id' and property_name != 'create_time' and property_name != 'update_time'):
+                        line_text += '        var %s: %s' % (inflection.camelize(property_name, False), column_type)
+                    else:
+                        line_text += '        val %s: %s' % (inflection.camelize(property_name, False), column_type)
                     lines.append(line_text)
                     swagger_index += 1
             content += '%s\n' % (',\n\n'.join(lines))
@@ -409,18 +434,35 @@ def run_package():
             file_write.close()
 
             # [Model]Service.kt
-            file_read = open(os.path.join(TEMPLATE_PATH, 'Service.kt'), 'r', encoding='UTF-8')
-            content = file_read.read()
-            t = string.Template(content)
-            columns_data = []
-            for column in columns:
-                property_name = column['name']
-                if column['name'] == 'create_time' or column['name'] == 'update_time' or column['name'] == 'created_time' or column['name'] == 'updated_time' or column['name'] == 'is_delete':
-                    continue
-                if column['name'].startswith('is_'):
-                    property_name = column['name'][3:]
-                columns_data.append('                %s = request.%s' % (inflection.camelize(property_name, False), inflection.camelize(property_name, False)))
-            content = t.substitute(package_name=package_name, model_upper_camelcase=inflection.camelize(table_name), model_camelcase=inflection.camelize(table_name, False), columns_data=',\n'.join(columns_data))
+            if table_name == 'user':
+                file_read = open(os.path.join(TEMPLATE_PATH, 'UserService.kt'), 'r', encoding='UTF-8')
+                content = file_read.read()
+                t = string.Template(content)
+                columns_data = []
+                bile_mobile_columns_data = []
+                for column in columns:
+                    property_name = column['name']
+                    if column['name'] == 'create_time' or column['name'] == 'update_time' or column['name'] == 'created_time' or column['name'] == 'updated_time' or column['name'] == 'is_delete':
+                        continue
+                    if column['name'].startswith('is_'):
+                        property_name = column['name'][3:]
+                    columns_data.append('                %s = request.%s' % (inflection.camelize(property_name, False), inflection.camelize(property_name, False)))
+                    if column['name'] != 'id' and column['name'] != 'mobile':
+                        bile_mobile_columns_data.append('            mobileUser.%s = currentUser.%s' % (inflection.camelize(property_name, False), inflection.camelize(property_name, False)))
+                content = t.substitute(package_name=package_name, columns_data=',\n'.join(columns_data), bile_mobile_columns_data='\n'.join(bile_mobile_columns_data))
+            else:
+                file_read = open(os.path.join(TEMPLATE_PATH, 'Service.kt'), 'r', encoding='UTF-8')
+                content = file_read.read()
+                t = string.Template(content)
+                columns_data = []
+                for column in columns:
+                    property_name = column['name']
+                    if column['name'] == 'create_time' or column['name'] == 'update_time' or column['name'] == 'created_time' or column['name'] == 'updated_time' or column['name'] == 'is_delete':
+                        continue
+                    if column['name'].startswith('is_'):
+                        property_name = column['name'][3:]
+                    columns_data.append('                %s = request.%s' % (inflection.camelize(property_name, False), inflection.camelize(property_name, False)))
+                content = t.substitute(package_name=package_name, model_upper_camelcase=inflection.camelize(table_name), model_camelcase=inflection.camelize(table_name, False), columns_data=',\n'.join(columns_data))
 
             output_services_path = os.path.join(kotlin_output_path, 'services')
             if not os.path.exists(output_services_path):
@@ -444,7 +486,7 @@ def run_package():
 
 
 if __name__ == '__main__':
-    OPTS, ARGS = getopt.getopt(sys.argv[1:], '', ['group-id=', 'artifact-id=', 'version=', 'port=', 'package-name=', 'project-path=', 'description='])
+    OPTS, ARGS = getopt.getopt(sys.argv[1:], '', ['group-id=', 'artifact-id=', 'version=', 'port=', 'package-name=', 'project-path=', 'description=', 'registry_username=', 'registry_password='])
     for name, value in OPTS:
         if name == '--group-id':
             group_id = value
@@ -460,6 +502,10 @@ if __name__ == '__main__':
             project_path = value
         elif name == '--description':
             description = value
+        elif name == '--registry_username':
+            registry_username = value
+        elif name == '--registry_password':
+            registry_password = value
     print(group_id, artifact_id, version, port, package_name, project_path, description)
     if not os.path.exists(project_path):
         os.makedirs(project_path)

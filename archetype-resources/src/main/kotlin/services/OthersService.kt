@@ -1,7 +1,7 @@
 package ${package_name}.services
 
 import com.qiniu.util.Auth
-import net.yuanfen.op.mateo.configurations.AppConfiguration
+import ${package_name}.configurations.AppConfiguration
 import org.springframework.stereotype.Component
 import javax.annotation.Resource
 

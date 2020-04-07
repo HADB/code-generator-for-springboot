@@ -5,16 +5,14 @@ import io.swagger.annotations.ApiImplicitParam
 import io.swagger.annotations.ApiOperation
 import ${package_name}.annotations.AllowAnonymous
 import ${package_name}.annotations.CurrentUser
-import ${package_name}.constants.AppConstants
 import ${package_name}.helpers.PasswordHelper
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.web.bind.annotation.*
 import ${package_name}.models.Response
 import ${package_name}.models.User
 import ${package_name}.services.UserService
 import ${package_name}.viewmodels.common.SearchResponse
 import ${package_name}.viewmodels.user.*
-import springfox.documentation.annotations.ApiIgnore
+import org.springframework.web.bind.annotation.*
+import javax.annotation.Resource
 
 @Api(tags = ["用户"])
 @CrossOrigin
@@ -97,15 +95,24 @@ class UserController {
      */
     @PostMapping("/password-sign-in")
     @AllowAnonymous
-    fun passwordSignIn(@RequestBody request: PasswordSignInRequest): Response<Any> {
-        val user = userService.getUserByUsername(request.username) ?: return Response.Errors.AccountNotExist()
+    fun passwordSignIn(@RequestBody request: PasswordSignInRequest, @RequestAttribute service: String): Response<Any> {
+        val user = userService.getUserByUsername(request.username) ?: return Response.Errors.accountNotExist()
 
         if (!passwordHelper.verify(request.password, user)) {
-            return Response.Errors.PasswordIncorrect()
+            return Response.Errors.passwordIncorrect()
         }
 
-        val response = userService.signIn(user)
+        val response = userService.signIn(service, user)
         return Response.success(response)
+    }
+
+    /*
+     * 注销
+     */
+    @PostMapping("/sign-out")
+    fun signOut(@RequestAttribute service: String, @CurrentUser user: User): Response<Any> {
+        userService.signOut(service, user)
+        return Response.success()
     }
 
     /*
@@ -114,31 +121,54 @@ class UserController {
     @ApiOperation(value = "小程序登录")
     @PostMapping("/wxapp-sign-in")
     @AllowAnonymous
-    fun wxappSignIn(@RequestBody request: WxappSignInRequest): Response<SignInResponse> {
-        val response = userService.wxappSignIn(request.code) ?: return Response.Errors.AccountNotExist()
+    fun wxappSignIn(@RequestBody request: WxappSignInRequest, @RequestAttribute service: String): Response<SignInResponse> {
+        val response = userService.wxappSignIn(service, request.code) ?: return Response.Errors.accountNotExist()
         return Response.success(response)
     }
 
     /*
      * 微信注册
      */
-    @ApiIgnore
+    @ApiOperation(value = "小程序注册")
     @PostMapping("/wxapp-register")
-    @AllowAnonymous
-    fun wxappRegister(@RequestBody request: WechatEncryptedDataRequest, @RequestAttribute openId: String): Response<Any> {
+    fun wxappRegister(@RequestBody request: WechatEncryptedDataRequest, @RequestAttribute key: String): Response<Any> {
         if (request.encryptedData == null || request.iv == null) {
             return Response.Errors.wechatNotAuthorized()
         }
-        userService.wxappRegister(request, openId)
+        val userInfo = userService.getUserByOpenId(key)
+        if (userInfo != null) {
+            return Response.Errors.accountAlreadyExist()
+        }
+        userService.wxappRegister(request, key)
         return Response.success()
     }
 
     /*
      * 注销
      */
-    @PostMapping("/sign-out")
-    fun signOut(@CurrentUser user: User): Response<Any> {
-        userService.signOut(user)
+    @ApiOperation(value = "注销登录")
+    @PostMapping("/wxapp-sign-out")
+    fun wxappSignOut(@RequestAttribute service: String, @CurrentUser user: User): Response<Any> {
+        userService.wxappSignOut(service, user)
         return Response.success()
+    }
+
+    /*
+     * 获取用户信息
+     */
+    @ApiOperation(value = "用户信息")
+    @GetMapping("/info")
+    fun info(@RequestAttribute service: String, @RequestAttribute key: String): Response<Any> {
+        val userInfo = userService.getUserByKey(service, key)
+        return Response.success(userInfo)
+    }
+
+    /*
+     * 绑定手机号
+     */
+    @PostMapping("/bind-mobile")
+    fun bindMobile(@RequestBody request: WechatEncryptedDataRequest, @RequestAttribute key: String): Response<Any> {
+        val response = userService.bindMobile(request, key)
+        return Response.success(response)
     }
 }

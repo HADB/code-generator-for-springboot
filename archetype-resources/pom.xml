@@ -214,8 +214,8 @@
                 <configuration>
                     <repository>registry.cn-hangzhou.aliyuncs.com/yuanfen/$${project.artifactId}</repository>
                     <tag>$${project.version}</tag>
-                    <username><![CDATA[]]></username>
-                    <password><![CDATA[]]></password>
+                    <username><![CDATA[${registry_username}]]></username>
+                    <password><![CDATA[${registry_password}]]></password>
                 </configuration>
             </plugin>
         </plugins>
