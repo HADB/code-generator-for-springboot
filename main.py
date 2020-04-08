@@ -35,7 +35,7 @@ def init_project():
             sub_path = path[len(ARCHETYPE_RESOURCE_PATH) + 1:]
 
             with open(os.path.join(path, file_name), 'r', encoding='utf-8') as file_read:
-                if 'src/main/resources/sql' in path:
+                if 'src/main/resources/sql' in path or 'src\\main\\resources\\sql' in path:
                     directory_path = os.path.join(project_path, sub_path)
                     if not os.path.exists(directory_path):
                         os.makedirs(directory_path)
@@ -76,7 +76,7 @@ def copy_archetype_resources():
 
             with open(os.path.join(path, file_name), 'r', encoding='utf-8') as file_read:
                 directory_path = os.path.join(project_path, sub_path)
-                if 'src/main/kotlin' in path:
+                if 'src/main/kotlin' in path or 'src\\main\\kotlin' in path:
                     directory_path = os.path.join(project_path, 'src/main/kotlin', *package_name.split('.'), sub_path[len('src/main/kotlin') + 1:])
                 if not os.path.exists(directory_path):
                     os.makedirs(directory_path)
