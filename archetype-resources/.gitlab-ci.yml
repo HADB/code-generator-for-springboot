@@ -13,7 +13,7 @@ maven-package:
   image: maven:3.6-jdk-8-slim
   stage: package
   script:
-    - mvn $MAVEN_OPTS $MAVEN_CLI_OPTS clean package -Dmaven.test.skip=true
+    - mvn $$MAVEN_OPTS $$MAVEN_CLI_OPTS clean package -Dmaven.test.skip=true
     - cp target/${artifact_id}.jar /cache/jars/
   only:
     - tags
@@ -27,8 +27,8 @@ docker-build:
     - docker login --username=admin@yuanfen.net registry.cn-hangzhou.aliyuncs.com -p 4J0RPue8Zgifql9J
     - mkdir target
     - cp /cache/jars/${artifact_id}.jar target
-    - docker build -t $REGISTRY/yuanfen/${artifact_id}:$CI_COMMIT_REF_NAME -t $REGISTRY/yuanfen/${artifact_id}:latest .
-    - docker push $REGISTRY/yuanfen/${artifact_id}:$CI_COMMIT_REF_NAME
-    - docker push $REGISTRY/yuanfen/${artifact_id}:latest
+    - docker build -t $$REGISTRY/yuanfen/${artifact_id}:$$CI_COMMIT_REF_NAME -t $$REGISTRY/yuanfen/${artifact_id}:latest .
+    - docker push $$REGISTRY/yuanfen/${artifact_id}:$$CI_COMMIT_REF_NAME
+    - docker push $$REGISTRY/yuanfen/${artifact_id}:latest
   only:
     - tags
