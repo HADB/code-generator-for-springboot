@@ -1,5 +1,6 @@
 package ${package_name}.configurations
 
+import net.yuanfen.op.mateo.annotations.CurrentUser
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import springfox.documentation.builders.ApiInfoBuilder
@@ -28,6 +29,7 @@ class SwaggerConfiguration {
                 .apis(RequestHandlerSelectors.basePackage("${package_name}.controllers"))
                 .paths(PathSelectors.any())
                 .build()
+                .ignoredParameterTypes(CurrentUser::class.java)
                 .securityContexts(listOf(securityContext()))
                 .securitySchemes(listOf(apiKey()))
     }
