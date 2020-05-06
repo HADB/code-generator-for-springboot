@@ -12,6 +12,8 @@
 
 ## 使用方式
 
+注意，请使用 Python 3
+
 #### 安装 `inflection`
 
 ```bash
@@ -32,9 +34,9 @@ $ python main.py \
 --registry_password=${registry_password}
 ```
 
-首次执行会初始化项目，在 `src/main/resources/sql` 文件夹内是 `.sql` 文件，新增文件后会自动生成新的 CRUD 代码，注意文件名必须为：`t_xxx.sql`
+首次执行会在 `ppackage_path` 目录下初始化项目， `src/main/resources/sql` 文件夹内是 SQL 文件，新增文件后再次执行命令会自动更新代码，注意 SQL 文件名必须为：`t_xxx.sql`
 
-#### .sql 文件示例
+#### SQL 文件示例
 ```sql
 CREATE TABLE `t_shop` (
     `id`                    bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
