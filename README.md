@@ -1,4 +1,4 @@
-# 生成 SpringBoot 基础的增删改查代码
+# SpringBoot 代码生成器
 
 ## 说明
 
