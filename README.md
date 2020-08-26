@@ -30,6 +30,8 @@ $ python main.py \
 --package_name=${package_name} \
 --project_path=${project_path} \
 --description=${description} \
+--registry_instance=${registry_instance} \
+--registry_namespace=${registry_namespace} \
 --registry_username=${registry_username} \
 --registry_password=${registry_password}
 ```

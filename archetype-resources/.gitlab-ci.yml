@@ -2,7 +2,6 @@ image: docker:latest
 
 variables:
   MAVEN_OPTS: "-Dmaven.repo.local=/cache/.m2/repository"
-  REGISTRY: "registry.cn-hangzhou.aliyuncs.com"
 
 stages:
   - package
@@ -23,11 +22,11 @@ docker-build:
   script:
     - echo "Building Dockerfile-based application..."
     - docker info
-    - docker login --username=admin@yuanfen.net registry.cn-hangzhou.aliyuncs.com -p 4J0RPue8Zgifql9J
+    - docker login --username=${registry_username} ${registry_instance} -p ${registry_password}
     - mkdir target
     - cp /cache/jars/${artifact_id}.jar target
-    - docker build -t $$REGISTRY/yuanfen/${artifact_id}:$$CI_COMMIT_REF_NAME -t $$REGISTRY/yuanfen/${artifact_id}:latest .
-    - docker push $$REGISTRY/yuanfen/${artifact_id}:$$CI_COMMIT_REF_NAME
-    - docker push $$REGISTRY/yuanfen/${artifact_id}:latest
+    - docker build -t ${registry_instance}/${registry_namespace}/${artifact_id}:$$CI_COMMIT_REF_NAME -t ${registry_instance}/${registry_namespace}/${artifact_id}:latest .
+    - docker push ${registry_instance}/${registry_namespace}/${artifact_id}:$$CI_COMMIT_REF_NAME
+    - docker push ${registry_instance}/${registry_namespace}/${artifact_id}:latest
   only:
     - tags

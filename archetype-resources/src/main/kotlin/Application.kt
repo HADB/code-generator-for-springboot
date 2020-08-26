@@ -7,5 +7,5 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 class Application
 
 fun main(args: Array<String>) {
-    SpringApplication.run(${package_name}.Application::class.java, *args)
+    SpringApplication.run(Application::class.java, *args)
 }

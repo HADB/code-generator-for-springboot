@@ -21,6 +21,8 @@ artifact_id = None
 version = None
 description = None
 port = None
+registry_instance = None
+registry_namespace = None
 registry_username = None
 registry_password = None
 
@@ -86,7 +88,7 @@ def copy_archetype_resources():
                     continue
                 content = file_read.read()
                 t = string.Template(content)
-                content = t.substitute(package_name=package_name, group_id=group_id, artifact_id=artifact_id, version=version, description=description, port=port, registry_username=registry_username, registry_password=registry_password, project_path=project_path)
+                content = t.substitute(package_name=package_name, group_id=group_id, artifact_id=artifact_id, version=version, description=description, port=port, registry_instance=registry_instance, registry_namespace=registry_namespace, registry_username=registry_username, registry_password=registry_password, project_path=project_path)
                 with open(file_path, 'w', encoding='utf-8') as file_write:
                     file_write.write(content)
                     print('已复制:' + file_path)
@@ -504,7 +506,7 @@ def run_package():
 
 
 if __name__ == '__main__':
-    OPTS, ARGS = getopt.getopt(sys.argv[1:], '', ['group_id=', 'artifact_id=', 'version=', 'port=', 'package_name=', 'project_path=', 'description=', 'registry_username=', 'registry_password='])
+    OPTS, ARGS = getopt.getopt(sys.argv[1:], '', ['group_id=', 'artifact_id=', 'version=', 'port=', 'package_name=', 'project_path=', 'description=', 'registry_instance=', 'registry_namespace=', 'registry_username=', 'registry_password='])
     for name, value in OPTS:
         if name == '--group_id':
             group_id = value
@@ -520,6 +522,10 @@ if __name__ == '__main__':
             project_path = value
         elif name == '--description':
             description = value
+        elif name == '--registry_instance':
+            registry_instance = value
+        elif name == '--registry_namespace':
+            registry_namespace = value
         elif name == '--registry_username':
             registry_username = value
         elif name == '--registry_password':
