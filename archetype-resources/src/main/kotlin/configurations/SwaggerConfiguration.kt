@@ -1,6 +1,6 @@
 package ${package_name}.configurations
 
-import net.yuanfen.op.mateo.annotations.CurrentUser
+import ${package_name}.annotations.CurrentUser
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import springfox.documentation.builders.ApiInfoBuilder
