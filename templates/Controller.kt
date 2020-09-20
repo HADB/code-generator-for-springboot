@@ -34,7 +34,7 @@ class ${model_upper_camelcase}Controller {
      * 修改
      */
     @ApiOperation(value = "修改「${model_description}」")
-    @ApiImplicitParam(name = "id", value = "${model_upper_camelcase} ID", required = true, dataType = "Long")
+    @ApiImplicitParam(name = "id", value = "${model_upper_camelcase} ID", required = true, dataTypeClass = Long::class)
     @PutMapping("/{id}")
     fun edit(@PathVariable("id") id: Long, @RequestBody request: ${model_upper_camelcase}EditRequest): Response<Any> {
         request.id = id
@@ -47,7 +47,7 @@ class ${model_upper_camelcase}Controller {
      * 删除
      */
     @ApiOperation(value = "删除「${model_description}」")
-    @ApiImplicitParam(name = "id", value = "${model_upper_camelcase} ID", required = true, dataType = "Long")
+    @ApiImplicitParam(name = "id", value = "${model_upper_camelcase} ID", required = true, dataTypeClass = Long::class)
     @DeleteMapping("/{id}")
     fun delete(@PathVariable("id") id: Long): Response<Any> {
         ${model_camelcase}Service.delete${model_upper_camelcase}(id)
@@ -58,7 +58,7 @@ class ${model_upper_camelcase}Controller {
      * 获取详情
      */
     @ApiOperation(value = "获取「${model_description}」详情")
-    @ApiImplicitParam(name = "id", value = "${model_upper_camelcase} ID", required = true, dataType = "Long")
+    @ApiImplicitParam(name = "id", value = "${model_upper_camelcase} ID", required = true, dataTypeClass = Long::class)
     @GetMapping("/{id}")
     fun get(@PathVariable("id") id: Long): Response<${model_upper_camelcase}> {
         val ${model_camelcase} = ${model_camelcase}Service.get${model_upper_camelcase}ById(id)

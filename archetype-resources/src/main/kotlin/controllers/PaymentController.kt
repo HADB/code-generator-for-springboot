@@ -29,7 +29,7 @@ class PaymentController {
      * 删除
      */
     @ApiOperation(value = "删除「支付」")
-    @ApiImplicitParam(name = "id", value = "Payment ID", required = true, dataType = "Long")
+    @ApiImplicitParam(name = "id", value = "Payment ID", required = true, dataTypeClass = Long::class)
     @DeleteMapping("/{id}")
     @Permission([RoleKey.Admin])
     fun delete(@PathVariable("id") id: Long): Response<Any> {
@@ -41,7 +41,7 @@ class PaymentController {
      * 获取详情
      */
     @ApiOperation(value = "获取「支付」详情")
-    @ApiImplicitParam(name = "id", value = "Payment ID", required = true, dataType = "Long")
+    @ApiImplicitParam(name = "id", value = "Payment ID", required = true, dataTypeClass = Long::class)
     @GetMapping("/{id}")
     fun get(@PathVariable("id") id: Long): Response<Payment> {
         val payment = paymentService.getPaymentById(id)

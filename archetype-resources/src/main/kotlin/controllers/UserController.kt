@@ -39,7 +39,7 @@ class UserController {
      * 修改
      */
     @ApiOperation(value = "修改「用户」")
-    @ApiImplicitParam(name = "id", value = "User ID", required = true, dataType = "Long")
+    @ApiImplicitParam(name = "id", value = "User ID", required = true, dataTypeClass = Long::class)
     @PutMapping("/{id}")
     fun edit(@PathVariable("id") id: Long, @RequestBody request: UserEditRequest): Response<Any> {
         request.id = id
@@ -52,7 +52,7 @@ class UserController {
      * 删除
      */
     @ApiOperation(value = "删除「用户」")
-    @ApiImplicitParam(name = "id", value = "User ID", required = true, dataType = "Long")
+    @ApiImplicitParam(name = "id", value = "User ID", required = true, dataTypeClass = Long::class)
     @DeleteMapping("/{id}")
     fun delete(@PathVariable("id") id: Long): Response<Any> {
         userService.deleteUser(id)
@@ -63,7 +63,7 @@ class UserController {
      * 获取详情
      */
     @ApiOperation(value = "获取「用户」详情")
-    @ApiImplicitParam(name = "id", value = "User ID", required = true, dataType = "Long")
+    @ApiImplicitParam(name = "id", value = "User ID", required = true, dataTypeClass = Long::class)
     @GetMapping("/{id}")
     fun get(@PathVariable("id") id: Long): Response<User> {
         val user = userService.getUserById(id)
