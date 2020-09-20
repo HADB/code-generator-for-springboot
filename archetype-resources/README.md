@@ -2,7 +2,7 @@
 
 #### 自动生成脚本
 ```bash
-python main.py \
+python3 main.py \
 --group_id=${group_id} \
 --artifact_id=${artifact_id} \
 --version=${version} \

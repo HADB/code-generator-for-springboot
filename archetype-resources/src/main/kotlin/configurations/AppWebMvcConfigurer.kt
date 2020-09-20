@@ -10,7 +10,6 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 import javax.annotation.Resource
 
-
 @Configuration
 class AppWebMvcConfigurer : WebMvcConfigurer {
     @Resource
@@ -24,20 +23,17 @@ class AppWebMvcConfigurer : WebMvcConfigurer {
                 .addPathPatterns("/**")
                 .excludePathPatterns("/error")
                 .excludePathPatterns("/swagger-resources/**")
-                .excludePathPatterns("/v2/api-docs")
                 .excludePathPatterns("/swagger-ui.html")
-                .excludePathPatterns("/static/**")
-                .excludePathPatterns("/webjars/**")
+                .excludePathPatterns("/swagger-ui/*")
+                .excludePathPatterns("/v2/api-docs")
+                .excludePathPatterns("/v3/api-docs")
         super.addInterceptors(registry)
     }
 
     override fun addResourceHandlers(registry: ResourceHandlerRegistry) {
-        registry.addResourceHandler("swagger-ui.html")
-                .addResourceLocations("classpath:/META-INF/resources/")
-        registry.addResourceHandler("/webjars/**")
-                .addResourceLocations("classpath:/META-INF/resources/webjars/")
-        registry.addResourceHandler("/static/**")
-                .addResourceLocations("classpath:/static/")
+        registry.addResourceHandler("/swagger-ui/**")
+                .addResourceLocations("classpath:/META-INF/resources/webjars/springfox-swagger-ui/")
+                .resourceChain(false)
     }
 
     override fun addCorsMappings(registry: CorsRegistry) {

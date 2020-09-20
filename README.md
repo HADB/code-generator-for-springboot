@@ -22,7 +22,7 @@ $ pip install inflection
 
 #### 项目执行命令
 ```bash
-$ python main.py \
+$ python3 main.py \
 --group_id=${group_id} \
 --artifact_id=${artifact_id} \
 --version=${version} \
