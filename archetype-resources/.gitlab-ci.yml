@@ -8,7 +8,7 @@ stages:
   - build
 
 maven-package:
-  image: maven:3.6-jdk-8-slim
+  image: maven:3.6-jdk-11-slim
   stage: package
   script:
     - mvn $$MAVEN_OPTS clean package -Dmaven.test.skip=true
