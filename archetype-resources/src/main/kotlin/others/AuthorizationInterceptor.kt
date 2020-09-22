@@ -48,6 +48,8 @@ class AuthorizationInterceptor : HandlerInterceptor {
         val service = request.getHeader(AppConstants.SERVICE)
         if (service != null && service.isNotBlank()) {
             request.setAttribute(AppConstants.SERVICE, service)
+        } else {
+            request.setAttribute(AppConstants.SERVICE, AppConstants.Service.DEFAULT)
         }
 
         // 允许匿名访问，直接通过
