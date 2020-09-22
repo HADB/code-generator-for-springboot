@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="${package_name}.mappers.UserRoleMapper">
+    <sql id="userRoleColumns">
+        `userRole`.`id` as `id`,
+        `userRole`.`user_id` as `userId`,
+        `userRole`.`role_id` as `roleId`,
+        `userRole`.`create_time` as `createTime`,
+        `userRole`.`update_time` as `updateTime`
+    </sql>
+
+    <sql id="userRoleTables">
+        `t_user_role` `userRole`
+    </sql>
+
+    <sql id="userRoleSearchWhere">
+        <if test="request.userId != null">
+            AND `userRole`.`user_id` = #{request.userId}
+        </if>
+        <if test="request.roleId != null">
+            AND `userRole`.`role_id` = #{request.roleId}
+        </if>
+        <if test="request.createTimeFrom != null">
+            AND `userRole`.`create_time` &gt;= #{request.createTimeFrom}
+        </if>
+        <if test="request.createTimeTo != null">
+            AND `userRole`.`create_time` &lt;= #{request.createTimeTo}
+        </if>
+        <if test="request.updateTimeFrom != null">
+            AND `userRole`.`update_time` &gt;= #{request.updateTimeFrom}
+        </if>
+        <if test="request.updateTimeTo != null">
+            AND `userRole`.`update_time` &lt;= #{request.updateTimeTo}
+        </if>
+        AND `userRole`.`is_delete` = 0
+    </sql>
+
+    <insert id="insertUserRole" useGeneratedKeys="true" keyProperty="userRole.id">
+        INSERT INTO `t_user_role`(
+        `user_id`,
+        `role_id`,
+        `create_time`,
+        `update_time`)
+        VALUES(
+        #{userRole.userId},
+        #{userRole.roleId},
+        NOW(),
+        NOW())
+    </insert>
+
+    <update id="updateUserRole">
+        UPDATE `t_user_role` SET
+        `user_id` = #{userRole.userId},
+        `role_id` = #{userRole.roleId},
+        `update_time` = NOW()
+        WHERE `id` = #{userRole.id}
+        AND `is_delete` = 0
+    </update>
+
+    <update id="updateUserRolePartly">
+        UPDATE `t_user_role` SET
+        <if test="request.userId != null">
+            `user_id` = #{request.userId},
+        </if>
+        <if test="request.roleId != null">
+            `role_id` = #{request.roleId},
+        </if>
+        `update_time` = NOW()
+        WHERE `id` = #{request.id}
+        AND `is_delete` = 0
+    </update>
+
+    <update id="deleteUserRole">
+        UPDATE `t_user_role`
+        SET `is_delete` = 1
+        <where>
+            AND `id` = #{id}
+            AND `is_delete` = 0
+        </where>
+    </update>
+
+    <select id="selectUserRoleById" resultType="${package_name}.models.UserRole">
+        SELECT
+        <include refid="userRoleColumns"/>
+        FROM
+        <include refid="userRoleTables"/>
+        <where>
+            AND `userRole`.`id` = #{id}
+            AND `userRole`.`is_delete` = 0
+        </where>
+        LIMIT 1
+    </select>
+
+    <select id="selectPagingUserRoles" resultType="${package_name}.models.UserRole">
+        SELECT
+        <include refid="userRoleColumns"/>
+        FROM
+        <include refid="userRoleTables"/>
+        <where>
+            <include refid="userRoleSearchWhere"/>
+        </where>
+        <choose>
+            <when test="request.sortBy != null and request.sortOrder != null">
+                ORDER BY `userRole`.`$${request.sortBy}` $${request.sortOrder}
+            </when>
+            <otherwise>
+                ORDER BY `userRole`.`id` DESC
+            </otherwise>
+        </choose>
+        LIMIT #{request.paging.offset}, #{request.paging.pageSize}
+    </select>
+
+    <select id="selectPagingUserRolesCount" resultType="Long">
+        SELECT COUNT(*)
+        FROM
+        <include refid="userRoleTables"/>
+        <where>
+            <include refid="userRoleSearchWhere"/>
+        </where>
+    </select>
+</mapper>

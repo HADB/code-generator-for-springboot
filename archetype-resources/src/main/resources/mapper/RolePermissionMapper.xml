@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="${package_name}.mappers.RolePermissionMapper">
+    <sql id="rolePermissionColumns">
+        `rolePermission`.`id` as `id`,
+        `rolePermission`.`role_id` as `roleId`,
+        `rolePermission`.`permission_id` as `permissionId`,
+        `rolePermission`.`create_time` as `createTime`,
+        `rolePermission`.`update_time` as `updateTime`
+    </sql>
+
+    <sql id="rolePermissionTables">
+        `t_role_permission` `rolePermission`
+    </sql>
+
+    <sql id="rolePermissionSearchWhere">
+        <if test="request.roleId != null">
+            AND `rolePermission`.`role_id` = #{request.roleId}
+        </if>
+        <if test="request.permissionId != null">
+            AND `rolePermission`.`permission_id` = #{request.permissionId}
+        </if>
+        <if test="request.createTimeFrom != null">
+            AND `rolePermission`.`create_time` &gt;= #{request.createTimeFrom}
+        </if>
+        <if test="request.createTimeTo != null">
+            AND `rolePermission`.`create_time` &lt;= #{request.createTimeTo}
+        </if>
+        <if test="request.updateTimeFrom != null">
+            AND `rolePermission`.`update_time` &gt;= #{request.updateTimeFrom}
+        </if>
+        <if test="request.updateTimeTo != null">
+            AND `rolePermission`.`update_time` &lt;= #{request.updateTimeTo}
+        </if>
+        AND `rolePermission`.`is_delete` = 0
+    </sql>
+
+    <insert id="insertRolePermission" useGeneratedKeys="true" keyProperty="rolePermission.id">
+        INSERT INTO `t_role_permission`(
+        `role_id`,
+        `permission_id`,
+        `create_time`,
+        `update_time`)
+        VALUES(
+        #{rolePermission.roleId},
+        #{rolePermission.permissionId},
+        NOW(),
+        NOW())
+    </insert>
+
+    <update id="updateRolePermission">
+        UPDATE `t_role_permission` SET
+        `role_id` = #{rolePermission.roleId},
+        `permission_id` = #{rolePermission.permissionId},
+        `update_time` = NOW()
+        WHERE `id` = #{rolePermission.id}
+        AND `is_delete` = 0
+    </update>
+
+    <update id="updateRolePermissionPartly">
+        UPDATE `t_role_permission` SET
+        <if test="request.roleId != null">
+            `role_id` = #{request.roleId},
+        </if>
+        <if test="request.permissionId != null">
+            `permission_id` = #{request.permissionId},
+        </if>
+        `update_time` = NOW()
+        WHERE `id` = #{request.id}
+        AND `is_delete` = 0
+    </update>
+
+    <update id="deleteRolePermission">
+        UPDATE `t_role_permission`
+        SET `is_delete` = 1
+        <where>
+            AND `id` = #{id}
+            AND `is_delete` = 0
+        </where>
+    </update>
+
+    <select id="selectRolePermissionById" resultType="${package_name}.models.RolePermission">
+        SELECT
+        <include refid="rolePermissionColumns"/>
+        FROM
+        <include refid="rolePermissionTables"/>
+        <where>
+            AND `rolePermission`.`id` = #{id}
+            AND `rolePermission`.`is_delete` = 0
+        </where>
+        LIMIT 1
+    </select>
+
+    <select id="selectPagingRolePermissions" resultType="${package_name}.models.RolePermission">
+        SELECT
+        <include refid="rolePermissionColumns"/>
+        FROM
+        <include refid="rolePermissionTables"/>
+        <where>
+            <include refid="rolePermissionSearchWhere"/>
+        </where>
+        <choose>
+            <when test="request.sortBy != null and request.sortOrder != null">
+                ORDER BY `rolePermission`.`$${request.sortBy}` $${request.sortOrder}
+            </when>
+            <otherwise>
+                ORDER BY `rolePermission`.`id` DESC
+            </otherwise>
+        </choose>
+        LIMIT #{request.paging.offset}, #{request.paging.pageSize}
+    </select>
+
+    <select id="selectPagingRolePermissionsCount" resultType="Long">
+        SELECT COUNT(*)
+        FROM
+        <include refid="rolePermissionTables"/>
+        <where>
+            <include refid="rolePermissionSearchWhere"/>
+        </where>
+    </select>
+</mapper>

@@ -86,6 +86,7 @@ def copy_archetype_resources():
                 if os.path.exists(file_path) and os.path.splitext(file_name)[-1] == '.sql':
                     print('跳过:' + file_path)
                     continue
+                print('准备复制:' + file_path)
                 content = file_read.read()
                 t = string.Template(content)
                 content = t.substitute(package_name=package_name, group_id=group_id, artifact_id=artifact_id, version=version, description=description, port=port, registry_instance=registry_instance, registry_namespace=registry_namespace, registry_username=registry_username, registry_password=registry_password, project_path=project_path)
@@ -459,7 +460,8 @@ def run_package():
                 content = file_read.read()
                 t = string.Template(content)
                 columns_data = []
-                bile_mobile_columns_data = []
+                add_user_with_password_columns_data = []
+                bind_mobile_columns_data = []
                 for column in columns:
                     property_name = column['name']
                     if column['name'] == 'create_time' or column['name'] == 'update_time' or column['name'] == 'created_time' or column['name'] == 'updated_time' or column['name'] == 'is_delete':
@@ -467,9 +469,14 @@ def run_package():
                     if column['name'].startswith('is_'):
                         property_name = column['name'][3:]
                     columns_data.append('                %s = request.%s' % (inflection.camelize(property_name, False), inflection.camelize(property_name, False)))
-                    if column['name'] != 'id' and column['name'] != 'mobile':
-                        bile_mobile_columns_data.append('            mobileUser.%s = currentUser.%s' % (inflection.camelize(property_name, False), inflection.camelize(property_name, False)))
-                content = t.substitute(package_name=package_name, columns_data=',\n'.join(columns_data), bile_mobile_columns_data='\n'.join(bile_mobile_columns_data))
+                    if column['name'] != 'id':
+                        if column['name'] != 'password' and column['name'] != 'salt' :
+                            add_user_with_password_columns_data.append('                %s = request.%s' % (inflection.camelize(property_name, False), inflection.camelize(property_name, False)))
+                        else:
+                            add_user_with_password_columns_data.append('                %s = %s' % (inflection.camelize(property_name, False), inflection.camelize(property_name, False)))
+                        if column['name'] != 'mobile':
+                            bind_mobile_columns_data.append('            mobileUser.%s = currentUser.%s' % (inflection.camelize(property_name, False), inflection.camelize(property_name, False)))
+                content = t.substitute(package_name=package_name, columns_data=',\n'.join(columns_data), add_user_with_password_columns_data=',\n'.join(add_user_with_password_columns_data), bind_mobile_columns_data='\n'.join(bind_mobile_columns_data))
             else:
                 file_read = open(os.path.join(TEMPLATE_PATH, 'Service.kt'), 'r', encoding='UTF-8')
                 content = file_read.read()

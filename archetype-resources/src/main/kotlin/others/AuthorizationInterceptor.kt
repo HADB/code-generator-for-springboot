@@ -1,13 +1,17 @@
 package ${package_name}.others
 
 import ${package_name}.annotations.AllowAnonymous
-import ${package_name}.annotations.Permission
+import ${package_name}.annotations.BuiltInRole
 import ${package_name}.constants.AppConstants
 import ${package_name}.helpers.ResponseHelper
 import ${package_name}.helpers.TokenHelper
 import ${package_name}.models.Response
+import ${package_name}.models.User
+import ${package_name}.services.PermissionService
+import ${package_name}.services.RoleService
 import ${package_name}.services.UserService
 import org.springframework.stereotype.Component
+import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.method.HandlerMethod
 import org.springframework.web.servlet.HandlerInterceptor
@@ -28,6 +32,12 @@ class AuthorizationInterceptor : HandlerInterceptor {
     @Resource
     lateinit var userService: UserService
 
+    @Resource
+    lateinit var roleService: RoleService
+
+    @Resource
+    lateinit var permissionService: PermissionService
+
     override fun preHandle(request: HttpServletRequest, response: HttpServletResponse, handler: Any): Boolean {
         if (handler !is HandlerMethod) {
             return true
@@ -36,7 +46,7 @@ class AuthorizationInterceptor : HandlerInterceptor {
         response.setHeader("Access-Control-Allow-Origin", request.getHeader("Origin"))
         response.setHeader("Vary", "Origin, Access-Control-Request-Method, Access-Control-Request-Headers")
 
-        val permission = handler.method.getAnnotation(Permission::class.java)
+        val builtInRole = handler.method.getAnnotation(BuiltInRole::class.java)
         val allowAnonymous = handler.method.getAnnotation(AllowAnonymous::class.java) != null
 
         if (request.method == RequestMethod.OPTIONS.name) {
@@ -45,12 +55,8 @@ class AuthorizationInterceptor : HandlerInterceptor {
         }
 
         // 设置终端类型
-        val service = request.getHeader(AppConstants.SERVICE)
-        if (service != null && service.isNotBlank()) {
-            request.setAttribute(AppConstants.SERVICE, service)
-        } else {
-            request.setAttribute(AppConstants.SERVICE, AppConstants.Service.DEFAULT)
-        }
+        val service = request.getHeader(AppConstants.SERVICE) ?: AppConstants.Service.DEFAULT
+        request.setAttribute(AppConstants.SERVICE, service)
 
         // 允许匿名访问，直接通过
         if (allowAnonymous) {
@@ -81,29 +87,46 @@ class AuthorizationInterceptor : HandlerInterceptor {
         // Token有效
         request.setAttribute(AppConstants.KEY, key)
 
-        // 需要验证权限
-        if (permission != null && permission.roles.isNotEmpty()) {
-            for (role in permission.roles) {
-                // 拥有其中一种权限则通过
-                if (hasPermission(service, key, role)) {
-                    return true
-                }
-            }
-
-            // 权限不足
-            responseHelper.setResponse(response, Response.Errors.permissionDenied())
+        // 获取 user
+        val user = userService.getUserByKey(service, key)
+        if (user == null) {
+            responseHelper.setResponse(response, Response.Errors.tokenInvalid())
             return false
         }
 
-        return true
+        // 验证代码内置权限
+        if (builtInRole != null && builtInRole.roles.isNotEmpty()) {
+            for (role in builtInRole.roles) {
+                // 拥有其中一种权限则通过
+                if (checkBuiltInRole(user, role)) {
+                    return true
+                }
+            }
+        }
+
+        // 验证 Rbac 权限
+        val controllerMappingPath = handler.bean.javaClass.getAnnotation(RequestMapping::class.java).value[0]
+        val methodMappingPath = handler.method.getAnnotation(RequestMapping::class.java).value[0]
+        if (checkRbacPermission(user, request.method, "$${controllerMappingPath}$${methodMappingPath}")) {
+            return true
+        }
+
+        // 权限不足
+        responseHelper.setResponse(response, Response.Errors.permissionDenied())
+        return false
     }
 
     override fun postHandle(request: HttpServletRequest, response: HttpServletResponse, handler: Any, modelAndView: ModelAndView?) = Unit
 
     override fun afterCompletion(request: HttpServletRequest, response: HttpServletResponse, handler: Any, ex: Exception?) = Unit
 
-    private fun hasPermission(service: String, key: String, role: String): Boolean {
-        val user = userService.getUserByKey(service, key)
-        return user?.role == role
+    private fun checkBuiltInRole(user: User, role: String): Boolean {
+        val userRoles = roleService.getRolesByUserId(user.id)
+        return userRoles.any { r -> r.key == role }
+    }
+
+    private fun checkRbacPermission(user: User, method: String, path: String): Boolean {
+        val userPermissions = permissionService.getPermissionsByUserId(user.id)
+        return userPermissions.any { p -> p.apiMethod == method && p.apiPath == path }
     }
 }

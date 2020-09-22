@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="${package_name}.mappers.PermissionMapper">
+    <sql id="permissionColumns">
+        `permission`.`id` as `id`,
+        `permission`.`key` as `key`,
+        `permission`.`name` as `name`,
+        `permission`.`description` as `description`,
+        `permission`.`api_path` as `apiPath`,
+        `permission`.`api_method` as `apiMethod`,
+        `permission`.`create_time` as `createTime`,
+        `permission`.`update_time` as `updateTime`
+    </sql>
+
+    <sql id="permissionTables">
+        `t_permission` `permission`
+    </sql>
+
+    <sql id="permissionSearchWhere">
+        <if test="request.key != null and request.key !=''">
+            AND `permission`.`key` = #{request.key}
+        </if>
+        <if test="request.name != null and request.name !=''">
+            AND `permission`.`name` = #{request.name}
+        </if>
+        <if test="request.description != null and request.description !=''">
+            AND `permission`.`description` = #{request.description}
+        </if>
+        <if test="request.apiPath != null and request.apiPath !=''">
+            AND `permission`.`api_path` = #{request.apiPath}
+        </if>
+        <if test="request.apiMethod != null and request.apiMethod !=''">
+            AND `permission`.`api_method` = #{request.apiMethod}
+        </if>
+        <if test="request.createTimeFrom != null">
+            AND `permission`.`create_time` &gt;= #{request.createTimeFrom}
+        </if>
+        <if test="request.createTimeTo != null">
+            AND `permission`.`create_time` &lt;= #{request.createTimeTo}
+        </if>
+        <if test="request.updateTimeFrom != null">
+            AND `permission`.`update_time` &gt;= #{request.updateTimeFrom}
+        </if>
+        <if test="request.updateTimeTo != null">
+            AND `permission`.`update_time` &lt;= #{request.updateTimeTo}
+        </if>
+        AND `permission`.`is_delete` = 0
+    </sql>
+
+    <insert id="insertPermission" useGeneratedKeys="true" keyProperty="permission.id">
+        INSERT INTO `t_permission`(
+        `key`,
+        `name`,
+        `description`,
+        `api_path`,
+        `api_method`,
+        `create_time`,
+        `update_time`)
+        VALUES(
+        #{permission.key},
+        #{permission.name},
+        #{permission.description},
+        #{permission.apiPath},
+        #{permission.apiMethod},
+        NOW(),
+        NOW())
+    </insert>
+
+    <update id="updatePermission">
+        UPDATE `t_permission` SET
+        `key` = #{permission.key},
+        `name` = #{permission.name},
+        `description` = #{permission.description},
+        `api_path` = #{permission.apiPath},
+        `api_method` = #{permission.apiMethod},
+        `update_time` = NOW()
+        WHERE `id` = #{permission.id}
+        AND `is_delete` = 0
+    </update>
+
+    <update id="updatePermissionPartly">
+        UPDATE `t_permission` SET
+        <if test="request.key != null and request.key !=''">
+            `key` = #{request.key},
+        </if>
+        <if test="request.name != null and request.name !=''">
+            `name` = #{request.name},
+        </if>
+        <if test="request.description != null and request.description !=''">
+            `description` = #{request.description},
+        </if>
+        <if test="request.apiPath != null and request.apiPath !=''">
+            `api_path` = #{request.apiPath},
+        </if>
+        <if test="request.apiMethod != null and request.apiMethod !=''">
+            `api_method` = #{request.apiMethod},
+        </if>
+        `update_time` = NOW()
+        WHERE `id` = #{request.id}
+        AND `is_delete` = 0
+    </update>
+
+    <update id="deletePermission">
+        UPDATE `t_permission`
+        SET `is_delete` = 1
+        <where>
+            AND `id` = #{id}
+            AND `is_delete` = 0
+        </where>
+    </update>
+
+    <select id="selectPermissionById" resultType="${package_name}.models.Permission">
+        SELECT
+        <include refid="permissionColumns"/>
+        FROM
+        <include refid="permissionTables"/>
+        <where>
+            AND `permission`.`id` = #{id}
+            AND `permission`.`is_delete` = 0
+        </where>
+        LIMIT 1
+    </select>
+
+    <select id="selectPagingPermissions" resultType="${package_name}.models.Permission">
+        SELECT
+        <include refid="permissionColumns"/>
+        FROM
+        <include refid="permissionTables"/>
+        <where>
+            <include refid="permissionSearchWhere"/>
+        </where>
+        <choose>
+            <when test="request.sortBy != null and request.sortOrder != null">
+                ORDER BY `permission`.`$${request.sortBy}` $${request.sortOrder}
+            </when>
+            <otherwise>
+                ORDER BY `permission`.`id` DESC
+            </otherwise>
+        </choose>
+        LIMIT #{request.paging.offset}, #{request.paging.pageSize}
+    </select>
+
+    <select id="selectPagingPermissionsCount" resultType="Long">
+        SELECT COUNT(*)
+        FROM
+        <include refid="permissionTables"/>
+        <where>
+            <include refid="permissionSearchWhere"/>
+        </where>
+    </select>
+
+    <select id="selectPermissionsByRoleId" resultType="${package_name}.models.Permission">
+        SELECT
+        <include refid="permissionColumns"/>
+        FROM
+        <include refid="permissionTables"/>
+        <where>
+            AND `permission`.`id` IN (SELECT `permission_id` FROM `t_role_permission` `role_permission` WHERE `role_permission`.`role_id` = #{roleId})
+            AND `permission`.`is_delete` = 0
+        </where>
+    </select>
+
+    <select id="selectPermissionsByUserId" resultType="${package_name}.models.Permission">
+        SELECT
+        <include refid="permissionColumns"/>
+        FROM
+        <include refid="permissionTables"/>
+        <where>
+            AND `permission`.`id` IN (SELECT `permission_id` FROM `t_role_permission` `role_permission` WHERE `role_permission`.`role_id` IN (SELECT `role_id` FROM `t_user_role` `user_role` WHERE `user_role`.`user_id` = #{userId}))
+            AND `permission`.`is_delete` = 0
+        </where>
+    </select>
+</mapper>

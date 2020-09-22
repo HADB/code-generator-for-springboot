@@ -7,7 +7,6 @@ CREATE TABLE `t_user` (
     `password`          VARCHAR(64)         DEFAULT NULL                COMMENT '密码',
     `salt`              VARCHAR (64)        DEFAULT NULL                COMMENT '盐',
     `avatar_url`        TEXT                DEFAULT NULL                COMMENT '微信头像url',
-    `role`              VARCHAR(64)         DEFAULT NULL                COMMENT '角色',
     `create_time`       DATETIME            DEFAULT CURRENT_TIMESTAMP   COMMENT '创建时间',
     `update_time`       DATETIME            DEFAULT CURRENT_TIMESTAMP   COMMENT '更新时间',
     `is_delete`         TINYINT(1)          NOT NULL DEFAULT '0'        COMMENT '是否删除',

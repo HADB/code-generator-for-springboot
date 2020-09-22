@@ -79,19 +79,17 @@ ${columns_data}
         return userMapper.selectPagingUsersCount(request)
     }
 
-    fun addUserWithPassword(request: UserEditRequest) {
+    fun addUserWithPassword(request: UserEditRequest): Long {
         val salt = passwordHelper.salt
         var password = passwordHelper.salt
         if (request.password != null && request.password.isNotEmpty()) {
             password = passwordHelper.generate(request.password, salt)
         }
         val user = User(
-                username = request.username,
-                password = password,
-                salt = salt,
-                role = request.role
+${add_user_with_password_columns_data}
         )
         userMapper.insertUser(user)
+        return user.id
     }
 
     fun editUserPassword(user: User, password: String) {
@@ -155,7 +153,7 @@ ${columns_data}
         val mobileUser = getUserByMobile(mobile)
         val currentUser = getUserByOpenId(openId)!!
         if (mobileUser != null) {
-${bile_mobile_columns_data}
+${bind_mobile_columns_data}
 
             if (currentUser.id != mobileUser.id) {
                 userMapper.deleteUser(currentUser.id)

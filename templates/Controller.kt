@@ -24,7 +24,7 @@ class ${model_upper_camelcase}Controller {
      * 新增
      */
     @ApiOperation(value = "新增「${model_description}」")
-    @PostMapping
+    @RequestMapping
     fun add(@RequestBody request: ${model_upper_camelcase}EditRequest): Response<Any> {
         val ${model_camelcase}Id = ${model_camelcase}Service.edit${model_upper_camelcase}(request)
         return Response.success(${model_camelcase}Id)
@@ -35,7 +35,7 @@ class ${model_upper_camelcase}Controller {
      */
     @ApiOperation(value = "修改「${model_description}」")
     @ApiImplicitParam(name = "id", value = "${model_upper_camelcase} ID", required = true, dataTypeClass = Long::class)
-    @PutMapping("/{id}")
+    @RequestMapping("/{id}", method = [RequestMethod.PUT])
     fun edit(@PathVariable("id") id: Long, @RequestBody request: ${model_upper_camelcase}EditRequest): Response<Any> {
         request.id = id
         val ${model_camelcase} = ${model_camelcase}Service.get${model_upper_camelcase}ById(id) ?: return Response.error("${model_upper_camelcase} 不存在")
@@ -48,7 +48,7 @@ class ${model_upper_camelcase}Controller {
      */
     @ApiOperation(value = "删除「${model_description}」")
     @ApiImplicitParam(name = "id", value = "${model_upper_camelcase} ID", required = true, dataTypeClass = Long::class)
-    @DeleteMapping("/{id}")
+    @RequestMapping("/{id}", method = [RequestMethod.DELETE])
     fun delete(@PathVariable("id") id: Long): Response<Any> {
         ${model_camelcase}Service.delete${model_upper_camelcase}(id)
         return Response.success()
@@ -59,7 +59,7 @@ class ${model_upper_camelcase}Controller {
      */
     @ApiOperation(value = "获取「${model_description}」详情")
     @ApiImplicitParam(name = "id", value = "${model_upper_camelcase} ID", required = true, dataTypeClass = Long::class)
-    @GetMapping("/{id}")
+    @RequestMapping("/{id}", method = [RequestMethod.GET])
     fun get(@PathVariable("id") id: Long): Response<${model_upper_camelcase}> {
         val ${model_camelcase} = ${model_camelcase}Service.get${model_upper_camelcase}ById(id)
         return Response.success(${model_camelcase})
@@ -69,7 +69,7 @@ class ${model_upper_camelcase}Controller {
      * 搜索
      */
     @ApiOperation(value = "搜索「${model_description}」")
-    @PostMapping("/search")
+    @RequestMapping("/search", method = [RequestMethod.POST])
     fun search(@RequestBody request: ${model_upper_camelcase}SearchRequest): Response<SearchResponse<${model_upper_camelcase}>> {
         val results = ${model_camelcase}Service.searchPaging${model_upper_camelcase}s(request)
         val count = ${model_camelcase}Service.searchPaging${model_upper_camelcase}sCount(request)

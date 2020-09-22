@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="${package_name}.mappers.RoleMapper">
+    <sql id="roleColumns">
+        `role`.`id` as `id`,
+        `role`.`key` as `key`,
+        `role`.`name` as `name`,
+        `role`.`description` as `description`,
+        `role`.`built_in` as `builtIn`,
+        `role`.`create_time` as `createTime`,
+        `role`.`update_time` as `updateTime`
+    </sql>
+
+    <sql id="roleTables">
+        `t_role` `role`
+    </sql>
+
+    <sql id="roleSearchWhere">
+        <if test="request.key != null and request.key !=''">
+            AND `role`.`key` = #{request.key}
+        </if>
+        <if test="request.name != null and request.name !=''">
+            AND `role`.`name` = #{request.name}
+        </if>
+        <if test="request.description != null and request.description !=''">
+            AND `role`.`description` = #{request.description}
+        </if>
+        <if test="request.builtIn != null">
+            AND `role`.`built_in` = #{request.builtIn}
+        </if>
+        <if test="request.createTimeFrom != null">
+            AND `role`.`create_time` &gt;= #{request.createTimeFrom}
+        </if>
+        <if test="request.createTimeTo != null">
+            AND `role`.`create_time` &lt;= #{request.createTimeTo}
+        </if>
+        <if test="request.updateTimeFrom != null">
+            AND `role`.`update_time` &gt;= #{request.updateTimeFrom}
+        </if>
+        <if test="request.updateTimeTo != null">
+            AND `role`.`update_time` &lt;= #{request.updateTimeTo}
+        </if>
+        AND `role`.`is_delete` = 0
+    </sql>
+
+    <insert id="insertRole" useGeneratedKeys="true" keyProperty="role.id">
+        INSERT INTO `t_role`(
+        `key`,
+        `name`,
+        `description`,
+        `built_in`,
+        `create_time`,
+        `update_time`)
+        VALUES(
+        #{role.key},
+        #{role.name},
+        #{role.description},
+        #{role.builtIn},
+        NOW(),
+        NOW())
+    </insert>
+
+    <update id="updateRole">
+        UPDATE `t_role` SET
+        `key` = #{role.key},
+        `name` = #{role.name},
+        `description` = #{role.description},
+        `built_in` = #{role.builtIn},
+        `update_time` = NOW()
+        WHERE `id` = #{role.id}
+        AND `is_delete` = 0
+    </update>
+
+    <update id="updateRolePartly">
+        UPDATE `t_role` SET
+        <if test="request.key != null and request.key !=''">
+            `key` = #{request.key},
+        </if>
+        <if test="request.name != null and request.name !=''">
+            `name` = #{request.name},
+        </if>
+        <if test="request.description != null and request.description !=''">
+            `description` = #{request.description},
+        </if>
+        <if test="request.builtIn != null">
+            `built_in` = #{request.builtIn},
+        </if>
+        `update_time` = NOW()
+        WHERE `id` = #{request.id}
+        AND `is_delete` = 0
+    </update>
+
+    <update id="deleteRole">
+        UPDATE `t_role`
+        SET `is_delete` = 1
+        <where>
+            AND `id` = #{id}
+            AND `is_delete` = 0
+        </where>
+    </update>
+
+    <select id="selectRoleById" resultType="${package_name}.models.Role">
+        SELECT
+        <include refid="roleColumns"/>
+        FROM
+        <include refid="roleTables"/>
+        <where>
+            AND `role`.`id` = #{id}
+            AND `role`.`is_delete` = 0
+        </where>
+        LIMIT 1
+    </select>
+
+    <select id="selectPagingRoles" resultType="${package_name}.models.Role">
+        SELECT
+        <include refid="roleColumns"/>
+        FROM
+        <include refid="roleTables"/>
+        <where>
+            <include refid="roleSearchWhere"/>
+        </where>
+        <choose>
+            <when test="request.sortBy != null and request.sortOrder != null">
+                ORDER BY `role`.`$${request.sortBy}` $${request.sortOrder}
+            </when>
+            <otherwise>
+                ORDER BY `role`.`id` DESC
+            </otherwise>
+        </choose>
+        LIMIT #{request.paging.offset}, #{request.paging.pageSize}
+    </select>
+
+    <select id="selectPagingRolesCount" resultType="Long">
+        SELECT COUNT(*)
+        FROM
+        <include refid="roleTables"/>
+        <where>
+            <include refid="roleSearchWhere"/>
+        </where>
+    </select>
+
+    <select id="selectRoleByKey" resultType="${package_name}.models.Role">
+        SELECT
+        <include refid="roleColumns"/>
+        FROM
+        <include refid="roleTables"/>
+        <where>
+            AND `role`.`key` = #{key}
+            AND `role`.`is_delete` = 0
+        </where>
+        LIMIT 1
+    </select>
+
+    <select id="selectRolesByUserId" resultType="${package_name}.models.Role">
+        SELECT
+        <include refid="roleColumns"/>
+        FROM
+        <include refid="roleTables"/>
+        <where>
+            AND `role`.`id` IN (SELECT `role_id` FROM `t_user_role` `user_role` WHERE `user_role`.`user_id` = #{userId})
+            AND `role`.`is_delete` = 0
+        </where>
+    </select>
+</mapper>

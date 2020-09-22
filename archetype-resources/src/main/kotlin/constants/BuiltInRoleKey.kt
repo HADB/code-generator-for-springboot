@@ -1,6 +1,6 @@
 package ${package_name}.constants
 
-class RoleKey {
+class BuiltInRoleKey {
     companion object {
         const val Admin = "admin"
     }

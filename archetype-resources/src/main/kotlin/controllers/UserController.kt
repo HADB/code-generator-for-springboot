@@ -29,9 +29,9 @@ class UserController {
      * 新增
      */
     @ApiOperation(value = "新增「用户」")
-    @PostMapping
+    @RequestMapping
     fun add(@RequestBody request: UserEditRequest): Response<Any> {
-        val userId = userService.editUser(request)
+        val userId = userService.addUserWithPassword(request)
         return Response.success(userId)
     }
 
@@ -40,7 +40,7 @@ class UserController {
      */
     @ApiOperation(value = "修改「用户」")
     @ApiImplicitParam(name = "id", value = "User ID", required = true, dataTypeClass = Long::class)
-    @PutMapping("/{id}")
+    @RequestMapping("/{id}", method = [RequestMethod.PUT])
     fun edit(@PathVariable("id") id: Long, @RequestBody request: UserEditRequest): Response<Any> {
         request.id = id
         val user = userService.getUserById(id) ?: return Response.error("User 不存在")
@@ -53,7 +53,7 @@ class UserController {
      */
     @ApiOperation(value = "删除「用户」")
     @ApiImplicitParam(name = "id", value = "User ID", required = true, dataTypeClass = Long::class)
-    @DeleteMapping("/{id}")
+    @RequestMapping("/{id}", method = [RequestMethod.DELETE])
     fun delete(@PathVariable("id") id: Long): Response<Any> {
         userService.deleteUser(id)
         return Response.success()
@@ -64,7 +64,7 @@ class UserController {
      */
     @ApiOperation(value = "获取「用户」详情")
     @ApiImplicitParam(name = "id", value = "User ID", required = true, dataTypeClass = Long::class)
-    @GetMapping("/{id}")
+    @RequestMapping("/{id}", method = [RequestMethod.GET])
     fun get(@PathVariable("id") id: Long): Response<User> {
         val user = userService.getUserById(id)
         return Response.success(user)
@@ -74,7 +74,7 @@ class UserController {
      * 搜索
      */
     @ApiOperation(value = "搜索「用户」")
-    @PostMapping("/search")
+    @RequestMapping("/search", method = [RequestMethod.POST])
     fun search(@RequestBody request: UserSearchRequest): Response<SearchResponse<User>> {
         val results = userService.searchPagingUsers(request)
         val count = userService.searchPagingUsersCount(request)
@@ -85,7 +85,7 @@ class UserController {
     /*
      * 检查登录状态
      */
-    @GetMapping("/status")
+    @RequestMapping("/status", method = [RequestMethod.GET])
     fun checkStatus(): Response<Any> {
         return Response.success()
     }
@@ -93,7 +93,8 @@ class UserController {
     /*
      * 密码登录
      */
-    @PostMapping("/password-sign-in")
+    @ApiOperation(value = "账号密码登录")
+    @RequestMapping("/password-sign-in", method = [RequestMethod.POST])
     @AllowAnonymous
     fun passwordSignIn(@RequestBody request: PasswordSignInRequest, @RequestAttribute service: String): Response<Any> {
         val user = userService.getUserByUsername(request.username) ?: return Response.Errors.accountNotExist()
@@ -109,7 +110,8 @@ class UserController {
     /*
      * 注销
      */
-    @PostMapping("/sign-out")
+    @ApiOperation(value = "注销")
+    @RequestMapping("/sign-out", method = [RequestMethod.POST])
     fun signOut(@RequestAttribute service: String, @CurrentUser user: User): Response<Any> {
         userService.signOut(service, user)
         return Response.success()
@@ -119,7 +121,7 @@ class UserController {
      * 微信登录
      */
     @ApiOperation(value = "小程序登录")
-    @PostMapping("/wxapp-sign-in")
+    @RequestMapping("/wxapp-sign-in", method = [RequestMethod.POST])
     @AllowAnonymous
     fun wxappSignIn(@RequestBody request: WxappSignInRequest, @RequestAttribute service: String): Response<SignInResponse> {
         val response = userService.wxappSignIn(service, request.code) ?: return Response.Errors.accountNotExist()
@@ -130,7 +132,7 @@ class UserController {
      * 微信注册
      */
     @ApiOperation(value = "小程序注册")
-    @PostMapping("/wxapp-register")
+    @RequestMapping("/wxapp-register", method = [RequestMethod.POST])
     fun wxappRegister(@RequestBody request: WechatEncryptedDataRequest, @RequestAttribute key: String): Response<Any> {
         if (request.encryptedData == null || request.iv == null) {
             return Response.Errors.wechatNotAuthorized()
@@ -147,7 +149,7 @@ class UserController {
      * 注销
      */
     @ApiOperation(value = "注销登录")
-    @PostMapping("/wxapp-sign-out")
+    @RequestMapping("/wxapp-sign-out", method = [RequestMethod.POST])
     fun wxappSignOut(@RequestAttribute service: String, @CurrentUser user: User): Response<Any> {
         userService.wxappSignOut(service, user)
         return Response.success()
@@ -157,7 +159,7 @@ class UserController {
      * 获取用户信息
      */
     @ApiOperation(value = "用户信息")
-    @GetMapping("/info")
+    @RequestMapping("/info", method = [RequestMethod.GET])
     fun info(@RequestAttribute service: String, @RequestAttribute key: String): Response<Any> {
         val userInfo = userService.getUserByKey(service, key)
         return Response.success(userInfo)
@@ -166,7 +168,7 @@ class UserController {
     /*
      * 绑定手机号
      */
-    @PostMapping("/bind-mobile")
+    @RequestMapping("/bind-mobile", method = [RequestMethod.POST])
     fun bindMobile(@RequestBody request: WechatEncryptedDataRequest, @RequestAttribute key: String): Response<Any> {
         val response = userService.bindMobile(request, key)
         return Response.success(response)
