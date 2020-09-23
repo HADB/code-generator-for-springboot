@@ -24,7 +24,7 @@ class UserRoleController {
      * 新增
      */
     @ApiOperation(value = "新增「用户-角色」")
-    @RequestMapping
+    @RequestMapping(method = [RequestMethod.POST])
     fun add(@RequestBody request: UserRoleEditRequest): Response<Any> {
         val userRoleId = userRoleService.editUserRole(request)
         return Response.success(userRoleId)

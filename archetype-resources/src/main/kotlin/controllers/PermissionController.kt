@@ -24,7 +24,7 @@ class PermissionController {
      * 新增
      */
     @ApiOperation(value = "新增「权限」")
-    @RequestMapping
+    @RequestMapping(method = [RequestMethod.POST])
     fun add(@RequestBody request: PermissionEditRequest): Response<Any> {
         val permissionId = permissionService.editPermission(request)
         return Response.success(permissionId)

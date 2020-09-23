@@ -29,7 +29,7 @@ class UserController {
      * 新增
      */
     @ApiOperation(value = "新增「用户」")
-    @RequestMapping
+    @RequestMapping(method = [RequestMethod.POST])
     fun add(@RequestBody request: UserEditRequest): Response<Any> {
         val userId = userService.addUserWithPassword(request)
         return Response.success(userId)
