@@ -30,7 +30,7 @@ registry_password = None
 def init_project():
     print('初始化项目，复制 .sql 文件')
     g = os.walk(ARCHETYPE_RESOURCE_PATH)
-    for path, dir_list, file_list in g:
+    for path, file_list in g:
         for file_name in file_list:
             if file_name == '.DS_Store':
                 continue

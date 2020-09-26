@@ -4,6 +4,7 @@ import io.swagger.annotations.Api
 import io.swagger.annotations.ApiImplicitParam
 import io.swagger.annotations.ApiOperation
 import ${package_name}.annotations.AllowAnonymous
+import ${package_name}.annotations.AllowSignedIn
 import ${package_name}.annotations.CurrentUser
 import ${package_name}.helpers.PasswordHelper
 import ${package_name}.models.Response
@@ -86,6 +87,7 @@ class UserController {
      * 检查登录状态
      */
     @RequestMapping("/status", method = [RequestMethod.GET])
+    @AllowSignedIn
     fun checkStatus(): Response<Any> {
         return Response.success()
     }
@@ -112,6 +114,7 @@ class UserController {
      */
     @ApiOperation(value = "注销")
     @RequestMapping("/sign-out", method = [RequestMethod.POST])
+    @AllowSignedIn
     fun signOut(@RequestAttribute service: String, @CurrentUser user: User): Response<Any> {
         userService.signOut(service, user)
         return Response.success()
@@ -150,6 +153,7 @@ class UserController {
      */
     @ApiOperation(value = "注销登录")
     @RequestMapping("/wxapp-sign-out", method = [RequestMethod.POST])
+    @AllowSignedIn
     fun wxappSignOut(@RequestAttribute service: String, @CurrentUser user: User): Response<Any> {
         userService.wxappSignOut(service, user)
         return Response.success()
@@ -160,6 +164,7 @@ class UserController {
      */
     @ApiOperation(value = "用户信息")
     @RequestMapping("/info", method = [RequestMethod.GET])
+    @AllowSignedIn
     fun info(@RequestAttribute service: String, @RequestAttribute key: String): Response<Any> {
         val userInfo = userService.getUserByKey(service, key)
         return Response.success(userInfo)
@@ -169,6 +174,7 @@ class UserController {
      * 绑定手机号
      */
     @RequestMapping("/bind-mobile", method = [RequestMethod.POST])
+    @AllowSignedIn
     fun bindMobile(@RequestBody request: WechatEncryptedDataRequest, @RequestAttribute key: String): Response<Any> {
         val response = userService.bindMobile(request, key)
         return Response.success(response)
