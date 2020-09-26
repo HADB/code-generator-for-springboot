@@ -44,8 +44,21 @@ class UserController {
     @RequestMapping("/{id}", method = [RequestMethod.PUT])
     fun edit(@PathVariable("id") id: Long, @RequestBody request: UserEditRequest): Response<Any> {
         request.id = id
-        val user = userService.getUserById(id) ?: return Response.error("User 不存在")
+        userService.getUserById(id) ?: return Response.error("User 不存在")
         userService.editUser(request)
+        return Response.success()
+    }
+
+    /*
+     * 修改
+     */
+    @ApiOperation(value = "部分修改「用户」")
+    @ApiImplicitParam(name = "id", value = "User ID", required = true, dataTypeClass = Long::class)
+    @RequestMapping("/{id}", method = [RequestMethod.PATCH])
+    fun editPartly(@PathVariable("id") id: Long, @RequestBody request: UserPartlyEditRequest): Response<Any> {
+        request.id = id
+        userService.getUserById(id) ?: return Response.error("User 不存在")
+        userService.editUserPartly(request)
         return Response.success()
     }
 

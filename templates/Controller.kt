@@ -8,6 +8,7 @@ import ${package_name}.models.${model_upper_camelcase}
 import ${package_name}.services.${model_upper_camelcase}Service
 import ${package_name}.viewmodels.common.SearchResponse
 import ${package_name}.viewmodels.${model_camelcase}.${model_upper_camelcase}EditRequest
+import ${package_name}.viewmodels.${model_camelcase}.${model_upper_camelcase}PartlyEditRequest
 import ${package_name}.viewmodels.${model_camelcase}.${model_upper_camelcase}SearchRequest
 import org.springframework.web.bind.annotation.*
 import javax.annotation.Resource
@@ -38,8 +39,21 @@ class ${model_upper_camelcase}Controller {
     @RequestMapping("/{id}", method = [RequestMethod.PUT])
     fun edit(@PathVariable("id") id: Long, @RequestBody request: ${model_upper_camelcase}EditRequest): Response<Any> {
         request.id = id
-        val ${model_camelcase} = ${model_camelcase}Service.get${model_upper_camelcase}ById(id) ?: return Response.error("${model_upper_camelcase} 不存在")
+        ${model_camelcase}Service.get${model_upper_camelcase}ById(id) ?: return Response.error("${model_upper_camelcase} 不存在")
         ${model_camelcase}Service.edit${model_upper_camelcase}(request)
+        return Response.success()
+    }
+
+    /*
+     * 部分修改
+     */
+    @ApiOperation(value = "部分修改「${model_description}」")
+    @ApiImplicitParam(name = "id", value = "${model_upper_camelcase} ID", required = true, dataTypeClass = Long::class)
+    @RequestMapping("/{id}", method = [RequestMethod.PATCH])
+    fun editPartly(@PathVariable("id") id: Long, @RequestBody request: ${model_upper_camelcase}PartlyEditRequest): Response<Any> {
+        request.id = id
+        ${model_camelcase}Service.get${model_upper_camelcase}ById(id) ?: return Response.error("${model_upper_camelcase} 不存在")
+        ${model_camelcase}Service.edit${model_upper_camelcase}Partly(request)
         return Response.success()
     }
 
