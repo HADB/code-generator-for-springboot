@@ -171,4 +171,16 @@
             AND `permission`.`is_delete` = 0
         </where>
     </select>
+
+    <select id="selectPermissionByKey" resultType="${package_name}.models.Permission">
+        SELECT
+        <include refid="permissionColumns"/>
+        FROM
+        <include refid="permissionTables"/>
+        <where>
+            AND `permission`.`key` = #{key}
+            AND `permission`.`is_delete` = 0
+        </where>
+        LIMIT 1
+    </select>
 </mapper>

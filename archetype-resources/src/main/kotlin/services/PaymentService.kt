@@ -81,9 +81,8 @@ class PaymentService {
         return payment.id
     }
 
-    fun editPaymentPartly(request: PaymentPartlyEditRequest): Long {
+    fun editPaymentPartly(request: PaymentPartlyEditRequest) {
         paymentMapper.updatePaymentPartly(request)
-        return request.id
     }
 
     fun deletePayment(id: Long) {

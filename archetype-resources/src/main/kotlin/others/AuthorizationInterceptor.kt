@@ -4,6 +4,7 @@ import ${package_name}.annotations.AllowAnonymous
 import ${package_name}.annotations.AllowSignedIn
 import ${package_name}.annotations.BuiltInRole
 import ${package_name}.constants.AppConstants
+import ${package_name}.constants.BuiltInRoleKey
 import ${package_name}.helpers.ResponseHelper
 import ${package_name}.helpers.TokenHelper
 import ${package_name}.models.Response
@@ -95,9 +96,15 @@ class AuthorizationInterceptor : HandlerInterceptor {
             responseHelper.setResponse(response, Response.Errors.tokenInvalid())
             return false
         }
+        val userRoles = roleService.getRolesByUserId(user.id)
 
         // 允许已登录用户访问，直接通过
         if (allowSignedIn) {
+            return true
+        }
+
+        // 系统管理员，直接通过
+        if (userRoles.any { r -> r.key == BuiltInRoleKey.Admin }) {
             return true
         }
 
@@ -105,7 +112,7 @@ class AuthorizationInterceptor : HandlerInterceptor {
         if (builtInRole != null && builtInRole.roles.isNotEmpty()) {
             for (role in builtInRole.roles) {
                 // 拥有其中一种权限则通过
-                if (checkBuiltInRole(user, role)) {
+                if (userRoles.any { r -> r.key == role }) {
                     return true
                 }
             }
@@ -126,11 +133,6 @@ class AuthorizationInterceptor : HandlerInterceptor {
     override fun postHandle(request: HttpServletRequest, response: HttpServletResponse, handler: Any, modelAndView: ModelAndView?) = Unit
 
     override fun afterCompletion(request: HttpServletRequest, response: HttpServletResponse, handler: Any, ex: Exception?) = Unit
-
-    private fun checkBuiltInRole(user: User, role: String): Boolean {
-        val userRoles = roleService.getRolesByUserId(user.id)
-        return userRoles.any { r -> r.key == role }
-    }
 
     private fun checkRbacPermission(user: User, method: String, path: String): Boolean {
         val userPermissions = permissionService.getPermissionsByUserId(user.id)

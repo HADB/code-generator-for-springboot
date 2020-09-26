@@ -18,4 +18,5 @@ interface PermissionMapper {
 
     fun selectPermissionsByRoleId(@Param("roleId") roleId: Long): List<Permission>
     fun selectPermissionsByUserId(@Param("userId") roleId: Long): List<Permission>
+    fun selectPermissionByKey(@Param("key") key: String): Permission?
 }

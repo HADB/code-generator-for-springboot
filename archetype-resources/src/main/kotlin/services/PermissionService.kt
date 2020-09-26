@@ -34,9 +34,8 @@ class PermissionService {
         return permission.id
     }
 
-    fun editPermissionPartly(request: PermissionPartlyEditRequest): Long {
+    fun editPermissionPartly(request: PermissionPartlyEditRequest) {
         permissionMapper.updatePermissionPartly(request)
-        return request.id
     }
 
     fun deletePermission(id: Long) {
@@ -61,5 +60,9 @@ class PermissionService {
 
     fun getPermissionsByUserId(userId: Long): List<Permission> {
         return permissionMapper.selectPermissionsByUserId(userId)
+    }
+
+    fun getPermissionByKey(key: String): Permission? {
+        return permissionMapper.selectPermissionByKey(key)
     }
 }

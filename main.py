@@ -371,13 +371,15 @@ def run_package():
             swagger_index = 0
             for column in columns:
                 define = 'var'
+                hidden = 'true'
                 if column['name'] == 'create_time' or column['name'] == 'update_time' or column['name'] == 'created_time' or column['name'] == 'updated_time' or column['name'] == 'is_delete':
                     continue
                 column_type, property_name = get_column_type_property_name(column)
+                column_type += '? = null'
                 if column['name'] != 'id':
                     define = 'val'
-                    column_type += '? = null'
-                line_text = '        @ApiModelProperty(position = %s, notes = "%s")\n' % (swagger_index, column['comment'])
+                    hidden = 'false'
+                line_text = '        @ApiModelProperty(position = %s, notes = "%s", required = false, hidden = %s)\n' % (swagger_index, column['comment'], hidden)
                 line_text += '        %s %s: %s' % (define, inflection.camelize(property_name, False), column_type)
                 lines.append(line_text)
                 swagger_index += 1

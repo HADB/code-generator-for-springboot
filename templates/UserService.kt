@@ -50,9 +50,8 @@ ${columns_data}
         return user.id
     }
 
-    fun editUserPartly(request: UserPartlyEditRequest): Long {
+    fun editUserPartly(request: UserPartlyEditRequest) {
         userMapper.updateUserPartly(request)
-        return request.id
     }
 
     fun deleteUser(id: Long) {

@@ -31,9 +31,8 @@ class RolePermissionService {
         return rolePermission.id
     }
 
-    fun editRolePermissionPartly(request: RolePermissionPartlyEditRequest): Long {
+    fun editRolePermissionPartly(request: RolePermissionPartlyEditRequest) {
         rolePermissionMapper.updateRolePermissionPartly(request)
-        return request.id
     }
 
     fun deleteRolePermission(id: Long) {

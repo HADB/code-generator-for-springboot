@@ -31,9 +31,8 @@ class UserRoleService {
         return userRole.id
     }
 
-    fun editUserRolePartly(request: UserRolePartlyEditRequest): Long {
+    fun editUserRolePartly(request: UserRolePartlyEditRequest) {
         userRoleMapper.updateUserRolePartly(request)
-        return request.id
     }
 
     fun deleteUserRole(id: Long) {
