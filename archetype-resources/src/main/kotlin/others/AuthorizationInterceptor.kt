@@ -1,6 +1,7 @@
 package ${package_name}.others
 
 import ${package_name}.annotations.AllowAnonymous
+import ${package_name}.annotations.AllowSignedIn
 import ${package_name}.annotations.BuiltInRole
 import ${package_name}.constants.AppConstants
 import ${package_name}.helpers.ResponseHelper
@@ -48,6 +49,7 @@ class AuthorizationInterceptor : HandlerInterceptor {
 
         val builtInRole = handler.method.getAnnotation(BuiltInRole::class.java)
         val allowAnonymous = handler.method.getAnnotation(AllowAnonymous::class.java) != null
+        val allowSignedIn = handler.method.getAnnotation(AllowSignedIn::class.java) != null
 
         if (request.method == RequestMethod.OPTIONS.name) {
             responseHelper.setResponse(response, Response.success())
@@ -92,6 +94,11 @@ class AuthorizationInterceptor : HandlerInterceptor {
         if (user == null) {
             responseHelper.setResponse(response, Response.Errors.tokenInvalid())
             return false
+        }
+
+        // 允许已登录用户访问，直接通过
+        if (allowSignedIn) {
+            return true
         }
 
         // 验证代码内置权限
