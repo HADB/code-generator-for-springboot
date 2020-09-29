@@ -472,12 +472,12 @@ def run_package():
                     if column['name'].startswith('is_'):
                         property_name = column['name'][3:]
                     columns_data.append('                %s = request.%s' % (inflection.camelize(property_name, False), inflection.camelize(property_name, False)))
-                    if column['name'] != 'id':
-                        if column['name'] != 'password' and column['name'] != 'salt' :
-                            add_user_with_password_columns_data.append('                %s = request.%s' % (inflection.camelize(property_name, False), inflection.camelize(property_name, False)))
-                        else:
-                            add_user_with_password_columns_data.append('                %s = %s' % (inflection.camelize(property_name, False), inflection.camelize(property_name, False)))
-                        if column['name'] != 'mobile':
+                    
+                    if column['name'] != 'password' and column['name'] != 'salt' :
+                        add_user_with_password_columns_data.append('                %s = request.%s' % (inflection.camelize(property_name, False), inflection.camelize(property_name, False)))
+                    else:
+                        add_user_with_password_columns_data.append('                %s = %s' % (inflection.camelize(property_name, False), inflection.camelize(property_name, False)))
+                    if column['name'] != 'mobile' and column['name'] != 'id':
                             bind_mobile_columns_data.append('            mobileUser.%s = currentUser.%s' % (inflection.camelize(property_name, False), inflection.camelize(property_name, False)))
                 content = t.substitute(package_name=package_name, columns_data=',\n'.join(columns_data), add_user_with_password_columns_data=',\n'.join(add_user_with_password_columns_data), bind_mobile_columns_data='\n'.join(bind_mobile_columns_data))
             else:

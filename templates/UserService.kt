@@ -35,8 +35,13 @@ class UserService {
     private lateinit var wxConfiguration: WxConfiguration
 
     fun editUser(request: UserEditRequest): Long {
+        val salt = passwordHelper.salt
+        var password = passwordHelper.salt
+        if (request.password != null && request.password.isNotEmpty()) {
+            password = passwordHelper.generate(request.password, salt)
+        }
         val user = User(
-${columns_data}
+${add_user_with_password_columns_data}
         )
         return editUser(user)
     }
@@ -51,6 +56,12 @@ ${columns_data}
     }
 
     fun editUserPartly(request: UserPartlyEditRequest) {
+        if (!request.password.isNullOrEmpty()) {
+            request.salt = passwordHelper.salt
+            request.password = passwordHelper.generate(request.password!!, request.salt!!)
+        } else {
+            request.salt = null
+        }
         userMapper.updateUserPartly(request)
     }
 
@@ -76,27 +87,6 @@ ${columns_data}
 
     fun searchPagingUsersCount(request: UserSearchRequest): Long {
         return userMapper.selectPagingUsersCount(request)
-    }
-
-    fun addUserWithPassword(request: UserEditRequest): Long {
-        val salt = passwordHelper.salt
-        var password = passwordHelper.salt
-        if (request.password != null && request.password.isNotEmpty()) {
-            password = passwordHelper.generate(request.password, salt)
-        }
-        val user = User(
-${add_user_with_password_columns_data}
-        )
-        userMapper.insertUser(user)
-        return user.id
-    }
-
-    fun editUserPassword(user: User, password: String) {
-        val salt = passwordHelper.salt
-        val encryptedPassword = passwordHelper.generate(password, salt)
-        user.password = encryptedPassword
-        user.salt = salt
-        userMapper.updateUserPassword(user)
     }
 
     fun getUserByOpenId(openId: String): User? {

@@ -37,7 +37,7 @@ class DbInitializationRunner : CommandLineRunner {
                 }
 
         userService.getUserByUsername("Admin")?.id
-                ?: userService.addUserWithPassword(UserEditRequest(
+                ?: userService.editUser(UserEditRequest(
                         username = "Admin",
                         password = "Qcga1WKe3idhi2r1"
                 )).also {

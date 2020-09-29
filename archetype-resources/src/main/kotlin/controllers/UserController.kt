@@ -32,7 +32,7 @@ class UserController {
     @ApiOperation(value = "新增「用户」")
     @RequestMapping(method = [RequestMethod.POST])
     fun add(@RequestBody request: UserEditRequest): Response<Any> {
-        val userId = userService.addUserWithPassword(request)
+        val userId = userService.editUser(request)
         return Response.success(userId)
     }
 
