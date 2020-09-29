@@ -7,6 +7,7 @@
         `permission`.`key` as `key`,
         `permission`.`name` as `name`,
         `permission`.`description` as `description`,
+        `permission`.`type` as `type`,
         `permission`.`api_path` as `apiPath`,
         `permission`.`api_method` as `apiMethod`,
         `permission`.`create_time` as `createTime`,
@@ -26,6 +27,9 @@
         </if>
         <if test="request.description != null and request.description !=''">
             AND `permission`.`description` = #{request.description}
+        </if>
+        <if test="request.type != null">
+            AND `permission`.`type` = #{request.type}
         </if>
         <if test="request.apiPath != null and request.apiPath !=''">
             AND `permission`.`api_path` = #{request.apiPath}
@@ -53,6 +57,7 @@
         `key`,
         `name`,
         `description`,
+        `type`,
         `api_path`,
         `api_method`,
         `create_time`,
@@ -61,6 +66,7 @@
         #{permission.key},
         #{permission.name},
         #{permission.description},
+        #{permission.type},
         #{permission.apiPath},
         #{permission.apiMethod},
         NOW(),
@@ -72,6 +78,7 @@
         `key` = #{permission.key},
         `name` = #{permission.name},
         `description` = #{permission.description},
+        `type` = #{permission.type},
         `api_path` = #{permission.apiPath},
         `api_method` = #{permission.apiMethod},
         `update_time` = NOW()
@@ -89,6 +96,9 @@
         </if>
         <if test="request.description != null and request.description !=''">
             `description` = #{request.description},
+        </if>
+        <if test="request.type != null">
+            `type` = #{request.type},
         </if>
         <if test="request.apiPath != null and request.apiPath !=''">
             `api_path` = #{request.apiPath},

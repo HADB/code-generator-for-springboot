@@ -19,6 +19,7 @@ class PermissionService {
                 key = request.key,
                 name = request.name,
                 description = request.description,
+                type = request.type,
                 apiPath = request.apiPath,
                 apiMethod = request.apiMethod
         )
