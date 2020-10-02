@@ -108,20 +108,20 @@ class AuthorizationInterceptor : HandlerInterceptor {
             return true
         }
 
-        // 验证代码内置权限
+        // 验证代码内置角色
         if (builtInRole != null && builtInRole.roles.isNotEmpty()) {
             for (role in builtInRole.roles) {
-                // 拥有其中一种权限则通过
+                // 拥有其中一种角色则通过
                 if (userRoles.any { r -> r.key == role }) {
                     return true
                 }
             }
         }
 
-        // 验证 Rbac 权限
+        // 验证 API 权限
         val controllerMappingPath = handler.bean.javaClass.getAnnotation(RequestMapping::class.java).value[0]
         val methodMappingPath = handler.method.getAnnotation(RequestMapping::class.java).value[0]
-        if (checkRbacPermission(user, request.method, "$${controllerMappingPath}$${methodMappingPath}")) {
+        if (checkApiPermission(user, request.method, "$${controllerMappingPath}$${methodMappingPath}")) {
             return true
         }
 
@@ -134,7 +134,7 @@ class AuthorizationInterceptor : HandlerInterceptor {
 
     override fun afterCompletion(request: HttpServletRequest, response: HttpServletResponse, handler: Any, ex: Exception?) = Unit
 
-    private fun checkRbacPermission(user: User, method: String, path: String): Boolean {
+    private fun checkApiPermission(user: User, method: String, path: String): Boolean {
         val userPermissions = permissionService.getPermissionsByUserId(user.id)
         return userPermissions.any { p -> p.apiMethod == method && p.apiPath == path }
     }
