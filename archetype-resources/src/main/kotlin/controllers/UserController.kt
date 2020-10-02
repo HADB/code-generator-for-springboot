@@ -99,6 +99,7 @@ class UserController {
     /*
      * 检查登录状态
      */
+    @ApiOperation(value = "检查「用户」登录状态")
     @RequestMapping("/status", method = [RequestMethod.GET])
     @AllowSignedIn
     fun checkStatus(): Response<Any> {
@@ -186,6 +187,7 @@ class UserController {
     /*
      * 绑定手机号
      */
+    @ApiOperation(value = "绑定「用户」手机号")
     @RequestMapping("/bind-mobile", method = [RequestMethod.POST])
     @AllowSignedIn
     fun bindMobile(@RequestBody request: WechatEncryptedDataRequest, @RequestAttribute key: String): Response<Any> {
