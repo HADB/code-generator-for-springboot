@@ -30,7 +30,7 @@ registry_password = None
 def init_project():
     print('初始化项目，复制 .sql 文件')
     g = os.walk(ARCHETYPE_RESOURCE_PATH)
-    for path, file_list in g:
+    for path, _, file_list in g:
         for file_name in file_list:
             if file_name == '.DS_Store':
                 continue
@@ -70,7 +70,7 @@ def get_column_type_property_name(column):
 def copy_archetype_resources():
     print('复制骨架资源文件')
     g = os.walk(ARCHETYPE_RESOURCE_PATH)
-    for path, dir_list, file_list in g:
+    for path, _, file_list in g:
         for file_name in file_list:
             if file_name == '.DS_Store':
                 continue
