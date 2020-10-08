@@ -25,7 +25,7 @@ registry_instance = None
 registry_namespace = None
 registry_username = None
 registry_password = None
-
+controller_names = []
 
 def init_project():
     print('初始化项目，复制 .sql 文件')
@@ -70,6 +70,7 @@ def get_column_type_property_name(column):
 def copy_archetype_resources():
     print('复制骨架资源文件')
     g = os.walk(ARCHETYPE_RESOURCE_PATH)
+    controller_names_text = ', '.join(controller_names)
     for path, _, file_list in g:
         for file_name in file_list:
             if file_name == '.DS_Store':
@@ -89,7 +90,7 @@ def copy_archetype_resources():
                 print('准备复制:' + file_path)
                 content = file_read.read()
                 t = string.Template(content)
-                content = t.substitute(package_name=package_name, group_id=group_id, artifact_id=artifact_id, version=version, description=description, port=port, registry_instance=registry_instance, registry_namespace=registry_namespace, registry_username=registry_username, registry_password=registry_password, project_path=project_path)
+                content = t.substitute(package_name=package_name, group_id=group_id, artifact_id=artifact_id, version=version, description=description, port=port, registry_instance=registry_instance, registry_namespace=registry_namespace, registry_username=registry_username, registry_password=registry_password, project_path=project_path, controller_names_text=controller_names_text)
                 with open(file_path, 'w', encoding='utf-8') as file_write:
                     file_write.write(content)
                     print('已复制:' + file_path)
@@ -121,6 +122,7 @@ def run_package():
             for line in file_read:
                 if line.find('CREATE TABLE ') >= 0:
                     table_name = line.strip().split()[2].strip('`')[2:]  # 读取表名
+                    controller_names.append('"%s"' % inflection.camelize(table_name))
                     continue
                 if line.find(' KEY ') >= 0:
                     continue  # 跳过索引

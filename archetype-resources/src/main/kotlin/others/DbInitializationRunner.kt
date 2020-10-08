@@ -56,9 +56,9 @@ class DbInitializationRunner : CommandLineRunner {
                     logger.info("已创建初始管理员用户")
                 }
 
-        val controllerNames = listOf("Alert", "Device", "Permission", "Project", "Report", "Role", "RolePermission", "Sensor", "SensorRecord", "System", "User")
+        val controllerNames = listOf(${controller_names_text})
         for (controllerName in controllerNames) {
-            val controller = Class.forName("net.yuanfen.op.esmonitor.controllers.$${controllerName}Controller")
+            val controller = Class.forName("${package_name}.controllers.$${controllerName}Controller")
             val controllerMappingPaths = controller.getAnnotation(RequestMapping::class.java).value
             for (controllerMappingPath in controllerMappingPaths) {
                 val methods = controller.declaredMethods
