@@ -24,9 +24,6 @@ class PaymentController {
     @Resource
     private lateinit var paymentService: PaymentService
 
-    /*
-     * 删除
-     */
     @ApiOperation(value = "删除「支付」")
     @ApiImplicitParam(name = "id", value = "Payment ID", required = true, dataTypeClass = Long::class)
     @RequestMapping("/{id}", method = [RequestMethod.DELETE])
@@ -36,9 +33,6 @@ class PaymentController {
         return Response.success()
     }
 
-    /*
-     * 获取详情
-     */
     @ApiOperation(value = "获取「支付」详情")
     @ApiImplicitParam(name = "id", value = "Payment ID", required = true, dataTypeClass = Long::class)
     @RequestMapping("/{id}", method = [RequestMethod.GET])
@@ -47,9 +41,6 @@ class PaymentController {
         return Response.success(payment)
     }
 
-    /*
-     * 搜索
-     */
     @ApiOperation(value = "搜索「支付」")
     @RequestMapping("/search", method = [RequestMethod.POST])
     fun search(@RequestBody request: PaymentSearchRequest): Response<SearchResponse<Payment>> {
@@ -59,27 +50,20 @@ class PaymentController {
         return Response.success(response)
     }
 
-    /*
-     * 预下单
-     */
     @ApiOperation(value = "预下单")
     @RequestMapping("/{id}/prepay", method = [RequestMethod.POST])
     fun prepay(@PathVariable("id") id: Long, servletRequest: HttpServletRequest): Response<WxPrepayResponse> {
         return paymentService.prepay(id, servletRequest)
     }
 
-    /*
-     * 微信支付回调通知
-     */
+    @ApiOperation(value = "微信退款回调通知", hidden = true)
     @RequestMapping("/notify/wxpay/order", method = [RequestMethod.POST])
     @AllowAnonymous
     fun wxpayOrderNotify(@RequestBody xmlData: String): String {
         return paymentService.handleWxpayOrderNotify(xmlData)
     }
 
-    /*
-     * 微信退款回调通知
-     */
+    @ApiOperation(value = "微信退款回调通知", hidden = true)
     @RequestMapping("/notify/wxpay/refund", method = [RequestMethod.POST])
     @AllowAnonymous
     fun wxpayRefundNotify(@RequestBody xmlData: String): String {

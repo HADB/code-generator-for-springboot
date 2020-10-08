@@ -21,9 +21,6 @@ class ${model_upper_camelcase}Controller {
     @Resource
     private lateinit var ${model_camelcase}Service: ${model_upper_camelcase}Service
 
-    /*
-     * 新增
-     */
     @ApiOperation(value = "新增「${model_description}」")
     @RequestMapping("", method = [RequestMethod.POST])
     fun add(@RequestBody request: ${model_upper_camelcase}EditRequest): Response<Any> {
@@ -31,9 +28,6 @@ class ${model_upper_camelcase}Controller {
         return Response.success(${model_camelcase}Id)
     }
 
-    /*
-     * 修改
-     */
     @ApiOperation(value = "修改「${model_description}」")
     @ApiImplicitParam(name = "id", value = "${model_upper_camelcase} ID", required = true, dataTypeClass = Long::class)
     @RequestMapping("/{id}", method = [RequestMethod.PUT])
@@ -44,9 +38,6 @@ class ${model_upper_camelcase}Controller {
         return Response.success()
     }
 
-    /*
-     * 部分修改
-     */
     @ApiOperation(value = "部分修改「${model_description}」")
     @ApiImplicitParam(name = "id", value = "${model_upper_camelcase} ID", required = true, dataTypeClass = Long::class)
     @RequestMapping("/{id}", method = [RequestMethod.PATCH])
@@ -57,9 +48,6 @@ class ${model_upper_camelcase}Controller {
         return Response.success()
     }
 
-    /*
-     * 删除
-     */
     @ApiOperation(value = "删除「${model_description}」")
     @ApiImplicitParam(name = "id", value = "${model_upper_camelcase} ID", required = true, dataTypeClass = Long::class)
     @RequestMapping("/{id}", method = [RequestMethod.DELETE])
@@ -68,9 +56,6 @@ class ${model_upper_camelcase}Controller {
         return Response.success()
     }
 
-    /*
-     * 获取详情
-     */
     @ApiOperation(value = "获取「${model_description}」详情")
     @ApiImplicitParam(name = "id", value = "${model_upper_camelcase} ID", required = true, dataTypeClass = Long::class)
     @RequestMapping("/{id}", method = [RequestMethod.GET])
@@ -79,9 +64,6 @@ class ${model_upper_camelcase}Controller {
         return Response.success(${model_camelcase})
     }
 
-    /*
-     * 搜索
-     */
     @ApiOperation(value = "搜索「${model_description}」")
     @RequestMapping("/search", method = [RequestMethod.POST])
     fun search(@RequestBody request: ${model_upper_camelcase}SearchRequest): Response<SearchResponse<${model_upper_camelcase}>> {

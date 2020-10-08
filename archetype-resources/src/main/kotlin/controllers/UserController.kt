@@ -26,9 +26,6 @@ class UserController {
     @Resource
     private lateinit var passwordHelper: PasswordHelper
 
-    /*
-     * 新增
-     */
     @ApiOperation(value = "新增「用户」")
     @RequestMapping("", method = [RequestMethod.POST])
     fun add(@RequestBody request: UserEditRequest): Response<Any> {
@@ -36,9 +33,6 @@ class UserController {
         return Response.success(userId)
     }
 
-    /*
-     * 修改
-     */
     @ApiOperation(value = "修改「用户」")
     @ApiImplicitParam(name = "id", value = "User ID", required = true, dataTypeClass = Long::class)
     @RequestMapping("/{id}", method = [RequestMethod.PUT])
@@ -49,9 +43,6 @@ class UserController {
         return Response.success()
     }
 
-    /*
-     * 修改
-     */
     @ApiOperation(value = "部分修改「用户」")
     @ApiImplicitParam(name = "id", value = "User ID", required = true, dataTypeClass = Long::class)
     @RequestMapping("/{id}", method = [RequestMethod.PATCH])
@@ -62,9 +53,6 @@ class UserController {
         return Response.success()
     }
 
-    /*
-     * 删除
-     */
     @ApiOperation(value = "删除「用户」")
     @ApiImplicitParam(name = "id", value = "User ID", required = true, dataTypeClass = Long::class)
     @RequestMapping("/{id}", method = [RequestMethod.DELETE])
@@ -73,9 +61,6 @@ class UserController {
         return Response.success()
     }
 
-    /*
-     * 获取详情
-     */
     @ApiOperation(value = "获取「用户」详情")
     @ApiImplicitParam(name = "id", value = "User ID", required = true, dataTypeClass = Long::class)
     @RequestMapping("/{id}", method = [RequestMethod.GET])
@@ -84,9 +69,6 @@ class UserController {
         return Response.success(user)
     }
 
-    /*
-     * 搜索
-     */
     @ApiOperation(value = "搜索「用户」")
     @RequestMapping("/search", method = [RequestMethod.POST])
     fun search(@RequestBody request: UserSearchRequest): Response<SearchResponse<User>> {
@@ -96,9 +78,6 @@ class UserController {
         return Response.success(response)
     }
 
-    /*
-     * 检查登录状态
-     */
     @ApiOperation(value = "检查「用户」登录状态")
     @RequestMapping("/status", method = [RequestMethod.GET])
     @AllowSignedIn
@@ -106,9 +85,6 @@ class UserController {
         return Response.success()
     }
 
-    /*
-     * 密码登录
-     */
     @ApiOperation(value = "账号密码登录")
     @RequestMapping("/password-sign-in", method = [RequestMethod.POST])
     @AllowAnonymous
@@ -123,9 +99,6 @@ class UserController {
         return Response.success(response)
     }
 
-    /*
-     * 注销
-     */
     @ApiOperation(value = "注销")
     @RequestMapping("/sign-out", method = [RequestMethod.POST])
     @AllowSignedIn
@@ -134,9 +107,6 @@ class UserController {
         return Response.success()
     }
 
-    /*
-     * 微信登录
-     */
     @ApiOperation(value = "小程序登录")
     @RequestMapping("/wxapp-sign-in", method = [RequestMethod.POST])
     @AllowAnonymous
@@ -145,9 +115,6 @@ class UserController {
         return Response.success(response)
     }
 
-    /*
-     * 微信注册
-     */
     @ApiOperation(value = "小程序注册")
     @RequestMapping("/wxapp-register", method = [RequestMethod.POST])
     fun wxappRegister(@RequestBody request: WechatEncryptedDataRequest, @RequestAttribute key: String): Response<Any> {
@@ -162,9 +129,6 @@ class UserController {
         return Response.success()
     }
 
-    /*
-     * 注销
-     */
     @ApiOperation(value = "注销登录")
     @RequestMapping("/wxapp-sign-out", method = [RequestMethod.POST])
     @AllowSignedIn
@@ -173,9 +137,6 @@ class UserController {
         return Response.success()
     }
 
-    /*
-     * 获取用户信息
-     */
     @ApiOperation(value = "用户信息")
     @RequestMapping("/info", method = [RequestMethod.GET])
     @AllowSignedIn
@@ -184,9 +145,6 @@ class UserController {
         return Response.success(userInfo)
     }
 
-    /*
-     * 绑定手机号
-     */
     @ApiOperation(value = "绑定「用户」手机号")
     @RequestMapping("/bind-mobile", method = [RequestMethod.POST])
     @AllowSignedIn
