@@ -2,6 +2,7 @@ package ${package_name}.others
 
 import ${package_name}.annotations.AllowAnonymous
 import ${package_name}.annotations.AllowSignedIn
+import ${package_name}.annotations.AllowUserNotExist
 import ${package_name}.annotations.BuiltInRole
 import ${package_name}.constants.AppConstants
 import ${package_name}.constants.BuiltInRoleKey
@@ -51,6 +52,7 @@ class AuthorizationInterceptor : HandlerInterceptor {
         val builtInRole = handler.method.getAnnotation(BuiltInRole::class.java)
         val allowAnonymous = handler.method.getAnnotation(AllowAnonymous::class.java) != null
         val allowSignedIn = handler.method.getAnnotation(AllowSignedIn::class.java) != null
+        val allowUserNotExist = handler.method.getAnnotation(AllowUserNotExist::class.java) != null
 
         if (request.method == RequestMethod.OPTIONS.name) {
             responseHelper.setResponse(response, Response.success())
@@ -89,6 +91,10 @@ class AuthorizationInterceptor : HandlerInterceptor {
 
         // Token有效
         request.setAttribute(AppConstants.KEY, key)
+
+        if (allowUserNotExist) {
+            return true
+        }
 
         // 获取 user
         val user = userService.getUserByKey(service, key)

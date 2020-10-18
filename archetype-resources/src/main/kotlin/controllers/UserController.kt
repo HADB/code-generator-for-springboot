@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiImplicitParam
 import io.swagger.annotations.ApiOperation
 import ${package_name}.annotations.AllowAnonymous
 import ${package_name}.annotations.AllowSignedIn
+import ${package_name}.annotations.AllowUserNotExist
 import ${package_name}.annotations.CurrentUser
 import ${package_name}.helpers.PasswordHelper
 import ${package_name}.models.Response
@@ -117,6 +118,7 @@ class UserController {
 
     @ApiOperation(value = "小程序注册")
     @RequestMapping("/wxapp-register", method = [RequestMethod.POST])
+    @AllowUserNotExist
     fun wxappRegister(@RequestBody request: WechatEncryptedDataRequest, @RequestAttribute key: String): Response<Any> {
         if (request.encryptedData == null || request.iv == null) {
             return Response.Errors.wechatNotAuthorized()
