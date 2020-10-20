@@ -112,7 +112,7 @@ class UserController {
     @RequestMapping("/wxapp-sign-in", method = [RequestMethod.POST])
     @AllowAnonymous
     fun wxappSignIn(@RequestBody request: WxappSignInRequest, @RequestAttribute service: String): Response<SignInResponse> {
-        val response = userService.wxappSignIn(service, request.code) ?: return Response.Errors.accountNotExist()
+        val response = userService.wxappSignIn(service, request.code)
         return Response.success(response)
     }
 
