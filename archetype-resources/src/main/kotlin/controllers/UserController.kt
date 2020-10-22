@@ -54,6 +54,16 @@ class UserController {
         return Response.success()
     }
 
+    @ApiOperation(value = "部分修改「用户」")
+    @ApiImplicitParam(name = "id", value = "User ID", required = true, dataTypeClass = Long::class)
+    @RequestMapping("/{id}/patch", method = [RequestMethod.PUT])
+    fun editPartlyCompatible(@PathVariable("id") id: Long, @RequestBody request: UserPartlyEditRequest): Response<Any> {
+        request.id = id
+        userService.getUserById(id) ?: return Response.error("User 不存在")
+        userService.editUserPartly(request)
+        return Response.success()
+    }
+
     @ApiOperation(value = "删除「用户」")
     @ApiImplicitParam(name = "id", value = "User ID", required = true, dataTypeClass = Long::class)
     @RequestMapping("/{id}", method = [RequestMethod.DELETE])

@@ -48,6 +48,16 @@ class ${model_upper_camelcase}Controller {
         return Response.success()
     }
 
+    @ApiOperation(value = "部分修改「${model_description}」")
+    @ApiImplicitParam(name = "id", value = "${model_upper_camelcase} ID", required = true, dataTypeClass = Long::class)
+    @RequestMapping("/{id}/patch", method = [RequestMethod.PUT])
+    fun editPartlyCompatible(@PathVariable("id") id: Long, @RequestBody request: ${model_upper_camelcase}PartlyEditRequest): Response<Any> {
+        request.id = id
+        ${model_camelcase}Service.get${model_upper_camelcase}ById(id) ?: return Response.error("${model_upper_camelcase} 不存在")
+        ${model_camelcase}Service.edit${model_upper_camelcase}Partly(request)
+        return Response.success()
+    }
+
     @ApiOperation(value = "删除「${model_description}」")
     @ApiImplicitParam(name = "id", value = "${model_upper_camelcase} ID", required = true, dataTypeClass = Long::class)
     @RequestMapping("/{id}", method = [RequestMethod.DELETE])
