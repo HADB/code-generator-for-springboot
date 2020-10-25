@@ -376,11 +376,14 @@ def run_package():
                 hidden = 'true'
                 if column['name'] == 'create_time' or column['name'] == 'update_time' or column['name'] == 'created_time' or column['name'] == 'updated_time' or column['name'] == 'is_delete':
                     continue
-                column_type, property_name = get_column_type_property_name(column)
-                column_type += '? = null'
+                column_type, property_name = get_column_type_property_name(column)     
                 if column['name'] != 'id':
                     define = 'val'
                     hidden = 'false'
+                    column_type += '? = null'
+                # 特殊处理 for UserPartlyEditRequest.kt
+                if table_name == 'user' and (column['name'] == 'password' or column['name'] == 'salt'):
+                    define = 'var'
                 line_text = '        @ApiModelProperty(position = %s, notes = "%s", required = false, hidden = %s)\n' % (swagger_index, column['comment'], hidden)
                 line_text += '        %s %s: %s' % (define, inflection.camelize(property_name, False), column_type)
                 lines.append(line_text)

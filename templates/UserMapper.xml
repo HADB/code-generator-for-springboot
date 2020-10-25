@@ -134,7 +134,7 @@ ${update_partly_list}
         </where>
         <choose>
             <when test="request.sortBy != null and request.sortOrder != null">
-                ORDER BY `user`.`$${request.sortBy}` $${request.sortOrder}
+                ORDER BY `$${request.sortBy}` $${request.sortOrder}
             </when>
             <otherwise>
                 ORDER BY `user`.`id` DESC

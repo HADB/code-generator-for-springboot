@@ -152,9 +152,8 @@ class UserController {
     @ApiOperation(value = "用户信息")
     @RequestMapping("/info", method = [RequestMethod.GET])
     @AllowSignedIn
-    fun info(@RequestAttribute service: String, @RequestAttribute key: String): Response<Any> {
-        val userInfo = userService.getUserByKey(service, key)
-        return Response.success(userInfo)
+    fun info(@RequestAttribute service: String, @CurrentUser user: User): Response<Any> {
+        return Response.success(user)
     }
 
     @ApiOperation(value = "绑定「用户」手机号")

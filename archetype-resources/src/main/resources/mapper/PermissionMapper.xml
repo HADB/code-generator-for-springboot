@@ -142,7 +142,7 @@
         </where>
         <choose>
             <when test="request.sortBy != null and request.sortOrder != null">
-                ORDER BY `permission`.`$${request.sortBy}` $${request.sortOrder}
+                ORDER BY `$${request.sortBy}` $${request.sortOrder}
             </when>
             <otherwise>
                 ORDER BY `permission`.`id` DESC
