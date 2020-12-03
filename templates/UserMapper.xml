@@ -79,8 +79,8 @@ ${update_partly_list}
 
     <update id="deleteUser">
         UPDATE `t_user` SET
-        `mobile` = CONCAT('delete-', `id`, '-', `mobile`),
-        `open_id` = CONCAT('delete-', `id`, '-', `open_id`),
+        `mobile` = CONCAT(`mobile`, '-', `id`, '-deleted'),
+        `open_id` = CONCAT(`open_id`, '-', `id`, '-deleted'),
         `is_delete` = 1
         <where>
             AND `id` = #{id}
