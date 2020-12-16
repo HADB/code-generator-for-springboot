@@ -27,6 +27,7 @@ registry_username = None
 registry_password = None
 controller_names = []
 
+
 def init_project():
     print('初始化项目，复制 .sql 文件')
     g = os.walk(ARCHETYPE_RESOURCE_PATH)
@@ -128,6 +129,8 @@ def run_package():
                     continue  # 跳过索引
                 if line.find('CHARSET=') >= 0:
                     table_description = line[line.find('COMMENT') + 8:].split('\'')[1]  # 读取表注释
+                    continue
+                if len(line.strip().split()) < 2:
                     continue
                 column = {
                     'name': line.strip().split()[0].strip('`'),
@@ -376,7 +379,7 @@ def run_package():
                 hidden = 'true'
                 if column['name'] == 'create_time' or column['name'] == 'update_time' or column['name'] == 'created_time' or column['name'] == 'updated_time' or column['name'] == 'is_delete':
                     continue
-                column_type, property_name = get_column_type_property_name(column)     
+                column_type, property_name = get_column_type_property_name(column)
                 if column['name'] != 'id':
                     define = 'val'
                     hidden = 'false'
@@ -477,13 +480,13 @@ def run_package():
                     if column['name'].startswith('is_'):
                         property_name = column['name'][3:]
                     columns_data.append('                %s = request.%s' % (inflection.camelize(property_name, False), inflection.camelize(property_name, False)))
-                    
-                    if column['name'] != 'password' and column['name'] != 'salt' :
+
+                    if column['name'] != 'password' and column['name'] != 'salt':
                         add_user_with_password_columns_data.append('                %s = request.%s' % (inflection.camelize(property_name, False), inflection.camelize(property_name, False)))
                     else:
                         add_user_with_password_columns_data.append('                %s = %s' % (inflection.camelize(property_name, False), inflection.camelize(property_name, False)))
                     if column['name'] != 'mobile' and column['name'] != 'id':
-                            bind_mobile_columns_data.append('            mobileUser.%s = currentUser.%s' % (inflection.camelize(property_name, False), inflection.camelize(property_name, False)))
+                        bind_mobile_columns_data.append('            mobileUser.%s = currentUser.%s' % (inflection.camelize(property_name, False), inflection.camelize(property_name, False)))
                 content = t.substitute(package_name=package_name, columns_data=',\n'.join(columns_data), add_user_with_password_columns_data=',\n'.join(add_user_with_password_columns_data), bind_mobile_columns_data='\n'.join(bind_mobile_columns_data))
             else:
                 file_read = open(os.path.join(TEMPLATE_PATH, 'Service.kt'), 'r', encoding='UTF-8')

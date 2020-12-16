@@ -36,7 +36,7 @@ $ python3 main.py \
 --registry_password=${registry_password}
 ```
 
-首次执行会在 `ppackage_path` 目录下初始化项目， `src/main/resources/sql` 文件夹内是 SQL 文件，新增文件后再次执行命令会自动更新代码，注意 SQL 文件名必须为：`t_xxx.sql`
+首次执行会在 `package_path` 目录下初始化项目， `src/main/resources/sql` 文件夹内是 SQL 文件，新增文件后再次执行命令会自动更新代码，注意 SQL 文件名必须为：`t_xxx.sql`
 
 #### SQL 文件示例
 ```sql
