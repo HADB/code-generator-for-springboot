@@ -1,7 +1,12 @@
 image: docker:latest
 
 variables:
-  MAVEN_OPTS: "-Dmaven.repo.local=/cache/.m2/repository"
+  MAVEN_OPTS: '-Dmaven.repo.local=/cache/.m2/repository'
+  REGISTRY: '${registry_instance}'
+  USERNAME: '${registry_username}'
+  PASSWORD: '${registry_password}'
+  NAMESPACE: '${registry_namespace}'
+  PROJECT_NAME: '${artifact_id}'
 
 stages:
   - package
@@ -12,7 +17,7 @@ maven-package:
   stage: package
   script:
     - mvn $$MAVEN_OPTS clean package -Dmaven.test.skip=true
-    - cp target/${artifact_id}.jar /cache/jars/
+    - cp target/$$PROJECT_NAME.jar /cache/jars/
   only:
     - tags
 
@@ -20,13 +25,11 @@ docker-build:
   stage: build
   image: docker:latest
   script:
-    - echo "Building Dockerfile-based application..."
-    - docker info
-    - docker login --username=${registry_username} ${registry_instance} -p ${registry_password}
+    - docker login --username=$$USERNAME $$REGISTRY -p $$PASSWORD
     - mkdir target
-    - cp /cache/jars/${artifact_id}.jar target
-    - docker build -t ${registry_instance}/${registry_namespace}/${artifact_id}:$$CI_COMMIT_REF_NAME -t ${registry_instance}/${registry_namespace}/${artifact_id}:latest .
-    - docker push ${registry_instance}/${registry_namespace}/${artifact_id}:$$CI_COMMIT_REF_NAME
-    - docker push ${registry_instance}/${registry_namespace}/${artifact_id}:latest
+    - cp /cache/jars/$$PROJECT_NAME.jar target
+    - docker build -t $$REGISTRY/$$NAMESPACE/$$PROJECT_NAME:$$CI_COMMIT_REF_NAME -t $$REGISTRY/$$NAMESPACE/$$PROJECT_NAME:latest .
+    - docker push $$REGISTRY/$$NAMESPACE/$$PROJECT_NAME:$$CI_COMMIT_REF_NAME
+    - docker push $$REGISTRY/$$NAMESPACE/$$PROJECT_NAME:latest
   only:
     - tags
