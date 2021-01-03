@@ -35,26 +35,32 @@ class DbInitializationRunner : CommandLineRunner {
 
     override fun run(vararg args: String?) {
         val builtInAdminRoleId = roleService.getRoleByKey(BuiltInRoleKey.Admin)?.id
-                ?: roleService.editRole(RoleEditRequest(
-                        key = BuiltInRoleKey.Admin,
-                        name = "管理员",
-                        description = "系统内置管理员",
-                        builtIn = 1
-                )).also {
-                    logger.info("已创建系统内置管理员角色")
-                }
+            ?: roleService.editRole(
+                RoleEditRequest(
+                    key = BuiltInRoleKey.Admin,
+                    name = "管理员",
+                    description = "系统内置管理员",
+                    builtIn = 1
+                )
+            ).also {
+                logger.info("已创建系统内置管理员角色")
+            }
 
         userService.getUserByUsername("Admin")?.id
-                ?: userService.editUser(UserEditRequest(
-                        username = "Admin",
-                        password = "Qcga1WKe3idhi2r1"
-                )).also {
-                    userRoleService.editUserRole(UserRoleEditRequest(
-                            userId = it,
-                            roleId = builtInAdminRoleId
-                    ))
-                    logger.info("已创建初始管理员用户")
-                }
+            ?: userService.editUser(
+                UserEditRequest(
+                    username = "Admin",
+                    password = "Qcga1WKe3idhi2r1"
+                )
+            ).also {
+                userRoleService.editUserRole(
+                    UserRoleEditRequest(
+                        userId = it,
+                        roleId = builtInAdminRoleId
+                    )
+                )
+                logger.info("已创建初始管理员用户")
+            }
 
         val controllerNames = listOf(${controller_names_text})
         for (controllerName in controllerNames) {
@@ -71,22 +77,26 @@ class DbInitializationRunner : CommandLineRunner {
                         for (apiMethod in apiMethods) {
                             val permission = permissionService.getPermissionByKey(key)
                             if (permission == null) {
-                                permissionService.editPermission(PermissionEditRequest(
+                                permissionService.editPermission(
+                                    PermissionEditRequest(
                                         key = key,
                                         name = method.getAnnotation(ApiOperation::class.java).value,
                                         type = 0,
                                         apiPath = "$${controllerMappingPath}$${methodMappingPath}",
                                         apiMethod = apiMethod.name
-                                ))
+                                    )
+                                )
                             } else {
-                                permissionService.editPermission(PermissionEditRequest(
+                                permissionService.editPermission(
+                                    PermissionEditRequest(
                                         id = permission.id,
                                         key = key,
                                         name = method.getAnnotation(ApiOperation::class.java).value,
                                         type = 0,
                                         apiPath = "$${controllerMappingPath}$${methodMappingPath}",
                                         apiMethod = apiMethod.name
-                                ))
+                                    )
+                                )
                             }
                         }
                     }

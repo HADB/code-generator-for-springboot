@@ -100,7 +100,7 @@ ${add_user_with_password_columns_data}
     fun signIn(service: String, user: User): SignInResponse {
         val token = tokenHelper.createToken(service, user.id.toString())
         return SignInResponse(
-                token = token
+            token = token
         )
     }
 
@@ -125,9 +125,9 @@ ${add_user_with_password_columns_data}
         val sessionKey = redisHelper.get(RedisKey.sessionKey(openId))!! // TODO: session_key 会过期，需处理一下
         val userInfo = wechatHelper.decryptUserInfo(sessionKey, request.encryptedData, request.iv)
         val user = User(
-                nickname = userInfo.nickname,
-                avatarUrl = userInfo.avatarUrl,
-                openId = userInfo.openId
+            nickname = userInfo.nickname,
+            avatarUrl = userInfo.avatarUrl,
+            openId = userInfo.openId
         )
         userMapper.insertUser(user)
     }

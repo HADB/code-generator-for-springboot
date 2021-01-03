@@ -53,21 +53,21 @@ class PaymentService {
 
     fun editPayment(request: PaymentEditRequest): Long {
         val payment = Payment(
-                id = request.id,
-                userId = request.userId,
-                body = request.body,
-                detail = request.detail,
-                amount = request.amount,
-                status = request.status,
-                paymentType = request.paymentType,
-                wxTransactionId = request.wxTransactionId,
-                wxOutTradeNo = request.wxOutTradeNo,
-                wxPaymentOpenId = request.wxPaymentOpenId,
-                message = request.message,
-                prepayTime = request.prepayTime,
-                canceledTime = request.canceledTime,
-                paymentTime = request.paymentTime,
-                refundTime = request.refundTime
+            id = request.id,
+            userId = request.userId,
+            body = request.body,
+            detail = request.detail,
+            amount = request.amount,
+            status = request.status,
+            paymentType = request.paymentType,
+            wxTransactionId = request.wxTransactionId,
+            wxOutTradeNo = request.wxOutTradeNo,
+            wxPaymentOpenId = request.wxPaymentOpenId,
+            message = request.message,
+            prepayTime = request.prepayTime,
+            canceledTime = request.canceledTime,
+            paymentTime = request.paymentTime,
+            refundTime = request.refundTime
         )
         return editPayment(payment)
     }
@@ -143,12 +143,12 @@ class PaymentService {
                     val prepayId = response.prepayId
 
                     val payResult = WxPayMpOrderResult.builder()
-                            .appId(wxConfiguration.wxAppId)
-                            .timeStamp((System.currentTimeMillis() / 1000).toString())
-                            .nonceStr(System.currentTimeMillis().toString())
-                            .packageValue("prepay_id=$$prepayId")
-                            .signType(WxPayConstants.SignType.MD5)
-                            .build()
+                        .appId(wxConfiguration.wxAppId)
+                        .timeStamp((System.currentTimeMillis() / 1000).toString())
+                        .nonceStr(System.currentTimeMillis().toString())
+                        .packageValue("prepay_id=$$prepayId")
+                        .signType(WxPayConstants.SignType.MD5)
+                        .build()
 
                     payResult.paySign = SignUtils.createSign(payResult, WxPayConstants.SignType.MD5, wxConfiguration.wxMchKey, null)
 
@@ -156,13 +156,13 @@ class PaymentService {
                     paymentMapper.updatePayment(payment)
 
                     return WxPrepayResponse(
-                            paymentId = payment.id,
-                            appId = payResult.appId,
-                            timeStamp = payResult.timeStamp,
-                            nonceStr = payResult.nonceStr,
-                            packageValue = payResult.packageValue,
-                            signType = payResult.signType,
-                            paySign = payResult.paySign
+                        paymentId = payment.id,
+                        appId = payResult.appId,
+                        timeStamp = payResult.timeStamp,
+                        nonceStr = payResult.nonceStr,
+                        packageValue = payResult.packageValue,
+                        signType = payResult.signType,
+                        paySign = payResult.paySign
                     )
                 } else {
                     logger.error(objectMapper.writeValueAsString(response))

@@ -21,17 +21,19 @@ class SwaggerConfiguration {
     @Bean
     fun api(): Docket {
         return Docket(DocumentationType.OAS_30)
-                .apiInfo(ApiInfoBuilder()
-                        .title("${description} API 文档")
-                        .version("1.0.0")
-                        .build())
-                .select()
-                .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation::class.java))
-                .paths(PathSelectors.any())
-                .build()
-                .ignoredParameterTypes(CurrentUser::class.java)
-                .securityContexts(listOf(securityContext()))
-                .securitySchemes(listOf(apiKey()))
+            .apiInfo(
+                ApiInfoBuilder()
+                    .title("${description} API 文档")
+                    .version("1.0.0")
+                    .build()
+            )
+            .select()
+            .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation::class.java))
+            .paths(PathSelectors.any())
+            .build()
+            .ignoredParameterTypes(CurrentUser::class.java)
+            .securityContexts(listOf(securityContext()))
+            .securitySchemes(listOf(apiKey()))
     }
 
     private fun apiKey(): ApiKey {

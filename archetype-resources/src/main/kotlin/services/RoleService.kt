@@ -15,11 +15,11 @@ class RoleService {
 
     fun editRole(request: RoleEditRequest): Long {
         val role = Role(
-                id = request.id,
-                key = request.key,
-                name = request.name,
-                description = request.description,
-                builtIn = request.builtIn
+            id = request.id,
+            key = request.key,
+            name = request.name,
+            description = request.description,
+            builtIn = request.builtIn
         )
         return editRole(role)
     }

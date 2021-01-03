@@ -15,9 +15,9 @@ class UserRoleService {
 
     fun editUserRole(request: UserRoleEditRequest): Long {
         val userRole = UserRole(
-                id = request.id,
-                userId = request.userId,
-                roleId = request.roleId
+            id = request.id,
+            userId = request.userId,
+            roleId = request.roleId
         )
         return editUserRole(userRole)
     }

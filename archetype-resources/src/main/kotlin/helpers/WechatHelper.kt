@@ -116,11 +116,11 @@ class WechatHelper {
 
     fun sendMessage(openId: String, templateId: String, formId: String, data: Any, page: String? = null) {
         val params = mapOf(
-                "touser" to openId,
-                "template_id" to templateId,
-                "form_id" to formId,
-                "data" to data,
-                "page" to page
+            "touser" to openId,
+            "template_id" to templateId,
+            "form_id" to formId,
+            "data" to data,
+            "page" to page
         )
         try {
             val httpClient = HttpClients.createDefault()

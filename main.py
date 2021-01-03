@@ -303,17 +303,17 @@ def run_package():
                         column_type += ' = ' + column['default']
                     if column['name'] == 'id':
                         column_type += ' = 0'
-                    line_text = '        @ApiModelProperty(position = %s, notes = "%s")\n' % (swagger_index, column['comment'])
+                    line_text = '    @ApiModelProperty(position = %s, notes = "%s")\n' % (swagger_index, column['comment'])
 
                     # 特殊处理 for Payment.kt
                     if table_name == 'payment' and (property_name == 'status' or property_name == 'wx_transaction_id' or property_name == 'wx_payment_open_id' or property_name == 'message' or property_name == 'payment_time'):
-                        line_text += '        var %s: %s' % (inflection.camelize(property_name, False), column_type)
+                        line_text += '    var %s: %s' % (inflection.camelize(property_name, False), column_type)
 
                     # 特殊处理 for User.kt
                     elif table_name == 'user' and (property_name != 'id' and property_name != 'create_time' and property_name != 'update_time'):
-                        line_text += '        var %s: %s' % (inflection.camelize(property_name, False), column_type)
+                        line_text += '    var %s: %s' % (inflection.camelize(property_name, False), column_type)
                     else:
-                        line_text += '        val %s: %s' % (inflection.camelize(property_name, False), column_type)
+                        line_text += '    val %s: %s' % (inflection.camelize(property_name, False), column_type)
                     lines.append(line_text)
                     swagger_index += 1
             content += '%s\n' % (',\n\n'.join(lines))
@@ -353,9 +353,9 @@ def run_package():
                 if column['name'] == 'id':
                     column_type += ' = 0'
                 if required:
-                    line_text += '        @NotNull(message = "%s 不能为空")\n' % (inflection.camelize(property_name, False))
-                line_text += '        @ApiModelProperty(position = %s, notes = "%s", required = %s, hidden = %s)\n' % (swagger_index, column['comment'], 'true' if required else 'false', 'true' if hidden else 'false')
-                line_text += '        %s %s: %s' % (define, inflection.camelize(property_name, False), column_type)
+                    line_text += '    @NotNull(message = "%s 不能为空")\n' % (inflection.camelize(property_name, False))
+                line_text += '    @ApiModelProperty(position = %s, notes = "%s", required = %s, hidden = %s)\n' % (swagger_index, column['comment'], 'true' if required else 'false', 'true' if hidden else 'false')
+                line_text += '    %s %s: %s' % (define, inflection.camelize(property_name, False), column_type)
                 lines.append(line_text)
                 swagger_index += 1
             content += '%s\n' % (',\n\n'.join(lines))
@@ -387,8 +387,8 @@ def run_package():
                 # 特殊处理 for UserPartlyEditRequest.kt
                 if table_name == 'user' and (column['name'] == 'password' or column['name'] == 'salt'):
                     define = 'var'
-                line_text = '        @ApiModelProperty(position = %s, notes = "%s", required = false, hidden = %s)\n' % (swagger_index, column['comment'], hidden)
-                line_text += '        %s %s: %s' % (define, inflection.camelize(property_name, False), column_type)
+                line_text = '    @ApiModelProperty(position = %s, notes = "%s", required = false, hidden = %s)\n' % (swagger_index, column['comment'], hidden)
+                line_text += '    %s %s: %s' % (define, inflection.camelize(property_name, False), column_type)
                 lines.append(line_text)
                 swagger_index += 1
             content += '%s\n' % (',\n\n'.join(lines))
@@ -414,33 +414,33 @@ def run_package():
                 column_type += '? = null'
                 define = 'val'
                 if column['type'] == 'datetime' or column['type'] == 'time' or column['type'] == 'date':
-                    line_text = '        @ApiModelProperty(position = %s, notes = "%s From")\n' % (swagger_index, column['comment'])
-                    line_text += '        %s %s: %s' % (define, inflection.camelize(column['name'] + "From", False), column_type)
+                    line_text = '    @ApiModelProperty(position = %s, notes = "%s From")\n' % (swagger_index, column['comment'])
+                    line_text += '    %s %s: %s' % (define, inflection.camelize(column['name'] + "From", False), column_type)
                     lines.append(line_text)
                     swagger_index += 1
-                    line_text = '        @ApiModelProperty(position = %s, notes = "%s To")\n' % (swagger_index, column['comment'])
-                    line_text += '        %s %s: %s' % (define, inflection.camelize(column['name'] + "To", False), column_type)
+                    line_text = '    @ApiModelProperty(position = %s, notes = "%s To")\n' % (swagger_index, column['comment'])
+                    line_text += '    %s %s: %s' % (define, inflection.camelize(column['name'] + "To", False), column_type)
                     lines.append(line_text)
                     swagger_index += 1
                     continue
 
-                line_text = '        @ApiModelProperty(position = %s, notes = "%s")\n' % (swagger_index, column['comment'])
-                line_text += '        %s %s: %s' % (define, inflection.camelize(property_name, False), column_type)
+                line_text = '    @ApiModelProperty(position = %s, notes = "%s")\n' % (swagger_index, column['comment'])
+                line_text += '    %s %s: %s' % (define, inflection.camelize(property_name, False), column_type)
                 lines.append(line_text)
                 swagger_index += 1
 
-            line_text = '        @ApiModelProperty(position = %s, notes = "排序字段")\n' % 97
-            line_text += '        val sortBy: String? = null'
+            line_text = '    @ApiModelProperty(position = %s, notes = "排序字段")\n' % 97
+            line_text += '    val sortBy: String? = null'
             lines.append(line_text)
             swagger_index += 1
 
-            line_text = '        @ApiModelProperty(position = %s, notes = "排序顺序")\n' % 98
-            line_text += '        val sortOrder: String? = null'
+            line_text = '    @ApiModelProperty(position = %s, notes = "排序顺序")\n' % 98
+            line_text += '    val sortOrder: String? = null'
             lines.append(line_text)
             swagger_index += 1
 
-            line_text = '        @ApiModelProperty(position = %s, notes = "分页(默认第1页，每页显示10条)")\n' % 99
-            line_text += '        val paging: Paging = Paging(1,10)'
+            line_text = '    @ApiModelProperty(position = %s, notes = "分页(默认第1页，每页显示10条)")\n' % 99
+            line_text += '    val paging: Paging = Paging(1, 10)'
             lines.append(line_text)
             content += '%s\n' % (',\n\n'.join(lines))
             content += ')\n'
@@ -479,12 +479,12 @@ def run_package():
                         continue
                     if column['name'].startswith('is_'):
                         property_name = column['name'][3:]
-                    columns_data.append('                %s = request.%s' % (inflection.camelize(property_name, False), inflection.camelize(property_name, False)))
+                    columns_data.append('            %s = request.%s' % (inflection.camelize(property_name, False), inflection.camelize(property_name, False)))
 
                     if column['name'] != 'password' and column['name'] != 'salt':
-                        add_user_with_password_columns_data.append('                %s = request.%s' % (inflection.camelize(property_name, False), inflection.camelize(property_name, False)))
+                        add_user_with_password_columns_data.append('            %s = request.%s' % (inflection.camelize(property_name, False), inflection.camelize(property_name, False)))
                     else:
-                        add_user_with_password_columns_data.append('                %s = %s' % (inflection.camelize(property_name, False), inflection.camelize(property_name, False)))
+                        add_user_with_password_columns_data.append('            %s = %s' % (inflection.camelize(property_name, False), inflection.camelize(property_name, False)))
                     if column['name'] != 'mobile' and column['name'] != 'id':
                         bind_mobile_columns_data.append('            mobileUser.%s = currentUser.%s' % (inflection.camelize(property_name, False), inflection.camelize(property_name, False)))
                 content = t.substitute(package_name=package_name, columns_data=',\n'.join(columns_data), add_user_with_password_columns_data=',\n'.join(add_user_with_password_columns_data), bind_mobile_columns_data='\n'.join(bind_mobile_columns_data))
@@ -499,7 +499,7 @@ def run_package():
                         continue
                     if column['name'].startswith('is_'):
                         property_name = column['name'][3:]
-                    columns_data.append('                %s = request.%s' % (inflection.camelize(property_name, False), inflection.camelize(property_name, False)))
+                    columns_data.append('            %s = request.%s' % (inflection.camelize(property_name, False), inflection.camelize(property_name, False)))
                 content = t.substitute(package_name=package_name, model_upper_camelcase=inflection.camelize(table_name), model_camelcase=inflection.camelize(table_name, False), columns_data=',\n'.join(columns_data))
 
             output_services_path = os.path.join(kotlin_output_path, 'services')

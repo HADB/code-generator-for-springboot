@@ -4,17 +4,17 @@ import io.swagger.annotations.ApiModelProperty
 import java.util.*
 
 data class Response<T>(
-        @ApiModelProperty(position = 1, notes = "状态码(0:操作成功, 1000:未指定错误码的一般错误, 1001:尚未登录, 1002:登录信息已失效, 其他:指定了错误码需要做对应处理的错误)")
-        val code: Int,
+    @ApiModelProperty(position = 1, notes = "状态码(0:操作成功, 1000:未指定错误码的一般错误, 1001:尚未登录, 1002:登录信息已失效, 其他:指定了错误码需要做对应处理的错误)")
+    val code: Int,
 
-        @ApiModelProperty(position = 2, notes = "消息(操作成功是为:操作成功, 错误时为具体错误原因)")
-        val message: String?,
+    @ApiModelProperty(position = 2, notes = "消息(操作成功是为:操作成功, 错误时为具体错误原因)")
+    val message: String?,
 
-        @ApiModelProperty(position = 3, notes = "数据对象(没有数据返回时不会返回data)")
-        val data: T? = null,
+    @ApiModelProperty(position = 3, notes = "数据对象(没有数据返回时不会返回data)")
+    val data: T? = null,
 
-        @ApiModelProperty(position = 4, notes = "返回时间")
-        val time: Date = Date()
+    @ApiModelProperty(position = 4, notes = "返回时间")
+    val time: Date = Date()
 ) {
     companion object {
         fun <T> error(code: Int, message: String?, data: T? = null): Response<T> {

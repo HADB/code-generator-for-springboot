@@ -15,9 +15,9 @@ class RolePermissionService {
 
     fun editRolePermission(request: RolePermissionEditRequest): Long {
         val rolePermission = RolePermission(
-                id = request.id,
-                roleId = request.roleId,
-                permissionId = request.permissionId
+            id = request.id,
+            roleId = request.roleId,
+            permissionId = request.permissionId
         )
         return editRolePermission(rolePermission)
     }

@@ -20,27 +20,27 @@ class AppWebMvcConfigurer : WebMvcConfigurer {
 
     override fun addInterceptors(registry: InterceptorRegistry) {
         registry.addInterceptor(authorizationInterceptor)
-                .addPathPatterns("/**")
-                .excludePathPatterns("/error")
-                .excludePathPatterns("/swagger-resources/**")
-                .excludePathPatterns("/swagger-ui.html")
-                .excludePathPatterns("/swagger-ui/*")
-                .excludePathPatterns("/v2/api-docs")
-                .excludePathPatterns("/v3/api-docs")
+            .addPathPatterns("/**")
+            .excludePathPatterns("/error")
+            .excludePathPatterns("/swagger-resources/**")
+            .excludePathPatterns("/swagger-ui.html")
+            .excludePathPatterns("/swagger-ui/*")
+            .excludePathPatterns("/v2/api-docs")
+            .excludePathPatterns("/v3/api-docs")
         super.addInterceptors(registry)
     }
 
     override fun addResourceHandlers(registry: ResourceHandlerRegistry) {
         registry.addResourceHandler("/swagger-ui/**")
-                .addResourceLocations("classpath:/META-INF/resources/webjars/springfox-swagger-ui/")
-                .resourceChain(false)
+            .addResourceLocations("classpath:/META-INF/resources/webjars/springfox-swagger-ui/")
+            .resourceChain(false)
     }
 
     override fun addCorsMappings(registry: CorsRegistry) {
         registry.addMapping("/**")
-                .allowedHeaders("*")
-                .allowedMethods("*")
-                .allowedOrigins("*")
+            .allowedHeaders("*")
+            .allowedMethods("*")
+            .allowedOrigins("*")
     }
 
     override fun addArgumentResolvers(argumentResolvers: MutableList<HandlerMethodArgumentResolver>) {

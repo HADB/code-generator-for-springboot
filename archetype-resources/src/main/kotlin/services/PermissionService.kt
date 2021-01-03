@@ -15,13 +15,13 @@ class PermissionService {
 
     fun editPermission(request: PermissionEditRequest): Long {
         val permission = Permission(
-                id = request.id,
-                key = request.key,
-                name = request.name,
-                description = request.description,
-                type = request.type,
-                apiPath = request.apiPath,
-                apiMethod = request.apiMethod
+            id = request.id,
+            key = request.key,
+            name = request.name,
+            description = request.description,
+            type = request.type,
+            apiPath = request.apiPath,
+            apiMethod = request.apiMethod
         )
         return editPermission(permission)
     }
