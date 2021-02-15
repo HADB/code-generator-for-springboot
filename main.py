@@ -25,6 +25,7 @@ registry_instance = None
 registry_namespace = None
 registry_username = None
 registry_password = None
+payment = False
 controller_names = []
 
 
@@ -33,7 +34,7 @@ def init_project():
     g = os.walk(ARCHETYPE_RESOURCE_PATH)
     for path, _, file_list in g:
         for file_name in file_list:
-            if file_name == '.DS_Store':
+            if file_name == '.DS_Store' or (not payment and file_name == 't_payment.sql'):
                 continue
             sub_path = path[len(ARCHETYPE_RESOURCE_PATH) + 1:]
 
@@ -88,6 +89,8 @@ def copy_archetype_resources():
                 if os.path.exists(file_path) and os.path.splitext(file_name)[-1] == '.sql':
                     print('跳过:' + file_path)
                     continue
+                if not payment and file_name in ['t_payment.sql', 'PaymentController.kt', 'PaymentService.kt', 'PaymentMapper.kt', 'PaymentStatus.kt', 'PaymentMapper.xml', 'WxPrepayResponse.kt']:
+                    continue
                 print('准备复制:' + file_path)
                 content = file_read.read()
                 t = string.Template(content)
@@ -115,6 +118,8 @@ def run_package():
                 continue
             print('处理: ' + input_file_name)
             file_name = os.path.splitext(input_file_name)[0].strip()  # 文件名
+            if not payment and file_name == 't_payment':
+                continue
             table_name = file_name  # 表名默认为文件名
             table_description = table_name  # 表注释默认为文件名
             file_read = open(input_file_path, 'r', encoding='UTF-8')
@@ -548,6 +553,8 @@ if __name__ == '__main__':
             registry_username = value
         elif name == '--registry_password':
             registry_password = value
+        elif name == '--payment':
+            payment = True
     print(group_id, artifact_id, version, port, package_name, project_path, description)
     if not os.path.exists(project_path):
         os.makedirs(project_path)
