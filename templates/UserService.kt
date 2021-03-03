@@ -74,11 +74,10 @@ ${add_user_with_password_columns_data}
     }
 
     fun getUserByKey(service: String, key: String): User? {
-        when (service) {
-            AppConstants.Service.DEFAULT -> return userMapper.selectUserById(key.toLong())
-            AppConstants.Service.WXAPP_C -> return userMapper.selectUserByOpenId(key)
+        return when (service) {
+            AppConstants.Service.WXAPP_C -> userMapper.selectUserByOpenId(key)
+            else -> userMapper.selectUserById(key.toLong())
         }
-        return null
     }
 
     fun searchPagingUsers(request: UserSearchRequest): List<User> {
