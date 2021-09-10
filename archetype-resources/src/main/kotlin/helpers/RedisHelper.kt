@@ -41,7 +41,7 @@ class RedisHelper {
     }
 
     private fun lock(key: String, expire: Int): Boolean {
-        val value = System.currentTimeMillis() + expire
+        val value = System.currentTimeMillis() + expire * 1000
         val status = redis.opsForValue().setIfAbsent(key, value.toString())!!
         if (status) {
             // 获取锁成功
@@ -49,7 +49,7 @@ class RedisHelper {
         }
         val oldExpireTime = redis.opsForValue().get(key)?.toLongOrNull()
         if (oldExpireTime == null || oldExpireTime < System.currentTimeMillis()) {
-            val newExpireTime = System.currentTimeMillis() + expire
+            val newExpireTime = System.currentTimeMillis() + expire * 1000
             val currentExpireTime = redis.opsForValue().getAndSet(key, newExpireTime.toString())?.toLongOrNull()
             if (currentExpireTime == oldExpireTime) {
                 // 锁已超时，获取锁成功
