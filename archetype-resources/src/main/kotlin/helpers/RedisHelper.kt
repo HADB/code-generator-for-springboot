@@ -27,6 +27,10 @@ class RedisHelper {
         redis.delete(key)
     }
 
+    fun getExpire(key: String, timeUnit: TimeUnit): Long? {
+        return redis.opsForValue().operations.getExpire(key, timeUnit)
+    }
+
     fun keys(pattern: String): MutableSet<String> {
         return redis.keys(pattern)
     }
