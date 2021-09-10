@@ -8,7 +8,7 @@ CREATE TABLE `t_permission` (
     `api_method`    VARCHAR(16)             DEFAULT NULL                COMMENT 'API 方法',
     `create_time`   DATETIME                DEFAULT CURRENT_TIMESTAMP   COMMENT '创建时间',
     `update_time`   DATETIME                DEFAULT CURRENT_TIMESTAMP   COMMENT '更新时间',
-    `is_delete`     TINYINT(1)              NOT NULL DEFAULT '0'        COMMENT '是否删除',
+    `is_delete`     TINYINT(4)              NOT NULL DEFAULT '0'        COMMENT '是否删除',
     PRIMARY KEY                     (`id`),
     UNIQUE KEY  `idx_key`           (`key`),
     KEY         `idx_type`          (`type`),

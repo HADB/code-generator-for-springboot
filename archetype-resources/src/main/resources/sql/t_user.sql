@@ -9,7 +9,7 @@ CREATE TABLE `t_user` (
     `avatar_url`        TEXT                DEFAULT NULL                COMMENT '微信头像url',
     `create_time`       DATETIME            DEFAULT CURRENT_TIMESTAMP   COMMENT '创建时间',
     `update_time`       DATETIME            DEFAULT CURRENT_TIMESTAMP   COMMENT '更新时间',
-    `is_delete`         TINYINT(1)          NOT NULL DEFAULT '0'        COMMENT '是否删除',
+    `is_delete`         TINYINT(4)          NOT NULL DEFAULT '0'        COMMENT '是否删除',
     PRIMARY KEY                     (`id`),
     UNIQUE KEY  `idx_mobile`        (`mobile`),
     UNIQUE KEY  `idx_open_id`       (`open_id`),
