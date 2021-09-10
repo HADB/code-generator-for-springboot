@@ -15,7 +15,7 @@ import javax.annotation.Resource
 @Component
 class CurrentUserResolver : HandlerMethodArgumentResolver {
     @Resource
-    lateinit var userService: UserService
+    private lateinit var userService: UserService
 
     override fun supportsParameter(parameter: MethodParameter): Boolean {
         if (parameter.parameterType.isAssignableFrom(User::class.java) && parameter.hasParameterAnnotation(${package_name}.annotations.CurrentUser::class.java)) {

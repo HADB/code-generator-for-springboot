@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletResponse
 @Component
 class ResponseHelper {
     @Resource
-    lateinit var jacksonMapper: ObjectMapper
+    private lateinit var jacksonMapper: ObjectMapper
 
     fun setResponse(httpResponse: HttpServletResponse, response: Response<Any>) {
         httpResponse.characterEncoding = "UTF-8"

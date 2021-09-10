@@ -9,7 +9,7 @@ import javax.annotation.Resource
 @Component
 class RedisHelper {
     @Resource
-    lateinit var redis: StringRedisTemplate
+    private lateinit var redis: StringRedisTemplate
 
     fun set(key: String, value: String) {
         redis.opsForValue().set(key, value)
@@ -44,7 +44,7 @@ class RedisHelper {
         val value = System.currentTimeMillis() + expire
         val status = redis.opsForValue().setIfAbsent(key, value.toString())!!
         if (status) {
-            // logger.info("获取锁成功，key: $$key")
+            // 获取锁成功
             return true
         }
         val oldExpireTime = redis.opsForValue().get(key)?.toLongOrNull()
@@ -52,11 +52,11 @@ class RedisHelper {
             val newExpireTime = System.currentTimeMillis() + expire
             val currentExpireTime = redis.opsForValue().getAndSet(key, newExpireTime.toString())?.toLongOrNull()
             if (currentExpireTime == oldExpireTime) {
-                // logger.info("锁已超时，获取锁成功，key: $$key")
+                // 锁已超时，获取锁成功
                 return true
             }
         }
-        // logger.info("获取锁失败，key: $$key")
+        // 获取锁失败
         return false
     }
 
@@ -67,7 +67,6 @@ class RedisHelper {
 
     fun unlock(type: String, id: Long, name: String) {
         val key = RedisKey.lock(type, id.toString(), name)
-        // logger.info("删除锁，key: $$key")
         redis.delete(key)
     }
 }

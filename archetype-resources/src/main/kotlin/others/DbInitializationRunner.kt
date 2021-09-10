@@ -70,7 +70,6 @@ class DbInitializationRunner : CommandLineRunner {
                 val methods = controller.declaredMethods
                 for (method in methods) {
                     val key = "$${CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, controllerName)}_$${CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, method.name)}"
-                    logger.info(key)
                     val methodMappingPaths = method.getAnnotation(RequestMapping::class.java).value
                     for (methodMappingPath in methodMappingPaths) {
                         val apiMethods = method.getAnnotation(RequestMapping::class.java).method

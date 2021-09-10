@@ -27,19 +27,19 @@ import javax.servlet.http.HttpServletResponse
 class AuthorizationInterceptor : HandlerInterceptor {
 
     @Resource
-    lateinit var tokenHelper: TokenHelper
+    private lateinit var tokenHelper: TokenHelper
 
     @Resource
-    lateinit var responseHelper: ResponseHelper
+    private lateinit var responseHelper: ResponseHelper
 
     @Resource
-    lateinit var userService: UserService
+    private lateinit var userService: UserService
 
     @Resource
-    lateinit var roleService: RoleService
+    private lateinit var roleService: RoleService
 
     @Resource
-    lateinit var permissionService: PermissionService
+    private lateinit var permissionService: PermissionService
 
     override fun preHandle(request: HttpServletRequest, response: HttpServletResponse, handler: Any): Boolean {
         if (handler !is HandlerMethod) {
