@@ -27,6 +27,10 @@ class RedisHelper {
         redis.delete(key)
     }
 
+    fun keys(pattern: String): MutableSet<String> {
+        return redis.keys(pattern)
+    }
+
     fun hgetAll(key: String): Map<String, String> {
         return redis.opsForHash<String, String>().entries(key)
     }
