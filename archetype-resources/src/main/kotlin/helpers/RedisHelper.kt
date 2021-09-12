@@ -3,6 +3,7 @@ package ${package_name}.helpers
 import ${package_name}.others.RedisKey
 import org.springframework.data.redis.core.StringRedisTemplate
 import org.springframework.stereotype.Component
+import java.time.Duration
 import java.util.concurrent.TimeUnit
 import javax.annotation.Resource
 
@@ -48,8 +49,8 @@ class RedisHelper {
         redis.expire(key, timeout, unit)
     }
 
-    private fun lock(key: String, expire: Int): Boolean {
-        val value = System.currentTimeMillis() + expire * 1000
+    private fun lock(key: String, duration: Duration): Boolean {
+        val value = System.currentTimeMillis() + duration.toMillis()
         val status = redis.opsForValue().setIfAbsent(key, value.toString())!!
         if (status) {
             // 获取锁成功
@@ -57,7 +58,7 @@ class RedisHelper {
         }
         val oldExpireTime = redis.opsForValue().get(key)?.toLongOrNull()
         if (oldExpireTime == null || oldExpireTime < System.currentTimeMillis()) {
-            val newExpireTime = System.currentTimeMillis() + expire * 1000
+            val newExpireTime = System.currentTimeMillis() + duration.toMillis()
             val currentExpireTime = redis.opsForValue().getAndSet(key, newExpireTime.toString())?.toLongOrNull()
             if (currentExpireTime == oldExpireTime) {
                 // 锁已超时，获取锁成功
@@ -68,12 +69,12 @@ class RedisHelper {
         return false
     }
 
-    fun lock(type: String, id: Long, name: String, expire: Int): Boolean {
+    fun lock(type: String, id: Any, name: String, duration: Duration): Boolean {
         val key = RedisKey.lock(type, id.toString(), name)
-        return lock(key, expire)
+        return lock(key, duration)
     }
 
-    fun unlock(type: String, id: Long, name: String) {
+    fun unlock(type: String, id: Any, name: String) {
         val key = RedisKey.lock(type, id.toString(), name)
         redis.delete(key)
     }
