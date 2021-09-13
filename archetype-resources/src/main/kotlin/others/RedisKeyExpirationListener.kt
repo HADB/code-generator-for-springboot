@@ -13,11 +13,13 @@ class RedisKeyExpirationListener : MessageListener {
 
     override fun onMessage(message: Message, pattern: ByteArray?) {
         val key = String(message.body)
-        logger.info("onRedisExpiredMessage: $$key")
-        when {
-            key.startsWith("$${AppConstants.REDIS_PREFIX}:DemoKey:") -> {
-                val id = key.split(':').last().toLong()
-                // TODO: 处理业务逻辑
+        if (key.startsWith(AppConstants.REDIS_PREFIX)) {
+            logger.info("onRedisExpiredMessage: $$key")
+            when {
+                key.startsWith("$${AppConstants.REDIS_PREFIX}:DemoKey:") -> {
+                    val id = key.split(':').last().toLong()
+                    // TODO: 处理业务逻辑
+                }
             }
         }
     }
