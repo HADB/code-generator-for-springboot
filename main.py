@@ -150,6 +150,8 @@ def run_package():
                     column['default'] = line[line.find('DEFAULT ') + 8:].split()[0].replace('\'', '"')  # 字段默认值
                     if column['default'] == 'NULL' or column['default'] == 'CURRENT_TIMESTAMP':
                         column['default'] = 'null'
+                    if (column['type'].find('decimal') >= 0):
+                        column['default'] = 'BigDecimal(%s)' % column['default'].replace('"', '')
                     if (column['type'].find('int') >= 0 or column['type'].find('double') >= 0 or column['type'].find('decimal') >= 0) and column['default'].find('"') >= 0:
                         column['default'] = column['default'].replace('"', '')
                     if column['type'] == 'tinyint' and column['name'].startswith('is_'):
