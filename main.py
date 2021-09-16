@@ -717,8 +717,8 @@ def run_package():
                 lines.append(line_text)
                 swagger_index += 1
 
-            line_text = '    @ApiModelProperty(position = %s, notes = "排序")\n' % 98
-            line_text += "    val sortOrders: MutableList<SortOrder>? = null"
+            line_text = '    @ApiModelProperty(position = %s, notes = "排序条件")\n' % 98
+            line_text += "    val sortOrders: List<SortOrder>? = null"
             lines.append(line_text)
             swagger_index += 1
 
