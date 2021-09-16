@@ -410,7 +410,7 @@ def run_package():
 
             # [Model]SearchRequest.kt
             content = 'package %s.viewmodels.%s\n\n' % (package_name, inflection.camelize(table_name, False))
-            content += 'import io.swagger.annotations.ApiModelProperty\nimport %s.models.Paging\nimport java.math.BigDecimal\nimport java.util.*\n\n' % package_name
+            content += 'import io.swagger.annotations.ApiModelProperty\nimport %s.models.Paging\nimport %s.viewmodels.common.SortOrder\nimport java.math.BigDecimal\nimport java.util.*\n\n' % (package_name, package_name)
             content += 'data class %sSearchRequest(\n' % (inflection.camelize(table_name))
             lines = []
             swagger_index = 0
@@ -436,13 +436,8 @@ def run_package():
                 lines.append(line_text)
                 swagger_index += 1
 
-            line_text = '    @ApiModelProperty(position = %s, notes = "排序字段")\n' % 97
-            line_text += '    val sortBy: String? = null'
-            lines.append(line_text)
-            swagger_index += 1
-
-            line_text = '    @ApiModelProperty(position = %s, notes = "排序顺序")\n' % 98
-            line_text += '    val sortOrder: String? = null'
+            line_text = '    @ApiModelProperty(position = %s, notes = "排序")\n' % 98
+            line_text += '    val sortOrders: MutableList<SortOrder>? = null'
             lines.append(line_text)
             swagger_index += 1
 

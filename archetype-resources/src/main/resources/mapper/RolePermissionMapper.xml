@@ -101,8 +101,11 @@
             <include refid="rolePermissionSearchWhere"/>
         </where>
         <choose>
-            <when test="request.sortBy != null and request.sortOrder != null">
-                ORDER BY `$${request.sortBy}` $${request.sortOrder}
+            <when test="request.sortOrders != null and request.sortOrders.size() != 0">
+                ORDER BY
+                <foreach collection="request.sortOrders" item="sortOrder" separator=",">
+                    $${sortOrder.field} $${sortOrder.direction}
+                </foreach>
             </when>
             <otherwise>
                 ORDER BY `rolePermission`.`id` DESC
