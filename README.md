@@ -12,7 +12,7 @@
 
 ## 使用方式
 
-注意，请使用 Python 3
+注意，请使用 Python 3，另外建议开启 Idea -> Preferences -> Editor -> Code Style -> Kotlin -> Other -> Use trailing comma，以减少手动添加字段导致的合并冲突 
 
 #### 安装 `inflection`
 

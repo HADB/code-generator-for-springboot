@@ -520,7 +520,7 @@ def run_package():
                         )
                     lines.append(line_text)
                     swagger_index += 1
-            content += "%s\n" % (",\n\n".join(lines))
+            content += "%s,\n" % (",\n\n".join(lines))
             content += ")\n"
 
             output_models_path = os.path.join(kotlin_output_path, "models")
@@ -584,7 +584,7 @@ def run_package():
                 )
                 lines.append(line_text)
                 swagger_index += 1
-            content += "%s\n" % (",\n\n".join(lines))
+            content += "%s,\n" % (",\n\n".join(lines))
             content += ")\n"
 
             output_viewmodels_path = os.path.join(
@@ -643,7 +643,7 @@ def run_package():
                 )
                 lines.append(line_text)
                 swagger_index += 1
-            content += "%s\n" % (",\n\n".join(lines))
+            content += "%s,\n" % (",\n\n".join(lines))
             content += ")\n"
 
             output_viewmodels_path = os.path.join(
@@ -725,7 +725,7 @@ def run_package():
             line_text = '    @ApiModelProperty(position = %s, notes = "分页(默认第1页，每页显示10条)")\n' % 99
             line_text += "    val paging: Paging = Paging(1, 10)"
             lines.append(line_text)
-            content += "%s\n" % (",\n\n".join(lines))
+            content += "%s,\n" % (",\n\n".join(lines))
             content += ")\n"
 
             output_viewmodels_path = os.path.join(
