@@ -9,7 +9,7 @@ import ${package_name}.constants.WechatConstants
 import ${package_name}.models.WechatAccessTokenResult
 import ${package_name}.models.WechatPhoneNumberInfo
 import ${package_name}.models.WechatSessionResult
-import ${package_name}.models.WechatUserInfo
+import ${package_name}.models.WechatUserProfile
 import ${package_name}.others.PKCS7Encoder
 import ${package_name}.others.RedisKey
 import org.apache.commons.codec.binary.Base64
@@ -64,7 +64,7 @@ class WechatHelper {
         }
     }
 
-    fun decryptUserInfo(sessionKey: String, encryptedData: String?, iv: String?): WechatUserInfo {
+    fun decryptUserProfile(sessionKey: String, encryptedData: String?, iv: String?): WechatUserProfile {
         val decryptedString = decrypt(sessionKey, encryptedData, iv)
         return objectMapper.readValue(decryptedString)
     }

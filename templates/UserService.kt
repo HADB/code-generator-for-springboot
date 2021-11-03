@@ -7,6 +7,7 @@ import ${package_name}.helpers.RedisHelper
 import ${package_name}.helpers.TokenHelper
 import ${package_name}.helpers.WechatHelper
 import ${package_name}.mappers.UserMapper
+import ${package_name}.models.Response
 import ${package_name}.models.User
 import ${package_name}.others.RedisKey
 import ${package_name}.viewmodels.user.*
@@ -120,23 +121,24 @@ ${add_user_with_password_columns_data}
         return response
     }
 
-    fun wxappRegister(request: WechatEncryptedDataRequest, openId: String) {
-        val sessionKey = redisHelper.get(RedisKey.sessionKey(openId))!! // TODO: session_key 会过期，需处理一下
-        val userInfo = wechatHelper.decryptUserInfo(sessionKey, request.encryptedData, request.iv)
+    fun wxappRegister(request: WechatEncryptedDataRequest, openId: String): Response<Any> {
+        val sessionKey = redisHelper.get(RedisKey.sessionKey(openId)) ?: return Response.Errors.tokenInvalid()
+        val userInfo = wechatHelper.decryptUserProfile(sessionKey, request.encryptedData, request.iv)
         val user = User(
             nickname = userInfo.nickname,
             avatarUrl = userInfo.avatarUrl,
-            openId = userInfo.openId
+            openId = openId
         )
         userMapper.insertUser(user)
+        return Response.success()
     }
 
     fun wxappSignOut(service: String, user: User) {
         tokenHelper.deleteToken(service, user.openId)
     }
 
-    fun bindMobile(request: WechatEncryptedDataRequest, openId: String) {
-        val sessionKey = redisHelper.get(RedisKey.sessionKey(openId))!! // TODO: session_key 会过期，需处理一下
+    fun bindMobile(request: WechatEncryptedDataRequest, openId: String): Response<Any> {
+        val sessionKey = redisHelper.get(RedisKey.sessionKey(openId)) ?: return Response.Errors.tokenInvalid()
         val mobile = wechatHelper.decryptPhoneNumber(sessionKey, request.encryptedData, request.iv)
         val mobileUser = getUserByMobile(mobile)
         val currentUser = getUserByOpenId(openId)!!
@@ -151,6 +153,7 @@ ${bind_mobile_columns_data}
             currentUser.mobile = mobile
             userMapper.updateUser(currentUser)
         }
+        return Response.success()
     }
 
     fun getUserByMobile(mobile: String): User? {

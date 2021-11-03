@@ -137,8 +137,7 @@ class UserController {
         if (userInfo != null) {
             return Response.Errors.accountAlreadyExist()
         }
-        userService.wxappRegister(request, key)
-        return Response.success()
+        return userService.wxappRegister(request, key)
     }
 
     @ApiOperation(value = "注销登录")
@@ -160,7 +159,6 @@ class UserController {
     @RequestMapping("/bind-mobile", method = [RequestMethod.POST])
     @AllowSignedIn
     fun bindMobile(@RequestBody request: WechatEncryptedDataRequest, @RequestAttribute key: String): Response<Any> {
-        val response = userService.bindMobile(request, key)
-        return Response.success(response)
+        return userService.bindMobile(request, key)
     }
 }

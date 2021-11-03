@@ -5,7 +5,7 @@ class AppConstants {
         const val TOKEN = "token"
         const val SERVICE = "service"
         const val REDIS_PREFIX = "${artifact_id}"
-        const val TOKEN_EXPIRES_HOUR = 24L
+        const val TOKEN_EXPIRES_HOUR = 720L
         const val AUTHENTICATION = "authentication"
         const val KEY = "key"
     }
