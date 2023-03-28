@@ -3,12 +3,11 @@
 crud-code-generator-for-springboot
 """
 import getopt
+import inflection
 import os
 import shutil
 import string
 import sys
-
-import inflection
 
 CURRENT_PATH = os.getcwd()  # 当前目录
 TEMPLATE_PATH = os.path.join(CURRENT_PATH, "templates")  # 模板目录

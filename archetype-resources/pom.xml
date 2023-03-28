@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>${group_id}</groupId>
@@ -12,23 +12,18 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.3.4.RELEASE</version>
-        <relativePath/>
+        <version>2.7.10</version>
+        <relativePath />
     </parent>
     <properties>
-        <java.version>11</java.version>
-        <kotlin.version>1.4.10</kotlin.version>
+        <java.version>19</java.version>
+        <kotlin.version>1.8.10</kotlin.version>
     </properties>
     <repositories>
         <repository>
-            <id>monkey-run-maven-central</id>
-            <name>Monkey Run Maven Central Repository</name>
-            <url>https://nexus.monkey.run:5443/repository/maven-central/</url>
-        </repository>
-        <repository>
-            <id>monkey-run-third-party</id>
-            <name>Monkey Run Third Party</name>
-            <url>https://nexus.monkey.run:5443/repository/third-party/</url>
+            <id>aliyun-maven-central</id>
+            <name>Aliyun Maven Central Repository</name>
+            <url>https://maven.aliyun.com/repository/public</url>
         </repository>
     </repositories>
     <dependencies>
@@ -63,8 +58,12 @@
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
         <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
         </dependency>
         <dependency>
             <groupId>commons-codec</groupId>
@@ -100,17 +99,17 @@
         <dependency>
             <groupId>com.fasterxml.jackson.module</groupId>
             <artifactId>jackson-module-kotlin</artifactId>
-            <version>2.10.3</version>
+            <version>2.14.2</version>
         </dependency>
         <dependency>
             <groupId>com.qiniu</groupId>
             <artifactId>qiniu-java-sdk</artifactId>
-            <version>7.2.28</version>
+            <version>7.12.1</version>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>28.2-jre</version>
+            <version>31.1-jre</version>
         </dependency>
         <dependency>
             <groupId>com.github.binarywang</groupId>
