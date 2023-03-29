@@ -28,8 +28,7 @@ docker-build:
         - docker login --username=$$USERNAME $$REGISTRY -p $$PASSWORD
         - mkdir target
         - cp /cache/jars/$$PROJECT_NAME.jar target
-        - docker build -t $$REGISTRY/$$NAMESPACE/$$PROJECT_NAME:$$CI_COMMIT_REF_NAME -t $$REGISTRY/$$NAMESPACE/$$PROJECT_NAME:latest .
-        - docker push $$REGISTRY/$$NAMESPACE/$$PROJECT_NAME:$$CI_COMMIT_REF_NAME
+        - docker build -t $$REGISTRY/$$NAMESPACE/$$PROJECT_NAME:latest .
         - docker push $$REGISTRY/$$NAMESPACE/$$PROJECT_NAME:latest
     only:
         - tags
