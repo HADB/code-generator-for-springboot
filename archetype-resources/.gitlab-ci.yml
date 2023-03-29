@@ -1,35 +1,35 @@
 image: docker:latest
 
 variables:
-  MAVEN_OPTS: '-Dmaven.repo.local=/cache/.m2/repository'
-  REGISTRY: '${registry_instance}'
-  USERNAME: '${registry_username}'
-  PASSWORD: '${registry_password}'
-  NAMESPACE: '${registry_namespace}'
-  PROJECT_NAME: '${artifact_id}'
+    MAVEN_OPTS: '-Dmaven.repo.local=/cache/.m2/repository'
+    REGISTRY: '${registry_instance}'
+    USERNAME: '${registry_username}'
+    PASSWORD: '${registry_password}'
+    NAMESPACE: '${registry_namespace}'
+    PROJECT_NAME: '${artifact_id}'
 
 stages:
-  - package
-  - build
+    - package
+    - build
 
 maven-package:
-  image: maven:latest
-  stage: package
-  script:
-    - mvn $$MAVEN_OPTS clean package -Dmaven.test.skip=true
-    - cp target/$$PROJECT_NAME.jar /cache/jars/
-  only:
-    - tags
+    image: maven:latest
+    stage: package
+    script:
+        - mvn $$MAVEN_OPTS clean package -Dmaven.test.skip=true
+        - cp target/$$PROJECT_NAME.jar /cache/jars/
+    only:
+        - tags
 
 docker-build:
-  stage: build
-  image: docker:latest
-  script:
-    - docker login --username=$$USERNAME $$REGISTRY -p $$PASSWORD
-    - mkdir target
-    - cp /cache/jars/$$PROJECT_NAME.jar target
-    - docker build -t $$REGISTRY/$$NAMESPACE/$$PROJECT_NAME:$$CI_COMMIT_REF_NAME -t $$REGISTRY/$$NAMESPACE/$$PROJECT_NAME:latest .
-    - docker push $$REGISTRY/$$NAMESPACE/$$PROJECT_NAME:$$CI_COMMIT_REF_NAME
-    - docker push $$REGISTRY/$$NAMESPACE/$$PROJECT_NAME:latest
-  only:
-    - tags
+    stage: build
+    image: docker:latest
+    script:
+        - docker login --username=$$USERNAME $$REGISTRY -p $$PASSWORD
+        - mkdir target
+        - cp /cache/jars/$$PROJECT_NAME.jar target
+        - docker build -t $$REGISTRY/$$NAMESPACE/$$PROJECT_NAME:$$CI_COMMIT_REF_NAME -t $$REGISTRY/$$NAMESPACE/$$PROJECT_NAME:latest .
+        - docker push $$REGISTRY/$$NAMESPACE/$$PROJECT_NAME:$$CI_COMMIT_REF_NAME
+        - docker push $$REGISTRY/$$NAMESPACE/$$PROJECT_NAME:latest
+    only:
+        - tags
