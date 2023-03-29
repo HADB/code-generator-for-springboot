@@ -1,4 +1,4 @@
-FROM openjdk:20-jre-slim
+FROM openjdk:17-slim
 VOLUME /tmp
 COPY target/${artifact_id}.jar app.jar
 ENV SPRING_PROFILES_ACTIVE="prd"
