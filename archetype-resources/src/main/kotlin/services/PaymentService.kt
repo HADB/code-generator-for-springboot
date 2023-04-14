@@ -8,7 +8,7 @@ import com.github.binarywang.wxpay.constant.WxPayConstants
 import com.github.binarywang.wxpay.service.WxPayService
 import com.github.binarywang.wxpay.util.SignUtils
 import ${package_name}.configurations.AppConfiguration
-import ${package_name}.configurations.WxConfiguration
+import ${package_name}.configurations.WechatConfiguration
 import ${package_name}.constants.PaymentStatus
 import ${package_name}.helpers.RequestHelper
 import ${package_name}.mappers.PaymentMapper
@@ -40,7 +40,7 @@ class PaymentService {
     private lateinit var wxpayService: WxPayService
 
     @Resource
-    private lateinit var wxConfiguration: WxConfiguration
+    private lateinit var wechatConfiguration: WechatConfiguration
 
     @Resource
     private lateinit var requestHelper: RequestHelper
@@ -143,14 +143,14 @@ class PaymentService {
                     val prepayId = response.prepayId
 
                     val payResult = WxPayMpOrderResult.builder()
-                        .appId(wxConfiguration.wxWeappAppId)
+                        .appId(wechatConfiguration.weappAppId)
                         .timeStamp((System.currentTimeMillis() / 1000).toString())
                         .nonceStr(System.currentTimeMillis().toString())
                         .packageValue("prepay_id=$$prepayId")
                         .signType(WxPayConstants.SignType.MD5)
                         .build()
 
-                    payResult.paySign = SignUtils.createSign(payResult, WxPayConstants.SignType.MD5, wxConfiguration.wxMchKey, null)
+                    payResult.paySign = SignUtils.createSign(payResult, WxPayConstants.SignType.MD5, wechatConfiguration.mchKey, null)
 
                     payment.status = PaymentStatus.Prepaid
                     paymentMapper.updatePayment(payment)

@@ -1,5 +1,5 @@
 package ${package_name}.viewmodels.user
 
-data class WxappSignInRequest(
+data class WeappSignInRequest(
     val code: String
 )

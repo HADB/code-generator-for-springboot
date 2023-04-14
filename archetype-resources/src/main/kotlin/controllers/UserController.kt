@@ -119,17 +119,17 @@ class UserController {
     }
 
     @ApiOperation(value = "小程序登录")
-    @RequestMapping("/wxapp-sign-in", method = [RequestMethod.POST])
+    @RequestMapping(path = ["/weapp-sign-in", "/wxapp-sign-in"], method = [RequestMethod.POST])
     @AllowAnonymous
-    fun wxappSignIn(@RequestBody request: WxappSignInRequest, @RequestAttribute service: String): Response<SignInResponse> {
-        val response = userService.wxappSignIn(service, request.code)
+    fun weappSignIn(@RequestBody request: WeappSignInRequest, @RequestAttribute service: String): Response<SignInResponse> {
+        val response = userService.weappSignIn(service, request.code)
         return Response.success(response)
     }
 
     @ApiOperation(value = "小程序注册")
-    @RequestMapping("/wxapp-register", method = [RequestMethod.POST])
+    @RequestMapping(path = ["/weapp-register", "/wxapp-register"], method = [RequestMethod.POST])
     @AllowUserNotExist
-    fun wxappRegister(@RequestBody request: WechatEncryptedDataRequest, @RequestAttribute key: String): Response<Any> {
+    fun weappRegister(@RequestBody request: WechatEncryptedDataRequest, @RequestAttribute key: String): Response<Any> {
         if (request.encryptedData == null || request.iv == null) {
             return Response.Errors.wechatNotAuthorized()
         }
@@ -137,14 +137,14 @@ class UserController {
         if (userInfo != null) {
             return Response.Errors.accountAlreadyExist()
         }
-        return userService.wxappRegister(request, key)
+        return userService.weappRegister(request, key)
     }
 
     @ApiOperation(value = "注销登录")
-    @RequestMapping("/wxapp-sign-out", method = [RequestMethod.POST])
+    @RequestMapping(path = ["/weapp-sign-out", "/wxapp-sign-out"], method = [RequestMethod.POST])
     @AllowSignedIn
-    fun wxappSignOut(@RequestAttribute service: String, @CurrentUser user: User): Response<Any> {
-        userService.wxappSignOut(service, user)
+    fun weappSignOut(@RequestAttribute service: String, @CurrentUser user: User): Response<Any> {
+        userService.weappSignOut(service, user)
         return Response.success()
     }
 

@@ -11,38 +11,38 @@ import org.springframework.context.annotation.Configuration
 
 @Configuration
 @ConditionalOnClass(WxPayService::class)
-class WxConfiguration {
+class WechatConfiguration {
 
-    @Value("\$${wx.weapp.app-id}")
-    lateinit var wxWeappAppId: String
+    @Value("\$${wechat.weapp.app-id}")
+    lateinit var weappAppId: String
 
-    @Value("\$${wx.weapp.app-secret}")
-    lateinit var wxWeappAppSecret: String
+    @Value("\$${wechat.weapp.app-secret}")
+    lateinit var weappAppSecret: String
 
-    @Value("\$${wx.mch-id}")
-    lateinit var wxMchId: String
+    @Value("\$${wechat.mch-id}")
+    lateinit var mchId: String
 
-    @Value("\$${wx.mch-key}")
-    lateinit var wxMchKey: String
+    @Value("\$${wechat.mch-key}")
+    lateinit var mchKey: String
 
-    @Value("\$${wx.mch-cert-path}")
-    lateinit var wxMchCertPath: String
+    @Value("\$${wechat.mch-cert-path}")
+    lateinit var mchCertPath: String
 
-    @Value("\$${wx.payment-notify-url}")
-    lateinit var wxPaymentNotifyUrl: String
+    @Value("\$${wechat.payment-notify-url}")
+    lateinit var paymentNotifyUrl: String
 
-    @Value("\$${wx.refund-notify-url}")
-    lateinit var wxRefundNotifyUrl: String
+    @Value("\$${wechat.refund-notify-url}")
+    lateinit var refundNotifyUrl: String
 
     @Bean
     @ConditionalOnMissingBean
     fun wxpayService(): WxPayService {
         val payConfig = WxPayConfig()
-        payConfig.appId = wxWeappAppId
-        payConfig.mchId = wxMchId
-        payConfig.mchKey = wxMchKey
-        payConfig.keyPath = wxMchCertPath
-        payConfig.notifyUrl = wxPaymentNotifyUrl
+        payConfig.appId = weappAppId
+        payConfig.mchId = mchId
+        payConfig.mchKey = mchKey
+        payConfig.keyPath = mchCertPath
+        payConfig.notifyUrl = paymentNotifyUrl
         payConfig.tradeType = "JSAPI"
         payConfig.isUseSandboxEnv = false // 可以指定是否使用沙箱环境
 

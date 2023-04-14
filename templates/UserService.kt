@@ -1,6 +1,6 @@
 package ${package_name}.services
 
-import ${package_name}.configurations.WxConfiguration
+import ${package_name}.configurations.WechatConfiguration
 import ${package_name}.constants.AppConstants
 import ${package_name}.helpers.PasswordHelper
 import ${package_name}.helpers.RedisHelper
@@ -33,7 +33,7 @@ class UserService {
     private lateinit var wechatHelper: WechatHelper
 
     @Resource
-    private lateinit var wxConfiguration: WxConfiguration
+    private lateinit var wechatConfiguration: WechatConfiguration
 
     fun editUser(request: UserEditRequest): Long {
         val salt = passwordHelper.salt
@@ -108,8 +108,8 @@ ${add_user_with_password_columns_data}
         tokenHelper.deleteToken(service, user.id.toString())
     }
 
-    fun wxappSignIn(service: String, code: String): SignInResponse {
-        val sessionResult = wechatHelper.getSessionResultByCode(code, wxConfiguration.wxWeappAppId, wxConfiguration.wxWeappAppSecret)
+    fun weappSignIn(service: String, code: String): SignInResponse {
+        val sessionResult = wechatHelper.getSessionResultByCode(code, wechatConfiguration.weappAppId, wechatConfiguration.weappAppSecret)
         val token = tokenHelper.createToken(service, sessionResult.openId)
         val response = SignInResponse(token = token)
         val user = getUserByOpenId(sessionResult.openId)
@@ -121,7 +121,7 @@ ${add_user_with_password_columns_data}
         return response
     }
 
-    fun wxappRegister(request: WechatEncryptedDataRequest, openId: String): Response<Any> {
+    fun weappRegister(request: WechatEncryptedDataRequest, openId: String): Response<Any> {
         val sessionKey = redisHelper.get(RedisKey.sessionKey(openId)) ?: return Response.Errors.tokenInvalid()
         val userInfo = wechatHelper.decryptUserProfile(sessionKey, request.encryptedData, request.iv)
         val user = User(
@@ -133,7 +133,7 @@ ${add_user_with_password_columns_data}
         return Response.success()
     }
 
-    fun wxappSignOut(service: String, user: User) {
+    fun weappSignOut(service: String, user: User) {
         tokenHelper.deleteToken(service, user.openId)
     }
 

@@ -12,6 +12,6 @@ class AppConstants {
 
     object Service {
         const val DEFAULT = "default"
-        const val WXAPP_C = "wxapp_c"
+        const val WEAPP_C = "weapp_c"
     }
 }

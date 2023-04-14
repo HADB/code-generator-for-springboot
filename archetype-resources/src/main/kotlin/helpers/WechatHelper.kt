@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.google.common.base.Joiner
 import ${package_name}.configurations.AppConfiguration
-import ${package_name}.configurations.WxConfiguration
+import ${package_name}.configurations.WechatConfiguration
 import ${package_name}.constants.WechatConstants
 import ${package_name}.models.WechatAccessTokenResult
 import ${package_name}.models.WechatPhoneNumberInfo
@@ -38,7 +38,7 @@ class WechatHelper {
     private lateinit var appConfiguration: AppConfiguration
 
     @Resource
-    private lateinit var wxConfiguration: WxConfiguration
+    private lateinit var wechatConfiguration: WechatConfiguration
 
     @Resource
     private lateinit var redisHelper: RedisHelper
@@ -97,8 +97,8 @@ class WechatHelper {
             return redisValue
         } else {
             val params = HashMap<String, String>()
-            params["appid"] = wxConfiguration.wxWeappAppId
-            params["secret"] = wxConfiguration.wxWeappAppSecret
+            params["appid"] = wechatConfiguration.weappAppId
+            params["secret"] = wechatConfiguration.weappAppSecret
             params["grant_type"] = "client_credential"
 
             val queryParams = Joiner.on("&").withKeyValueSeparator("=").join(params)
