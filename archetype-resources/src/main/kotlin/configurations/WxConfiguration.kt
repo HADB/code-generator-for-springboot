@@ -13,11 +13,11 @@ import org.springframework.context.annotation.Configuration
 @ConditionalOnClass(WxPayService::class)
 class WxConfiguration {
 
-    @Value("\$${wx.app-id}")
-    lateinit var wxAppId: String
+    @Value("\$${wx.weapp.app-id}")
+    lateinit var wxWeappAppId: String
 
-    @Value("\$${wx.app-secret}")
-    lateinit var wxAppSecret: String
+    @Value("\$${wx.weapp.app-secret}")
+    lateinit var wxWeappAppSecret: String
 
     @Value("\$${wx.mch-id}")
     lateinit var wxMchId: String
@@ -38,7 +38,7 @@ class WxConfiguration {
     @ConditionalOnMissingBean
     fun wxpayService(): WxPayService {
         val payConfig = WxPayConfig()
-        payConfig.appId = wxAppId
+        payConfig.appId = wxWeappAppId
         payConfig.mchId = wxMchId
         payConfig.mchKey = wxMchKey
         payConfig.keyPath = wxMchCertPath

@@ -97,8 +97,8 @@ class WechatHelper {
             return redisValue
         } else {
             val params = HashMap<String, String>()
-            params["appid"] = wxConfiguration.wxAppId
-            params["secret"] = wxConfiguration.wxAppSecret
+            params["appid"] = wxConfiguration.wxWeappAppId
+            params["secret"] = wxConfiguration.wxWeappAppSecret
             params["grant_type"] = "client_credential"
 
             val queryParams = Joiner.on("&").withKeyValueSeparator("=").join(params)

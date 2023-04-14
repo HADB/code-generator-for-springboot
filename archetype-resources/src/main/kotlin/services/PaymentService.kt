@@ -143,7 +143,7 @@ class PaymentService {
                     val prepayId = response.prepayId
 
                     val payResult = WxPayMpOrderResult.builder()
-                        .appId(wxConfiguration.wxAppId)
+                        .appId(wxConfiguration.wxWeappAppId)
                         .timeStamp((System.currentTimeMillis() / 1000).toString())
                         .nonceStr(System.currentTimeMillis().toString())
                         .packageValue("prepay_id=$$prepayId")

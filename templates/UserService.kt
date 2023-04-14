@@ -109,7 +109,7 @@ ${add_user_with_password_columns_data}
     }
 
     fun wxappSignIn(service: String, code: String): SignInResponse {
-        val sessionResult = wechatHelper.getSessionResultByCode(code, wxConfiguration.wxAppId, wxConfiguration.wxAppSecret)
+        val sessionResult = wechatHelper.getSessionResultByCode(code, wxConfiguration.wxWeappAppId, wxConfiguration.wxWeappAppSecret)
         val token = tokenHelper.createToken(service, sessionResult.openId)
         val response = SignInResponse(token = token)
         val user = getUserByOpenId(sessionResult.openId)
