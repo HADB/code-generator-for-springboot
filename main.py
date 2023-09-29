@@ -71,6 +71,7 @@ def get_column_type_property_name(column):
 def copy_archetype_resources():
     print("复制骨架资源文件")
     g = os.walk(ARCHETYPE_RESOURCE_PATH)
+    controller_names.sort()
     controller_names_text = ", ".join(controller_names)
     for path, _, file_list in g:
         for file_name in file_list:
