@@ -76,7 +76,7 @@ ${add_user_with_password_columns_data}
 
     fun getUserByKey(service: String, key: String): User? {
         return when (service) {
-            AppConstants.Service.WXAPP_C -> userMapper.selectUserByOpenId(key)
+            AppConstants.Service.WEAPP_C -> userMapper.selectUserByOpenId(key)
             else -> userMapper.selectUserById(key.toLong())
         }
     }
