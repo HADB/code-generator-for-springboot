@@ -54,4 +54,24 @@ git add .
 
 git commit -m "gen: auto commit"
 
+if [ "$$current_branch" != "generator" ]; then
+    # 切换回原分支
+    git checkout "$$current_branch"
+    if [ $$? -ne 0 ]; then
+        echo "切换回 $$current_branch 分支时出错。"
+        exit 1
+    else
+        echo "已切换回 $$current_branch 分支"
+
+        # 合并 generator 分支到原分支
+        git merge -m "gen: merge branch 'generator'" generator
+        if [ $$? -ne 0 ]; then
+            echo "合并 generator 分支到 $$current_branch 分支时出错"
+            exit 1
+        else
+            echo "已成功合并 generator 分支到 $$current_branch 分支"
+        fi
+    fi
+fi
+
 echo "执行完成"
