@@ -2,24 +2,25 @@
 
 cd "${project_path}"
 
-# 检查当前分支是否干净
-if ! git diff --quiet; then
-    echo "当前分支不干净，请先提交您的更改或者清空未提交的更改"
-    exit 1
-fi
-
 # 获取当前分支的名称
 current_branch=$$(git symbolic-ref --short HEAD)
 
+
 # 检查是否在 generator 分支
 if [ "$$current_branch" != "generator" ]; then
-    # 如果不在 generator 分支，切换到 generator 分支
-    git checkout generator
-    if [ $$? -ne 0 ]; then
-        echo "切换到 generator 分支时出错"
+    # 如果不在 generator 分支且当前分支不干净
+    if ! git diff --quiet; then
+        echo "当前分支不干净，请先提交您的更改或者清空未提交的更改"
         exit 1
     else
-        echo "已切换到 generator 分支"
+        # 切换到 generator 分支
+        git checkout generator
+        if [ $$? -ne 0 ]; then
+            echo "切换到 generator 分支时出错"
+            exit 1
+        else
+            echo "已切换到 generator 分支"
+        fi
     fi
 fi
 
@@ -52,25 +53,5 @@ cd "${project_path}"
 git add .
 
 git commit -m "gen: auto commit"
-
-if [ "$$current_branch" != "generator" ]; then
-    # 切换回原分支
-    git checkout "$$current_branch"
-    if [ $$? -ne 0 ]; then
-        echo "切换回 $$current_branch 分支时出错。"
-        exit 1
-    else
-        echo "已切换回 $$current_branch 分支"
-
-        # 合并 generator 分支到原分支
-        git merge -m "gen: merge branch 'generator'" generator
-        if [ $$? -ne 0 ]; then
-            echo "合并 generator 分支到 $$current_branch 分支时出错"
-            exit 1
-        else
-            echo "已成功合并 generator 分支到 $$current_branch 分支"
-        fi
-    fi
-fi
 
 echo "执行完成"
