@@ -5,23 +5,10 @@ cd "${project_path}"
 # 获取当前分支的名称
 current_branch=$$(git symbolic-ref --short HEAD)
 
-
 # 检查是否在 generator 分支
 if [ "$$current_branch" != "generator" ]; then
-    # 如果不在 generator 分支且当前分支不干净
-    if ! git diff --quiet; then
-        echo "当前分支不干净，请先提交您的更改或者清空未提交的更改"
-        exit 1
-    else
-        # 切换到 generator 分支
-        git checkout generator
-        if [ $$? -ne 0 ]; then
-            echo "切换到 generator 分支时出错"
-            exit 1
-        else
-            echo "已切换到 generator 分支"
-        fi
-    fi
+    echo "当前不在 generator 分支，请切换到 generator 分支"
+    exit 1
 fi
 
 # 检查是否存在 CODE_GENERATOR_PATH 环境变量
