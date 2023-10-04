@@ -1,6 +1,14 @@
 #!/bin/zsh
 
-cd "${project_path}"
+project_path = ${project_path}
+package_name = ${package_name}
+group_id = ${group_id}
+artifact_id = ${artifact_id}
+version = ${version}
+description = ${description}
+port = ${port}
+
+cd "$$project_path"
 
 # 获取当前分支的名称
 current_branch=$$(git symbolic-ref --short HEAD)
@@ -30,17 +38,13 @@ cd "$$CODE_GENERATOR_PATH"
 
 # 运行 main.py 并传递参数
 python3 main.py \
---group_id=${group_id} \
---artifact_id=${artifact_id} \
---version=${version} \
---port=${port} \
---package_name=${package_name} \
---project_path=${project_path} \
---description=${description} \
---registry_instance=${registry_instance} \
---registry_namespace=${registry_namespace} \
---registry_username=${registry_username} \
---registry_password=${registry_password}
+--project_path=$$project_path \
+--package_name=$$package_name \
+--group_id=$$group_id \
+--artifact_id=$$artifact_id \
+--version=$$version \
+--description=$$description \
+--port=$$port
 
 if [ $$? -ne 0 ]; then
     echo "main.py 执行出错"
@@ -48,7 +52,7 @@ if [ $$? -ne 0 ]; then
 fi
 
 # 进入项目目录
-cd "${project_path}"
+cd "$$project_path"
 
 git add .
 

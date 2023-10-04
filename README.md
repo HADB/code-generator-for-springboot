@@ -20,23 +20,30 @@
 $ pip install inflection
 ```
 
-#### 项目执行命令
+#### 首次创建项目
+
 ```bash
+$ echo 'export CODE_GENERATOR_PATH="/path/to/code-generator-for-springboot"' >> ~/.zshrc
+$ source ~/.zshrc
+$ cd "/path/to/code-generator-for-springboot"
 $ python3 main.py \
---group_id=${group_id} \
---artifact_id=${artifact_id} \
---version=${version} \
---port=${port} \
---package_name=${package_name} \
---project_path=${project_path} \
---description=${description} \
---registry_instance=${registry_instance} \
---registry_namespace=${registry_namespace} \
---registry_username=${registry_username} \
---registry_password=${registry_password}
+    --project_path=${project_path} \
+    --package_name=${package_name} \
+    --group_id=${group_id} \
+    --artifact_id=${artifact_id} \
+    --version=${version} \
+    --description=${description} \
+    --port=${port}
 ```
 
-首次执行会在 `package_path` 目录下初始化项目， `src/main/resources/sql` 文件夹内是 SQL 文件，新增文件后再次执行命令会自动更新代码，注意 SQL 文件名必须为：`t_xxx.sql`
+#### 更新项目
+
+```bash
+$ cd "/path/to/your/project"
+$ ./generator.sh
+```
+
+首次执行会在 `package_path` 目录下初始化项目， `src/main/resources/sql` 文件夹内是 SQL 文件，新增文件后执行命令会自动更新代码，注意 SQL 文件名必须为：`t_xxx.sql`
 
 #### SQL 文件示例
 ```sql

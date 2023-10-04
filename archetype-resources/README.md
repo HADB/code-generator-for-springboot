@@ -1,17 +1,24 @@
 # ${description}
 
-#### 自动生成脚本
+#### 首次创建项目
+
 ```bash
-python3 main.py \
---group_id=${group_id} \
---artifact_id=${artifact_id} \
---version=${version} \
---port=${port} \
---package_name=${package_name} \
---project_path=${project_path} \
---description=${description} \
---registry_instance=${registry_instance} \
---registry_namespace=${registry_namespace} \
---registry_username=${registry_username} \
---registry_password=${registry_password}
+$ echo 'export CODE_GENERATOR_PATH="/path/to/code-generator-for-springboot"' >> ~/.zshrc
+$ source ~/.zshrc
+$ cd "/path/to/code-generator-for-springboot"
+$ python3 main.py \
+    --project_path=${project_path} \
+    --package_name=${package_name} \
+    --group_id=${group_id} \
+    --artifact_id=${artifact_id} \
+    --version=${version} \
+    --description=${description} \
+    --port=${port}
+```
+
+#### 更新项目
+
+```bash
+$ cd "/path/to/your/project"
+$ ./generator.sh
 ```

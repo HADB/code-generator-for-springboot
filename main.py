@@ -22,10 +22,6 @@ artifact_id = None
 version = None
 description = None
 port = None
-registry_instance = None
-registry_namespace = None
-registry_username = None
-registry_password = None
 payment = False
 controller_names = []
 debug = False
@@ -121,13 +117,8 @@ def copy_archetype_resources():
                     version=version,
                     description=description,
                     port=port,
-                    registry_instance=registry_instance,
-                    registry_namespace=registry_namespace,
-                    registry_username=registry_username,
-                    registry_password=registry_password,
                     project_path=project_path,
                     controller_names_text=controller_names_text,
-                    current_path=CURRENT_PATH,
                 )
                 with open(file_path, "w", encoding="utf-8") as file_write:
                     file_write.write(content)
@@ -918,10 +909,6 @@ if __name__ == "__main__":
             "package_name=",
             "project_path=",
             "description=",
-            "registry_instance=",
-            "registry_namespace=",
-            "registry_username=",
-            "registry_password=",
         ],
     )
     for name, value in OPTS:
@@ -939,14 +926,6 @@ if __name__ == "__main__":
             project_path = value
         elif name == "--description":
             description = value
-        elif name == "--registry_instance":
-            registry_instance = value
-        elif name == "--registry_namespace":
-            registry_namespace = value
-        elif name == "--registry_username":
-            registry_username = value
-        elif name == "--registry_password":
-            registry_password = value
         elif name == "--payment":
             payment = True
         elif name == "--debug":
