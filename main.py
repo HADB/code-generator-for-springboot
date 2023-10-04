@@ -3,11 +3,13 @@
 crud-code-generator-for-springboot
 """
 import getopt
-import inflection
 import os
 import shutil
 import string
+import subprocess
 import sys
+
+import inflection
 
 CURRENT_PATH = os.getcwd()  # 当前目录
 TEMPLATE_PATH = os.path.join(CURRENT_PATH, "templates")  # 模板目录
@@ -26,6 +28,7 @@ registry_username = None
 registry_password = None
 payment = False
 controller_names = []
+debug = False
 
 
 def init_project():
@@ -43,7 +46,8 @@ def init_project():
                     if not os.path.exists(directory_path):
                         os.makedirs(directory_path)
                     file_path = os.path.join(directory_path, file_name)
-                    print(file_path)
+                    if debug:
+                        print(file_path)
                     content = file_read.read()
                     with open(file_path, "w", encoding="utf-8") as file_write:
                         file_write.write(content)
@@ -69,7 +73,8 @@ def get_column_type_property_name(column):
 
 
 def copy_archetype_resources():
-    print("复制骨架资源文件")
+    if debug:
+        print("复制骨架资源文件")
     g = os.walk(ARCHETYPE_RESOURCE_PATH)
     controller_names.sort()
     controller_names_text = ", ".join(controller_names)
@@ -92,7 +97,8 @@ def copy_archetype_resources():
                     os.makedirs(directory_path)
                 file_path = os.path.join(directory_path, file_name)
                 if os.path.exists(file_path) and os.path.splitext(file_name)[-1] == ".sql":
-                    print("跳过:" + file_path)
+                    if debug:
+                        print("跳过:" + file_path)
                     continue
                 if not payment and file_name in [
                     "t_payment.sql",
@@ -104,7 +110,8 @@ def copy_archetype_resources():
                     "WxPrepayResponse.kt",
                 ]:
                     continue
-                print("准备复制:" + file_path)
+                if debug:
+                    print("准备复制:" + file_path)
                 content = file_read.read()
                 t = string.Template(content)
                 content = t.substitute(
@@ -120,14 +127,19 @@ def copy_archetype_resources():
                     registry_password=registry_password,
                     project_path=project_path,
                     controller_names_text=controller_names_text,
+                    current_path=CURRENT_PATH,
                 )
                 with open(file_path, "w", encoding="utf-8") as file_write:
                     file_write.write(content)
-                    print("已复制:" + file_path)
+                    if debug:
+                        print("已复制:" + file_path)
+                if file_name == "generator.sh":
+                    subprocess.run(["chmod", "+x", file_path])
 
 
 def run_package():
-    print("执行 CRUD")
+    if debug:
+        print("执行 CRUD")
     input_path = os.path.join(project_path, "src/main/resources/sql")
     # kotlin 输出目录
     kotlin_output_path = os.path.join(project_path, "src", "main", "kotlin", *package_name.split("."))
@@ -142,9 +154,11 @@ def run_package():
         input_file_path = os.path.join(input_path, input_file_name)
         if not os.path.isdir(input_file_path):
             if not input_file_name.endswith(".sql"):
-                print("跳过: " + input_file_name)
+                if debug:
+                    print("跳过: " + input_file_name)
                 continue
-            print("处理: " + input_file_name)
+            if debug:
+                print("处理: " + input_file_name)
             file_name = os.path.splitext(input_file_name)[0].strip()  # 文件名
             if not payment and file_name == "t_payment":
                 continue
@@ -935,7 +949,11 @@ if __name__ == "__main__":
             registry_password = value
         elif name == "--payment":
             payment = True
-    print(group_id, artifact_id, version, port, package_name, project_path, description)
+        elif name == "--debug":
+            debug = True
+    if debug:
+        print("debug mode")
+        print(group_id, artifact_id, version, port, package_name, project_path, description)
     if not os.path.exists(project_path):
         os.makedirs(project_path)
 
@@ -944,3 +962,4 @@ if __name__ == "__main__":
         init_project()
     run_package()
     copy_archetype_resources()
+    print("generator 执行完成")
