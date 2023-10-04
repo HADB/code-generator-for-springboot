@@ -3,10 +3,10 @@
 #### 首次创建项目
 
 ```bash
-$ echo 'export CODE_GENERATOR_PATH="/path/to/code-generator-for-springboot"' >> ~/.zshrc
-$ source ~/.zshrc
-$ cd "/path/to/code-generator-for-springboot"
-$ python3 main.py \
+$$ echo 'export CODE_GENERATOR_PATH="/path/to/code-generator-for-springboot"' >> ~/.zshrc
+$$ source ~/.zshrc
+$$ cd "/path/to/code-generator-for-springboot"
+$$ python3 main.py \
     --project_path=${project_path} \
     --package_name=${package_name} \
     --group_id=${group_id} \
@@ -19,6 +19,6 @@ $ python3 main.py \
 #### 更新项目
 
 ```bash
-$ cd "/path/to/your/project"
-$ ./generator.sh
+$$ cd "/path/to/your/project"
+$$ ./generator.sh
 ```

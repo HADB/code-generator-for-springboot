@@ -909,6 +909,8 @@ if __name__ == "__main__":
             "package_name=",
             "project_path=",
             "description=",
+            "payment",
+            "debug",
         ],
     )
     for name, value in OPTS:

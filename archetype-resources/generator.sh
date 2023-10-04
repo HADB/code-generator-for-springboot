@@ -1,12 +1,12 @@
 #!/bin/zsh
 
-project_path = ${project_path}
-package_name = ${package_name}
-group_id = ${group_id}
-artifact_id = ${artifact_id}
-version = ${version}
-description = ${description}
-port = ${port}
+project_path="${project_path}"
+package_name="${package_name}"
+group_id="${group_id}"
+artifact_id="${artifact_id}"
+version="${version}"
+description="${description}"
+port=${port}
 
 cd "$$project_path"
 
