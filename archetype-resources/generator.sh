@@ -7,8 +7,16 @@ current_branch=$$(git symbolic-ref --short HEAD)
 
 # 检查是否在 generator 分支
 if [ "$$current_branch" != "generator" ]; then
-    echo "当前不在 generator 分支，请切换到 generator 分支"
-    exit 1
+    echo "当前不在 generator 分支"
+    non_sql_files=$$(git status --porcelain | awk '$$2 !~ /\.sql$$/{print $$2}')
+    # 如果有非 .sql 后缀的文件存在，终止
+    if [ -n "$$non_sql_files" ]; then
+        echo "存在非 .sql 文件改动，退出"
+        exit 1
+    fi
+
+    echo "切换到 generator 分支"
+    git checkout generator
 fi
 
 # 检查是否存在 CODE_GENERATOR_PATH 环境变量
@@ -33,6 +41,11 @@ python3 main.py \
 --registry_namespace=${registry_namespace} \
 --registry_username=${registry_username} \
 --registry_password=${registry_password}
+
+if [ $$? -ne 0 ]; then
+    echo "main.py 执行出错"
+    exit 1
+fi
 
 # 进入项目目录
 cd "${project_path}"
