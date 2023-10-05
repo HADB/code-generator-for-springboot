@@ -1,13 +1,14 @@
 package ${package_name}.others
 
 import ${package_name}.constants.AppConstants
+import java.util.*
 
 class RedisKey {
     companion object {
         const val ACCESS_TOKEN = "$${AppConstants.REDIS_PREFIX}:access-token"
 
         fun build(key: String): String {
-            return "$${AppConstants.REDIS_PREFIX}:$$key".toLowerCase()
+            return "$${AppConstants.REDIS_PREFIX}:$$key".lowercase(Locale.getDefault())
         }
 
         fun token(service: String?, key: String): String {

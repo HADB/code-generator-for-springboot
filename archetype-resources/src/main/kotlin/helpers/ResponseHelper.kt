@@ -3,8 +3,8 @@ package ${package_name}.helpers
 import com.fasterxml.jackson.databind.ObjectMapper
 import ${package_name}.models.Response
 import org.springframework.stereotype.Component
-import javax.annotation.Resource
-import javax.servlet.http.HttpServletResponse
+import jakarta.annotation.Resource
+import jakarta.servlet.http.HttpServletResponse
 
 @Component
 class ResponseHelper {

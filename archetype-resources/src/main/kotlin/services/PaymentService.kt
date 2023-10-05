@@ -22,8 +22,8 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import java.net.InetAddress
 import java.util.*
-import javax.annotation.Resource
-import javax.servlet.http.HttpServletRequest
+import jakarta.annotation.Resource
+import jakarta.servlet.http.HttpServletRequest
 
 @Component
 class PaymentService {

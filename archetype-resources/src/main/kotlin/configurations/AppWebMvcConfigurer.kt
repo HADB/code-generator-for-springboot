@@ -8,7 +8,7 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
-import javax.annotation.Resource
+import jakarta.annotation.Resource
 
 @Configuration
 class AppWebMvcConfigurer : WebMvcConfigurer {
@@ -25,15 +25,8 @@ class AppWebMvcConfigurer : WebMvcConfigurer {
             .excludePathPatterns("/swagger-resources/**")
             .excludePathPatterns("/swagger-ui.html")
             .excludePathPatterns("/swagger-ui/*")
-            .excludePathPatterns("/v2/api-docs")
             .excludePathPatterns("/v3/api-docs")
         super.addInterceptors(registry)
-    }
-
-    override fun addResourceHandlers(registry: ResourceHandlerRegistry) {
-        registry.addResourceHandler("/swagger-ui/**")
-            .addResourceLocations("classpath:/META-INF/resources/webjars/springfox-swagger-ui/")
-            .resourceChain(false)
     }
 
     override fun addCorsMappings(registry: CorsRegistry) {

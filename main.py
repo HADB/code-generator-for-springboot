@@ -472,7 +472,7 @@ def run_package():
 
             # [Model].kt
             content = "package %s.models\n\n" % package_name
-            content += "import io.swagger.annotations.ApiModelProperty\n"
+            content += "import io.swagger.v3.oas.annotations.media.Schema\n"
             content += "import %s.annotations.NoArg\n" % package_name
             content += "import java.math.BigDecimal\n"
             content += "import java.util.*\n\n"
@@ -492,10 +492,7 @@ def run_package():
                         column_type += " = " + column["default"]
                     if column["name"] == "id":
                         column_type += " = 0"
-                    line_text = '    @ApiModelProperty(position = %s, notes = "%s")\n' % (
-                        swagger_index,
-                        column["comment"],
-                    )
+                    line_text = '    @Schema(description = "%s")\n' % (column["comment"])
 
                     # 特殊处理 for Payment.kt
                     if table_name == "payment" and (
@@ -544,7 +541,7 @@ def run_package():
                 package_name,
                 inflection.camelize(table_name, False),
             )
-            content += "import io.swagger.annotations.ApiModelProperty\nimport java.math.BigDecimal\nimport java.util.*\nimport javax.validation.constraints.NotNull\n\n"
+            content += "import io.swagger.v3.oas.annotations.media.Schema\nimport java.math.BigDecimal\nimport java.util.*\nimport jakarta.validation.constraints.NotNull\n\n"
             content += "data class %sEditRequest(\n" % (inflection.camelize(table_name))
             lines = []
             swagger_index = 0
@@ -576,8 +573,7 @@ def run_package():
                     column_type += " = 0"
                 if required:
                     line_text += '    @NotNull(message = "%s 不能为空")\n' % (inflection.camelize(property_name, False))
-                line_text += '    @ApiModelProperty(position = %s, notes = "%s", required = %s, hidden = %s)\n' % (
-                    swagger_index,
+                line_text += '    @Schema(description = "%s", required = %s, hidden = %s)\n' % (
                     column["comment"],
                     "true" if required else "false",
                     "true" if hidden else "false",
@@ -613,7 +609,7 @@ def run_package():
                 package_name,
                 inflection.camelize(table_name, False),
             )
-            content += "import io.swagger.annotations.ApiModelProperty\nimport java.math.BigDecimal\nimport java.util.*\nimport javax.validation.constraints.NotNull\n\n"
+            content += "import io.swagger.v3.oas.annotations.media.Schema\nimport java.math.BigDecimal\nimport java.util.*\nimport jakarta.validation.constraints.NotNull\n\n"
             content += "data class %sPartlyEditRequest(\n" % (inflection.camelize(table_name))
             lines = []
             swagger_index = 0
@@ -636,8 +632,7 @@ def run_package():
                 # 特殊处理 for UserPartlyEditRequest.kt
                 if table_name == "user" and (column["name"] == "password" or column["name"] == "salt"):
                     define = "var"
-                line_text = '    @ApiModelProperty(position = %s, notes = "%s", required = false, hidden = %s)\n' % (
-                    swagger_index,
+                line_text = '    @Schema(description = "%s", required = false, hidden = %s)\n' % (
                     column["comment"],
                     hidden,
                 )
@@ -673,7 +668,7 @@ def run_package():
                 inflection.camelize(table_name, False),
             )
             content += (
-                "import io.swagger.annotations.ApiModelProperty\nimport %s.models.Paging\nimport %s.viewmodels.common.SortOrder\nimport java.math.BigDecimal\nimport java.util.*\n\n"
+                "import io.swagger.v3.oas.annotations.media.Schema\nimport %s.models.Paging\nimport %s.viewmodels.common.SortOrder\nimport java.math.BigDecimal\nimport java.util.*\n\n"
                 % (package_name, package_name)
             )
             content += "data class %sSearchRequest(\n" % (inflection.camelize(table_name))
@@ -686,10 +681,7 @@ def run_package():
                 column_type += "? = null"
                 define = "val"
                 if column["type"] == "datetime" or column["type"] == "time" or column["type"] == "date":
-                    line_text = '    @ApiModelProperty(position = %s, notes = "%s From")\n' % (
-                        swagger_index,
-                        column["comment"],
-                    )
+                    line_text = '    @Schema(description = "%s From")\n' % (column["comment"])
                     line_text += "    %s %s: %s" % (
                         define,
                         inflection.camelize(column["name"] + "From", False),
@@ -697,10 +689,7 @@ def run_package():
                     )
                     lines.append(line_text)
                     swagger_index += 1
-                    line_text = '    @ApiModelProperty(position = %s, notes = "%s To")\n' % (
-                        swagger_index,
-                        column["comment"],
-                    )
+                    line_text = '    @Schema(description = "%s To")\n' % (column["comment"])
                     line_text += "    %s %s: %s" % (
                         define,
                         inflection.camelize(column["name"] + "To", False),
@@ -710,10 +699,7 @@ def run_package():
                     swagger_index += 1
                     continue
 
-                line_text = '    @ApiModelProperty(position = %s, notes = "%s")\n' % (
-                    swagger_index,
-                    column["comment"],
-                )
+                line_text = '    @Schema(description = "%s")\n' % (column["comment"])
                 line_text += "    %s %s: %s" % (
                     define,
                     inflection.camelize(property_name, False),
@@ -722,12 +708,12 @@ def run_package():
                 lines.append(line_text)
                 swagger_index += 1
 
-            line_text = '    @ApiModelProperty(position = %s, notes = "排序条件")\n' % 98
+            line_text = '    @Schema(description = "排序条件")\n'
             line_text += "    val sortOrders: List<SortOrder>? = null"
             lines.append(line_text)
             swagger_index += 1
 
-            line_text = '    @ApiModelProperty(position = %s, notes = "分页(默认第1页，每页显示10条)")\n' % 99
+            line_text = '    @Schema(description = "分页(默认第1页，每页显示10条)")\n'
             line_text += "    val paging: Paging = Paging(1, 10)"
             lines.append(line_text)
             content += "%s,\n" % (",\n\n".join(lines))

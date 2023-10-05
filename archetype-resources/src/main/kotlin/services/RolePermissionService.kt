@@ -6,7 +6,7 @@ import ${package_name}.viewmodels.rolePermission.RolePermissionEditRequest
 import ${package_name}.viewmodels.rolePermission.RolePermissionPartlyEditRequest
 import ${package_name}.viewmodels.rolePermission.RolePermissionSearchRequest
 import org.springframework.stereotype.Component
-import javax.annotation.Resource
+import jakarta.annotation.Resource
 
 @Component
 class RolePermissionService {

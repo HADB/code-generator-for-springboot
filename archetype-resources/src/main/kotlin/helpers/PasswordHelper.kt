@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component
 import java.security.MessageDigest
 import java.util.*
 import java.util.concurrent.TimeUnit
-import javax.annotation.Resource
+import jakarta.annotation.Resource
 
 @Component
 class PasswordHelper {
@@ -115,13 +115,13 @@ class PasswordHelper {
     }
 
     private fun checkCharacterType(c: Char): CharacterType {
-        if (c.toInt() in 48..57) {
+        if (c.code in 48..57) {
             return CharacterType.Number
         }
-        if (c.toInt() in 65..90) {
+        if (c.code in 65..90) {
             return CharacterType.CapitalLetter
         }
-        if (c.toInt() in 97..122) {
+        if (c.code in 97..122) {
             return CharacterType.SmallLetter
         }
         return CharacterType.Others

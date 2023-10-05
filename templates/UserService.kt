@@ -13,7 +13,7 @@ import ${package_name}.others.RedisKey
 import ${package_name}.viewmodels.user.*
 import org.springframework.stereotype.Component
 import java.util.concurrent.TimeUnit
-import javax.annotation.Resource
+import jakarta.annotation.Resource
 
 @Component
 class UserService {

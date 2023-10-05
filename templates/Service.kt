@@ -6,7 +6,7 @@ import ${package_name}.viewmodels.${model_camelcase}.${model_upper_camelcase}Edi
 import ${package_name}.viewmodels.${model_camelcase}.${model_upper_camelcase}PartlyEditRequest
 import ${package_name}.viewmodels.${model_camelcase}.${model_upper_camelcase}SearchRequest
 import org.springframework.stereotype.Component
-import javax.annotation.Resource
+import jakarta.annotation.Resource
 
 @Component
 class ${model_upper_camelcase}Service {

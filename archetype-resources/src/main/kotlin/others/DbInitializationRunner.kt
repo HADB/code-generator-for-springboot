@@ -1,7 +1,7 @@
 package ${package_name}.others
 
 import com.google.common.base.CaseFormat
-import io.swagger.annotations.ApiOperation
+import io.swagger.v3.oas.annotations.Operation
 import ${package_name}.constants.BuiltInRoleKey
 import ${package_name}.services.PermissionService
 import ${package_name}.services.RoleService
@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.boot.CommandLineRunner
 import org.springframework.stereotype.Component
 import org.springframework.web.bind.annotation.RequestMapping
-import javax.annotation.Resource
+import jakarta.annotation.Resource
 
 @Component
 class DbInitializationRunner : CommandLineRunner {
@@ -79,7 +79,7 @@ class DbInitializationRunner : CommandLineRunner {
                                 permissionService.editPermission(
                                     PermissionEditRequest(
                                         key = key,
-                                        name = method.getAnnotation(ApiOperation::class.java).value,
+                                        name = method.getAnnotation(Operation::class.java).summary,
                                         type = 0,
                                         apiPath = "$${controllerMappingPath}$${methodMappingPath}",
                                         apiMethod = apiMethod.name
@@ -90,7 +90,7 @@ class DbInitializationRunner : CommandLineRunner {
                                     PermissionEditRequest(
                                         id = permission.id,
                                         key = key,
-                                        name = method.getAnnotation(ApiOperation::class.java).value,
+                                        name = method.getAnnotation(Operation::class.java).summary,
                                         type = 0,
                                         apiPath = "$${controllerMappingPath}$${methodMappingPath}",
                                         apiMethod = apiMethod.name

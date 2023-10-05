@@ -6,7 +6,7 @@ import ${package_name}.viewmodels.permission.PermissionEditRequest
 import ${package_name}.viewmodels.permission.PermissionPartlyEditRequest
 import ${package_name}.viewmodels.permission.PermissionSearchRequest
 import org.springframework.stereotype.Component
-import javax.annotation.Resource
+import jakarta.annotation.Resource
 
 @Component
 class PermissionService {

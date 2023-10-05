@@ -1,7 +1,7 @@
 package ${package_name}.helpers
 
 import org.springframework.stereotype.Component
-import javax.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletRequest
 
 @Component
 class RequestHelper {

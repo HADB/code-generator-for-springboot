@@ -5,7 +5,7 @@ import ${package_name}.others.RedisKey
 import org.springframework.stereotype.Component
 import java.util.*
 import java.util.concurrent.TimeUnit
-import javax.annotation.Resource
+import jakarta.annotation.Resource
 
 @Component
 class TokenHelper {

@@ -1,11 +1,11 @@
 package ${package_name}.viewmodels.common
 
-import io.swagger.annotations.ApiModelProperty
+import io.swagger.v3.oas.annotations.media.Schema
 
 data class SortOrder(
-    @ApiModelProperty(position = 1, notes = "排序字段")
+    @Schema(description = "排序字段")
     val field: String,
 
-    @ApiModelProperty(position = 2, notes = "排序方向")
+    @Schema(description = "排序方向")
     val direction: String
 )

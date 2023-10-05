@@ -54,7 +54,6 @@ object PKCS7Encoder {
      */
     fun chr(a: Int): Char {
         val target = (a and 0xFF).toByte()
-        return target.toChar()
+        return target.toInt().toChar()
     }
-
 }

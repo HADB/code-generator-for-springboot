@@ -6,7 +6,7 @@ import ${package_name}.viewmodels.userRole.UserRoleEditRequest
 import ${package_name}.viewmodels.userRole.UserRolePartlyEditRequest
 import ${package_name}.viewmodels.userRole.UserRoleSearchRequest
 import org.springframework.stereotype.Component
-import javax.annotation.Resource
+import jakarta.annotation.Resource
 
 @Component
 class UserRoleService {

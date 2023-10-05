@@ -24,7 +24,7 @@ import java.nio.charset.StandardCharsets
 import java.security.AlgorithmParameters
 import java.util.*
 import java.util.concurrent.TimeUnit
-import javax.annotation.Resource
+import jakarta.annotation.Resource
 import javax.crypto.Cipher
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
