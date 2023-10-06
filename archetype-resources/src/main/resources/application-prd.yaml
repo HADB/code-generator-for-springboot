@@ -1,0 +1,12 @@
+spring:
+    datasource:
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        password: ''
+        url: ''
+        username: ''
+    redis:
+        primary:
+            database: ''
+            host: ''
+            password: ''
+            port: ''

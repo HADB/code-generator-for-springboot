@@ -1,0 +1,44 @@
+app:
+    qiniu:
+        access-key: ''
+        bucket: ''
+        secret-key: ''
+mybatis:
+    mapper-locations: classpath:mapper/*.xml
+server:
+    port: ${port}
+    servlet:
+        encoding:
+            charset: UTF-8
+            enabled: true
+            force: true
+    shutdown: graceful
+spring:
+    datasource:
+        hikari:
+            connection-init-sql: SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+            idle-timeout: 600000
+            maximum-pool-size: 10
+            minimum-idle: 2
+    jackson:
+        default-property-inclusion: non_null
+        time-zone: GMT+8
+    main:
+        allow-circular-references: true
+    mvc:
+        pathmatch:
+            matching-strategy: ant_path_matcher
+    profiles:
+        active: dev
+springdoc:
+    swagger-ui:
+        url: /v3/api-docs
+wechat:
+    mch-cert-path: ''
+    mch-id: ''
+    mch-key: ''
+    payment-notify-url: ''
+    refund-notify-url: ''
+    weapp:
+        app-id: ''
+        app-secret: ''
