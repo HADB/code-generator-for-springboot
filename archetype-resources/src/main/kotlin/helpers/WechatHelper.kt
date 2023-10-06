@@ -3,7 +3,6 @@ package ${package_name}.helpers
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.google.common.base.Joiner
-import ${package_name}.configurations.AppConfiguration
 import ${package_name}.configurations.WechatConfiguration
 import ${package_name}.constants.WechatConstants
 import ${package_name}.models.WechatAccessTokenResult
@@ -13,11 +12,6 @@ import ${package_name}.models.WechatUserProfile
 import ${package_name}.others.PKCS7Encoder
 import ${package_name}.others.RedisKey
 import org.apache.commons.codec.binary.Base64
-import org.apache.http.client.methods.HttpGet
-import org.apache.http.client.methods.HttpPost
-import org.apache.http.entity.StringEntity
-import org.apache.http.impl.client.HttpClients
-import org.apache.http.util.EntityUtils
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import java.nio.charset.StandardCharsets
@@ -25,6 +19,12 @@ import java.security.AlgorithmParameters
 import java.util.*
 import java.util.concurrent.TimeUnit
 import jakarta.annotation.Resource
+import org.apache.hc.client5.http.classic.methods.HttpGet
+import org.apache.hc.client5.http.classic.methods.HttpPost
+import org.apache.hc.client5.http.impl.classic.HttpClients
+import org.apache.hc.core5.http.ContentType
+import org.apache.hc.core5.http.io.entity.EntityUtils
+import org.apache.hc.core5.http.io.entity.StringEntity
 import javax.crypto.Cipher
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
@@ -33,9 +33,6 @@ import javax.crypto.spec.SecretKeySpec
 class WechatHelper {
     @Resource
     private lateinit var objectMapper: ObjectMapper
-
-    @Resource
-    private lateinit var appConfiguration: AppConfiguration
 
     @Resource
     private lateinit var wechatConfiguration: WechatConfiguration
@@ -127,13 +124,12 @@ class WechatHelper {
             val httpPost = HttpPost(WechatConstants.SEND_TEMPLATE_MESSAGE + "?access_token=" + getAccessToken())
             val json = objectMapper.writeValueAsString(params)
             logger.info(json)
-            val stringEntity = StringEntity(json, "UTF-8")
-            stringEntity.setContentType("application/json")
+            val stringEntity = StringEntity(json, ContentType.APPLICATION_JSON.withCharset(StandardCharsets.UTF_8))
             httpPost.entity = stringEntity
             val response = httpClient.execute(httpPost)
 
             response.use {
-                if (it.statusLine.statusCode == 200) {
+                if (it.code == 200) {
                     val entity = it.entity
                     val entityString = EntityUtils.toString(entity)
                     logger.info(entityString)
