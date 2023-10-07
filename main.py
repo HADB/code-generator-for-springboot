@@ -335,19 +335,11 @@ def run_package():
                     lines.append("        NOW()")
                 elif column["name"].startswith("is_"):
                     lines.append(
-                        "        #{%s.%s}"
-                        % (
-                            model_name_camel_case,
-                            inflection.camelize(column["name"][3:], False),
-                        )
+                        "        #{%s.%s}" % (model_name_camel_case, inflection.camelize(column["name"][3:], False))
                     )
                 else:
                     lines.append(
-                        "        #{%s.%s}"
-                        % (
-                            model_name_camel_case,
-                            inflection.camelize(column["name"], False),
-                        )
+                        "        #{%s.%s}" % (model_name_camel_case, inflection.camelize(column["name"], False))
                     )
             value_list = ",\n".join(lines)
 
@@ -365,20 +357,12 @@ def run_package():
                 elif column["name"].startswith("is_"):
                     lines.append(
                         "        `%s` = #{%s.%s}"
-                        % (
-                            column["name"],
-                            model_name_camel_case,
-                            inflection.camelize(column["name"][3:], False),
-                        )
+                        % (column["name"], model_name_camel_case, inflection.camelize(column["name"][3:], False))
                     )
                 else:
                     lines.append(
                         "        `%s` = #{%s.%s}"
-                        % (
-                            column["name"],
-                            model_name_camel_case,
-                            inflection.camelize(column["name"], False),
-                        )
+                        % (column["name"], model_name_camel_case, inflection.camelize(column["name"], False))
                     )
             update_list = ",\n".join(lines)
 
@@ -399,20 +383,14 @@ def run_package():
                     )
                     lines.append(
                         "            `%s` = #{request.%s},"
-                        % (
-                            column["name"],
-                            inflection.camelize(column["name"][3:], False),
-                        )
+                        % (column["name"], inflection.camelize(column["name"][3:], False))
                     )
                     lines.append("        </if>")
                 else:
                     if column["type"] == "varchar" or column["type"] == "text":
                         lines.append(
                             "        <if test=\"request.%s != null and request.%s !=''\">"
-                            % (
-                                inflection.camelize(column["name"], False),
-                                inflection.camelize(column["name"], False),
-                            )
+                            % (inflection.camelize(column["name"], False), inflection.camelize(column["name"], False))
                         )
                     else:
                         lines.append(
@@ -470,9 +448,7 @@ def run_package():
                 os.makedirs(mapper_output_path)
 
             file_write = open(
-                os.path.join(mapper_output_path, model_name_pascal_case + "Mapper.xml"),
-                "w",
-                encoding="UTF-8",
+                os.path.join(mapper_output_path, model_name_pascal_case + "Mapper.xml"), "w", encoding="UTF-8"
             )
             file_write.write(content)
             file_write.close()
@@ -518,15 +494,9 @@ def run_package():
                     elif model_name == "user" and (
                         property_name != "id" and property_name != "create_time" and property_name != "update_time"
                     ):
-                        line_text += "    var %s: %s" % (
-                            inflection.camelize(property_name, False),
-                            column_type,
-                        )
+                        line_text += "    var %s: %s" % (inflection.camelize(property_name, False), column_type)
                     else:
-                        line_text += "    val %s: %s" % (
-                            inflection.camelize(property_name, False),
-                            column_type,
-                        )
+                        line_text += "    val %s: %s" % (inflection.camelize(property_name, False), column_type)
                     lines.append(line_text)
                     swagger_index += 1
             content += "%s,\n" % (",\n\n".join(lines))
@@ -535,19 +505,12 @@ def run_package():
             output_models_path = os.path.join(kotlin_output_path, "models")
             if not os.path.exists(output_models_path):
                 os.makedirs(output_models_path)
-            file_write = open(
-                os.path.join(output_models_path, model_name_pascal_case + ".kt"),
-                "w",
-                encoding="UTF-8",
-            )
+            file_write = open(os.path.join(output_models_path, model_name_pascal_case + ".kt"), "w", encoding="UTF-8")
             file_write.write(content)
             file_write.close()
 
             # [Model]EditRequest.kt
-            content = "package %s.viewmodels.%s\n\n" % (
-                package_name,
-                model_name_camel_case,
-            )
+            content = "package %s.viewmodels.%s\n\n" % (package_name, model_name_camel_case)
             content += "import io.swagger.v3.oas.annotations.media.Schema\nimport java.math.BigDecimal\nimport java.util.*\nimport jakarta.validation.constraints.NotNull\n\n"
             content += "data class %sEditRequest(\n" % (model_name_pascal_case)
             lines = []
@@ -585,11 +548,7 @@ def run_package():
                     "true" if required else "false",
                     "true" if hidden else "false",
                 )
-                line_text += "    %s %s: %s" % (
-                    define,
-                    inflection.camelize(property_name, False),
-                    column_type,
-                )
+                line_text += "    %s %s: %s" % (define, inflection.camelize(property_name, False), column_type)
                 lines.append(line_text)
                 swagger_index += 1
             content += "%s,\n" % (",\n\n".join(lines))
@@ -599,21 +558,13 @@ def run_package():
             if not os.path.exists(output_viewmodels_path):
                 os.makedirs(output_viewmodels_path)
             file_write = open(
-                os.path.join(
-                    output_viewmodels_path,
-                    model_name_pascal_case + "EditRequest.kt",
-                ),
-                "w",
-                encoding="UTF-8",
+                os.path.join(output_viewmodels_path, model_name_pascal_case + "EditRequest.kt"), "w", encoding="UTF-8"
             )
             file_write.write(content)
             file_write.close()
 
             # [Model]PartlyEditRequest.kt
-            content = "package %s.viewmodels.%s\n\n" % (
-                package_name,
-                model_name_camel_case,
-            )
+            content = "package %s.viewmodels.%s\n\n" % (package_name, model_name_camel_case)
             content += "import io.swagger.v3.oas.annotations.media.Schema\nimport java.math.BigDecimal\nimport java.util.*\nimport jakarta.validation.constraints.NotNull\n\n"
             content += "data class %sPartlyEditRequest(\n" % (model_name_pascal_case)
             lines = []
@@ -641,11 +592,7 @@ def run_package():
                     column["comment"],
                     hidden,
                 )
-                line_text += "    %s %s: %s" % (
-                    define,
-                    inflection.camelize(property_name, False),
-                    column_type,
-                )
+                line_text += "    %s %s: %s" % (define, inflection.camelize(property_name, False), column_type)
                 lines.append(line_text)
                 swagger_index += 1
             content += "%s,\n" % (",\n\n".join(lines))
@@ -655,10 +602,7 @@ def run_package():
             if not os.path.exists(output_viewmodels_path):
                 os.makedirs(output_viewmodels_path)
             file_write = open(
-                os.path.join(
-                    output_viewmodels_path,
-                    model_name_pascal_case + "PartlyEditRequest.kt",
-                ),
+                os.path.join(output_viewmodels_path, model_name_pascal_case + "PartlyEditRequest.kt"),
                 "w",
                 encoding="UTF-8",
             )
@@ -666,10 +610,7 @@ def run_package():
             file_write.close()
 
             # [Model]SearchRequest.kt
-            content = "package %s.viewmodels.%s\n\n" % (
-                package_name,
-                model_name_camel_case,
-            )
+            content = "package %s.viewmodels.%s\n\n" % (package_name, model_name_camel_case)
             content += (
                 "import io.swagger.v3.oas.annotations.media.Schema\nimport %s.models.Paging\nimport %s.viewmodels.common.SortOrder\nimport java.math.BigDecimal\nimport java.util.*\n\n"
                 % (package_name, package_name)
@@ -726,12 +667,7 @@ def run_package():
             if not os.path.exists(output_viewmodels_path):
                 os.makedirs(output_viewmodels_path)
             file_write = open(
-                os.path.join(
-                    output_viewmodels_path,
-                    model_name_pascal_case + "SearchRequest.kt",
-                ),
-                "w",
-                encoding="UTF-8",
+                os.path.join(output_viewmodels_path, model_name_pascal_case + "SearchRequest.kt"), "w", encoding="UTF-8"
             )
             file_write.write(content)
             file_write.close()
@@ -750,9 +686,7 @@ def run_package():
             if not os.path.exists(output_mappers_path):
                 os.makedirs(output_mappers_path)
             file_write = open(
-                os.path.join(output_mappers_path, model_name_pascal_case + "Mapper.kt"),
-                "w",
-                encoding="UTF-8",
+                os.path.join(output_mappers_path, model_name_pascal_case + "Mapper.kt"), "w", encoding="UTF-8"
             )
             file_write.write(content)
             file_write.close()
@@ -850,9 +784,7 @@ def run_package():
             if not os.path.exists(output_services_path):
                 os.makedirs(output_services_path)
             file_write = open(
-                os.path.join(output_services_path, model_name_pascal_case + "Service.kt"),
-                "w",
-                encoding="UTF-8",
+                os.path.join(output_services_path, model_name_pascal_case + "Service.kt"), "w", encoding="UTF-8"
             )
             file_write.write(content)
             file_write.close()
@@ -873,12 +805,7 @@ def run_package():
             if not os.path.exists(output_controllers_path):
                 os.makedirs(output_controllers_path)
             file_write = open(
-                os.path.join(
-                    output_controllers_path,
-                    model_name_pascal_case + "Controller.kt",
-                ),
-                "w",
-                encoding="UTF-8",
+                os.path.join(output_controllers_path, model_name_pascal_case + "Controller.kt"), "w", encoding="UTF-8"
             )
             file_write.write(content)
             file_write.close()
