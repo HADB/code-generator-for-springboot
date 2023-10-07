@@ -186,8 +186,10 @@ def run_package():
                 }
                 if line.find("NOT NULL ") > 0:
                     column["nullable"] = False  # 字段是否可空
+                    column["default"] = None
                 else:
                     column["nullable"] = True
+                    column["default"] = "null"
 
                 if line.find("DEFAULT ") > 0:
                     column["default"] = line[line.find("DEFAULT ") + 8 :].split()[0].replace("'", '"')  # 字段默认值
@@ -206,8 +208,6 @@ def run_package():
                             column["default"] = "false"
                         else:
                             column["default"] = "true"
-                else:
-                    column["default"] = None
 
                 column["comment"] = line[line.find("COMMENT") + 8 :].split("'")[1]  # 字段注释
                 columns.append(column)

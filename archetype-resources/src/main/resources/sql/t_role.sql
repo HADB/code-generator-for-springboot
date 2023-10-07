@@ -2,7 +2,7 @@ CREATE TABLE `t_role` (
     `id`            BIGINT UNSIGNED NOT NULL AUTO_INCREMENT     COMMENT '主键',
     `key`           VARCHAR(64)     NOT NULL                    COMMENT '角色标识',
     `name`          VARCHAR(64)     NOT NULL                    COMMENT '角色名称',
-    `description`   VARCHAR(128)    DEFAULT NULL                COMMENT '角色描述',
+    `description`   VARCHAR(128)                                COMMENT '角色描述',
     `built_in`      TINYINT         NOT NULL DEFAULT 0          COMMENT '是否内置',
     `create_time`   DATETIME        DEFAULT CURRENT_TIMESTAMP   COMMENT '创建时间',
     `update_time`   DATETIME        DEFAULT CURRENT_TIMESTAMP   COMMENT '更新时间',
