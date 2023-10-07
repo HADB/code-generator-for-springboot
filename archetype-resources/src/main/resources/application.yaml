@@ -1,8 +1,7 @@
 app:
-    qiniu:
-        access-key: ''
-        bucket: ''
-        secret-key: ''
+    qiniu-access-key: ''
+    qiniu-bucket: ''
+    qiniu-secret-key: ''
 mybatis:
     mapper-locations: classpath:mapper/*.xml
 server:
