@@ -10,7 +10,9 @@ import subprocess
 import sys
 
 import inflection
+import inflect
 
+inflect_engine = inflect.engine()
 CURRENT_PATH = os.getcwd()  # 当前目录
 TEMPLATE_PATH = os.path.join(CURRENT_PATH, "templates")  # 模板目录
 ARCHETYPE_RESOURCE_PATH = os.path.join(CURRENT_PATH, "archetype-resources")  # 原型资源目录
@@ -156,6 +158,7 @@ def run_package():
             table_name = file_name  # 表名默认为文件名
             model_name = table_name[2:] if table_name.startswith("t_") else table_name
             model_name_pascal_case = inflection.camelize(model_name, True)  # PascalCase
+            model_name_plural_pascal_case = inflection.camelize(inflect_engine.plural(model_name), True)  # PascalCases
             model_name_camel_case = inflection.camelize(model_name, False)  # camelCase
             model_name_snake_case = inflection.dasherize(model_name)  # snake_case
 
@@ -435,6 +438,7 @@ def run_package():
                     package_name=package_name,
                     model_name_pascal_case=model_name_pascal_case,
                     model_name_camel_case=model_name_camel_case,
+                    model_name_plural_pascal_case=model_name_plural_pascal_case,
                     column_list=column_list,
                     search_where=search_where,
                     orders=orders,
@@ -680,6 +684,7 @@ def run_package():
                 package_name=package_name,
                 model_name_pascal_case=model_name_pascal_case,
                 model_name_camel_case=model_name_camel_case,
+                model_name_plural_pascal_case=model_name_plural_pascal_case,
             )
 
             output_mappers_path = os.path.join(kotlin_output_path, "mappers")
@@ -777,6 +782,7 @@ def run_package():
                     package_name=package_name,
                     model_name_pascal_case=model_name_pascal_case,
                     model_name_camel_case=model_name_camel_case,
+                    model_name_plural_pascal_case=model_name_plural_pascal_case,
                     columns_data=",\n".join(columns_data),
                 )
 
@@ -798,6 +804,7 @@ def run_package():
                 model_name_snake_case=model_name_snake_case,
                 model_name_pascal_case=model_name_pascal_case,
                 model_name_camel_case=model_name_camel_case,
+                model_name_plural_pascal_case=model_name_plural_pascal_case,
                 model_description=table_description,
             )
 

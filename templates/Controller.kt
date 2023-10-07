@@ -77,8 +77,8 @@ class ${model_name_pascal_case}Controller {
     @Operation(summary = "搜索「${model_description}」")
     @RequestMapping("/search", method = [RequestMethod.POST])
     fun search(@RequestBody request: ${model_name_pascal_case}SearchRequest): Response<SearchResponse<${model_name_pascal_case}>> {
-        val results = ${model_name_camel_case}Service.searchPaging${model_name_pascal_case}s(request)
-        val count = ${model_name_camel_case}Service.searchPaging${model_name_pascal_case}sCount(request)
+        val results = ${model_name_camel_case}Service.searchPaging${model_name_plural_pascal_case}(request)
+        val count = ${model_name_camel_case}Service.searchPaging${model_name_plural_pascal_case}Count(request)
         val response = SearchResponse(results, count)
         return Response.success(response)
     }
