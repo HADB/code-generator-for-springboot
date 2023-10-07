@@ -4,7 +4,7 @@ CREATE TABLE `t_user_role` (
     `role_id`       BIGINT UNSIGNED NOT NULL                    COMMENT '角色ID',
     `create_time`   DATETIME        DEFAULT CURRENT_TIMESTAMP   COMMENT '创建时间',
     `update_time`   DATETIME        DEFAULT CURRENT_TIMESTAMP   COMMENT '更新时间',
-    `is_delete`     TINYINT         NOT NULL DEFAULT '0'        COMMENT '是否删除',
+    `is_delete`     TINYINT         NOT NULL DEFAULT 0          COMMENT '是否删除',
     PRIMARY KEY                     (`id`),
     KEY         `idx_user_id`       (`user_id`),
     KEY         `idx_role_id`       (`role_id`),
