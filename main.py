@@ -154,14 +154,21 @@ def run_package():
             if not payment and file_name == "t_payment":
                 continue
             table_name = file_name  # 表名默认为文件名
-            table_description = table_name  # 表注释默认为文件名
+            model_name = table_name[2:] if table_name.startswith("t_") else table_name
+            model_name_pascal_case = inflection.camelize(model_name, True)  # PascalCase
+            model_name_camel_case = inflection.camelize(model_name, False)  # camelCase
+            model_name_snake_case = inflection.dasherize(model_name)  # snake_case
+
+            table_description = model_name  # 表注释
             file_read = open(input_file_path, "r", encoding="UTF-8")
             columns = []  # 字段数组
 
             for line in file_read:
                 if line.find("CREATE TABLE ") >= 0:
-                    table_name = line.strip().split()[2].strip("`")[2:]  # 读取表名
-                    controller_names.append('"%s"' % inflection.camelize(table_name))
+                    if line.strip().split()[2].strip("`") != table_name:
+                        print("表名与文件名不一致！")
+                        return
+                    controller_names.append('"%s"' % inflection.camelize(model_name))
                     continue
                 if line.find(" KEY ") >= 0:
                     continue  # 跳过索引
@@ -216,22 +223,22 @@ def run_package():
                 lines.append(
                     "        `%s`.`%s` as `%s`"
                     % (
-                        inflection.camelize(table_name, False),
+                        model_name_camel_case,
                         column["name"],
                         inflection.camelize(property_name, False),
                     )
                 )
-                if table_name == "user" and column["name"] != "password" and column["name"] != "salt":
+                if model_name == "user" and column["name"] != "password" and column["name"] != "salt":
                     lines_without_password.append(
                         "        `%s`.`%s` as `%s`"
                         % (
-                            inflection.camelize(table_name, False),
+                            model_name_camel_case,
                             column["name"],
                             inflection.camelize(property_name, False),
                         )
                     )
             column_list = ",\n".join(lines)
-            if table_name == "user":
+            if model_name == "user":
                 column_list_without_password = ",\n".join(lines_without_password)
 
             lines = []
@@ -239,7 +246,7 @@ def run_package():
                 if (
                     column["name"] == "id"
                     or column["name"] == "sort_weight"
-                    or (table_name == "user" and (column["name"] == "password" or column["name"] == "salt"))
+                    or (model_name == "user" and (column["name"] == "password" or column["name"] == "salt"))
                 ):
                     continue
                 if column["type"] == "datetime" or column["type"] == "time" or column["type"] == "date":
@@ -249,7 +256,7 @@ def run_package():
                     lines.append(
                         "            AND `%s`.`%s` &gt;= #{request.%sFrom}"
                         % (
-                            inflection.camelize(table_name, False),
+                            model_name_camel_case,
                             column["name"],
                             inflection.camelize(column["name"], False),
                         )
@@ -261,7 +268,7 @@ def run_package():
                     lines.append(
                         "            AND `%s`.`%s` &lt;= #{request.%sTo}"
                         % (
-                            inflection.camelize(table_name, False),
+                            model_name_camel_case,
                             column["name"],
                             inflection.camelize(column["name"], False),
                         )
@@ -269,7 +276,7 @@ def run_package():
                     lines.append("        </if>")
                     continue
                 if column["name"] == "is_delete":
-                    lines.append("        AND `%s`.`%s` = 0" % (inflection.camelize(table_name, False), column["name"]))
+                    lines.append("        AND `%s`.`%s` = 0" % (model_name_camel_case, column["name"]))
                     continue
                 if column["type"] == "varchar" or column["type"] == "text":
                     lines.append(
@@ -291,7 +298,7 @@ def run_package():
                     lines.append(
                         "            AND `%s`.`%s` = #{request.%s}"
                         % (
-                            inflection.camelize(table_name, False),
+                            model_name_camel_case,
                             column["name"],
                             inflection.camelize(column["name"][3:], False),
                         )
@@ -300,7 +307,7 @@ def run_package():
                     lines.append(
                         "            AND `%s`.`%s` = #{request.%s}"
                         % (
-                            inflection.camelize(table_name, False),
+                            model_name_camel_case,
                             column["name"],
                             inflection.camelize(column["name"], False),
                         )
@@ -330,7 +337,7 @@ def run_package():
                     lines.append(
                         "        #{%s.%s}"
                         % (
-                            inflection.camelize(table_name, False),
+                            model_name_camel_case,
                             inflection.camelize(column["name"][3:], False),
                         )
                     )
@@ -338,7 +345,7 @@ def run_package():
                     lines.append(
                         "        #{%s.%s}"
                         % (
-                            inflection.camelize(table_name, False),
+                            model_name_camel_case,
                             inflection.camelize(column["name"], False),
                         )
                     )
@@ -360,7 +367,7 @@ def run_package():
                         "        `%s` = #{%s.%s}"
                         % (
                             column["name"],
-                            inflection.camelize(table_name, False),
+                            model_name_camel_case,
                             inflection.camelize(column["name"][3:], False),
                         )
                     )
@@ -369,7 +376,7 @@ def run_package():
                         "        `%s` = #{%s.%s}"
                         % (
                             column["name"],
-                            inflection.camelize(table_name, False),
+                            model_name_camel_case,
                             inflection.camelize(column["name"], False),
                         )
                     )
@@ -421,19 +428,19 @@ def run_package():
             lines = []
             for column in columns:
                 if column["name"] == "sort_weight":
-                    lines.append("`%s`.`sort_weight` DESC" % (inflection.camelize(table_name, False)))
+                    lines.append("`%s`.`sort_weight` DESC" % (model_name_camel_case))
             if not lines:
-                lines.append("`%s`.`id` DESC" % (inflection.camelize(table_name, False)))
+                lines.append("`%s`.`id` DESC" % (model_name_camel_case))
             orders = ", ".join(lines)
 
-            if table_name == "user":
+            if model_name == "user":
                 file_read = open(os.path.join(TEMPLATE_PATH, "UserMapper.xml"), "r", encoding="UTF-8")
             else:
                 file_read = open(os.path.join(TEMPLATE_PATH, "Mapper.xml"), "r", encoding="UTF-8")
 
             content = file_read.read()
             t = string.Template(content)
-            if table_name == "user":
+            if model_name == "user":
                 content = t.substitute(
                     package_name=package_name,
                     column_list_without_password=column_list_without_password,
@@ -446,10 +453,10 @@ def run_package():
                 )
             else:
                 content = t.substitute(
-                    table_name="t_" + table_name,
+                    table_name=table_name,
                     package_name=package_name,
-                    model_upper_camelcase=inflection.camelize(table_name),
-                    model_camelcase=inflection.camelize(table_name, False),
+                    model_name_pascal_case=model_name_pascal_case,
+                    model_name_camel_case=model_name_camel_case,
                     column_list=column_list,
                     search_where=search_where,
                     orders=orders,
@@ -463,7 +470,7 @@ def run_package():
                 os.makedirs(mapper_output_path)
 
             file_write = open(
-                os.path.join(mapper_output_path, inflection.camelize(table_name) + "Mapper.xml"),
+                os.path.join(mapper_output_path, model_name_pascal_case + "Mapper.xml"),
                 "w",
                 encoding="UTF-8",
             )
@@ -477,7 +484,7 @@ def run_package():
             content += "import java.math.BigDecimal\n"
             content += "import java.util.*\n\n"
             content += "@NoArg\n"
-            content += "data class %s(\n" % (inflection.camelize(table_name))
+            content += "data class %s(\n" % (model_name_pascal_case)
             lines = []
             swagger_index = 0
             for column in columns:
@@ -495,7 +502,7 @@ def run_package():
                     line_text = '    @Schema(description = "%s")\n' % (column["comment"])
 
                     # 特殊处理 for Payment.kt
-                    if table_name == "payment" and (
+                    if model_name == "payment" and (
                         property_name == "status"
                         or property_name == "wx_transaction_id"
                         or property_name == "wx_payment_open_id"
@@ -508,7 +515,7 @@ def run_package():
                         )
 
                     # 特殊处理 for User.kt
-                    elif table_name == "user" and (
+                    elif model_name == "user" and (
                         property_name != "id" and property_name != "create_time" and property_name != "update_time"
                     ):
                         line_text += "    var %s: %s" % (
@@ -529,7 +536,7 @@ def run_package():
             if not os.path.exists(output_models_path):
                 os.makedirs(output_models_path)
             file_write = open(
-                os.path.join(output_models_path, inflection.camelize(table_name) + ".kt"),
+                os.path.join(output_models_path, model_name_pascal_case + ".kt"),
                 "w",
                 encoding="UTF-8",
             )
@@ -539,10 +546,10 @@ def run_package():
             # [Model]EditRequest.kt
             content = "package %s.viewmodels.%s\n\n" % (
                 package_name,
-                inflection.camelize(table_name, False),
+                model_name_camel_case,
             )
             content += "import io.swagger.v3.oas.annotations.media.Schema\nimport java.math.BigDecimal\nimport java.util.*\nimport jakarta.validation.constraints.NotNull\n\n"
-            content += "data class %sEditRequest(\n" % (inflection.camelize(table_name))
+            content += "data class %sEditRequest(\n" % (model_name_pascal_case)
             lines = []
             swagger_index = 0
             for column in columns:
@@ -588,15 +595,13 @@ def run_package():
             content += "%s,\n" % (",\n\n".join(lines))
             content += ")\n"
 
-            output_viewmodels_path = os.path.join(
-                kotlin_output_path, "viewmodels", inflection.camelize(table_name, False)
-            )
+            output_viewmodels_path = os.path.join(kotlin_output_path, "viewmodels", model_name_camel_case)
             if not os.path.exists(output_viewmodels_path):
                 os.makedirs(output_viewmodels_path)
             file_write = open(
                 os.path.join(
                     output_viewmodels_path,
-                    inflection.camelize(table_name) + "EditRequest.kt",
+                    model_name_pascal_case + "EditRequest.kt",
                 ),
                 "w",
                 encoding="UTF-8",
@@ -607,10 +612,10 @@ def run_package():
             # [Model]PartlyEditRequest.kt
             content = "package %s.viewmodels.%s\n\n" % (
                 package_name,
-                inflection.camelize(table_name, False),
+                model_name_camel_case,
             )
             content += "import io.swagger.v3.oas.annotations.media.Schema\nimport java.math.BigDecimal\nimport java.util.*\nimport jakarta.validation.constraints.NotNull\n\n"
-            content += "data class %sPartlyEditRequest(\n" % (inflection.camelize(table_name))
+            content += "data class %sPartlyEditRequest(\n" % (model_name_pascal_case)
             lines = []
             swagger_index = 0
             for column in columns:
@@ -630,7 +635,7 @@ def run_package():
                     hidden = "false"
                     column_type += "? = null"
                 # 特殊处理 for UserPartlyEditRequest.kt
-                if table_name == "user" and (column["name"] == "password" or column["name"] == "salt"):
+                if model_name == "user" and (column["name"] == "password" or column["name"] == "salt"):
                     define = "var"
                 line_text = '    @Schema(description = "%s", required = false, hidden = %s)\n' % (
                     column["comment"],
@@ -646,15 +651,13 @@ def run_package():
             content += "%s,\n" % (",\n\n".join(lines))
             content += ")\n"
 
-            output_viewmodels_path = os.path.join(
-                kotlin_output_path, "viewmodels", inflection.camelize(table_name, False)
-            )
+            output_viewmodels_path = os.path.join(kotlin_output_path, "viewmodels", model_name_camel_case)
             if not os.path.exists(output_viewmodels_path):
                 os.makedirs(output_viewmodels_path)
             file_write = open(
                 os.path.join(
                     output_viewmodels_path,
-                    inflection.camelize(table_name) + "PartlyEditRequest.kt",
+                    model_name_pascal_case + "PartlyEditRequest.kt",
                 ),
                 "w",
                 encoding="UTF-8",
@@ -665,13 +668,13 @@ def run_package():
             # [Model]SearchRequest.kt
             content = "package %s.viewmodels.%s\n\n" % (
                 package_name,
-                inflection.camelize(table_name, False),
+                model_name_camel_case,
             )
             content += (
                 "import io.swagger.v3.oas.annotations.media.Schema\nimport %s.models.Paging\nimport %s.viewmodels.common.SortOrder\nimport java.math.BigDecimal\nimport java.util.*\n\n"
                 % (package_name, package_name)
             )
-            content += "data class %sSearchRequest(\n" % (inflection.camelize(table_name))
+            content += "data class %sSearchRequest(\n" % (model_name_pascal_case)
             lines = []
             swagger_index = 0
             for column in columns:
@@ -719,15 +722,13 @@ def run_package():
             content += "%s,\n" % (",\n\n".join(lines))
             content += ")\n"
 
-            output_viewmodels_path = os.path.join(
-                kotlin_output_path, "viewmodels", inflection.camelize(table_name, False)
-            )
+            output_viewmodels_path = os.path.join(kotlin_output_path, "viewmodels", model_name_camel_case)
             if not os.path.exists(output_viewmodels_path):
                 os.makedirs(output_viewmodels_path)
             file_write = open(
                 os.path.join(
                     output_viewmodels_path,
-                    inflection.camelize(table_name) + "SearchRequest.kt",
+                    model_name_pascal_case + "SearchRequest.kt",
                 ),
                 "w",
                 encoding="UTF-8",
@@ -741,15 +742,15 @@ def run_package():
             t = string.Template(content)
             content = t.substitute(
                 package_name=package_name,
-                model_upper_camelcase=inflection.camelize(table_name),
-                model_camelcase=inflection.camelize(table_name, False),
+                model_name_pascal_case=model_name_pascal_case,
+                model_name_camel_case=model_name_camel_case,
             )
 
             output_mappers_path = os.path.join(kotlin_output_path, "mappers")
             if not os.path.exists(output_mappers_path):
                 os.makedirs(output_mappers_path)
             file_write = open(
-                os.path.join(output_mappers_path, inflection.camelize(table_name) + "Mapper.kt"),
+                os.path.join(output_mappers_path, model_name_pascal_case + "Mapper.kt"),
                 "w",
                 encoding="UTF-8",
             )
@@ -757,7 +758,7 @@ def run_package():
             file_write.close()
 
             # [Model]Service.kt
-            if table_name == "user":
+            if model_name == "user":
                 file_read = open(os.path.join(TEMPLATE_PATH, "UserService.kt"), "r", encoding="UTF-8")
                 content = file_read.read()
                 t = string.Template(content)
@@ -840,8 +841,8 @@ def run_package():
                     )
                 content = t.substitute(
                     package_name=package_name,
-                    model_upper_camelcase=inflection.camelize(table_name),
-                    model_camelcase=inflection.camelize(table_name, False),
+                    model_name_pascal_case=model_name_pascal_case,
+                    model_name_camel_case=model_name_camel_case,
                     columns_data=",\n".join(columns_data),
                 )
 
@@ -849,7 +850,7 @@ def run_package():
             if not os.path.exists(output_services_path):
                 os.makedirs(output_services_path)
             file_write = open(
-                os.path.join(output_services_path, inflection.camelize(table_name) + "Service.kt"),
+                os.path.join(output_services_path, model_name_pascal_case + "Service.kt"),
                 "w",
                 encoding="UTF-8",
             )
@@ -862,9 +863,9 @@ def run_package():
             t = string.Template(content)
             content = t.substitute(
                 package_name=package_name,
-                model_dasherize=inflection.dasherize(table_name),
-                model_upper_camelcase=inflection.camelize(table_name),
-                model_camelcase=inflection.camelize(table_name, False),
+                model_name_snake_case=model_name_snake_case,
+                model_name_pascal_case=model_name_pascal_case,
+                model_name_camel_case=model_name_camel_case,
                 model_description=table_description,
             )
 
@@ -874,7 +875,7 @@ def run_package():
             file_write = open(
                 os.path.join(
                     output_controllers_path,
-                    inflection.camelize(table_name) + "Controller.kt",
+                    model_name_pascal_case + "Controller.kt",
                 ),
                 "w",
                 encoding="UTF-8",

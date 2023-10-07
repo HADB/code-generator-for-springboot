@@ -1,41 +1,41 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="${package_name}.mappers.${model_upper_camelcase}Mapper">
-    <sql id="${model_camelcase}Columns">
+<mapper namespace="${package_name}.mappers.${model_name_pascal_case}Mapper">
+    <sql id="${model_name_camel_case}Columns">
 ${column_list}
     </sql>
 
-    <sql id="${model_camelcase}Tables">
-        `${table_name}` `${model_camelcase}`
+    <sql id="${model_name_camel_case}Tables">
+        `${table_name}` `${model_name_camel_case}`
     </sql>
 
-    <sql id="${model_camelcase}SearchWhere">
+    <sql id="${model_name_camel_case}SearchWhere">
 ${search_where}
     </sql>
 
-    <insert id="insert${model_upper_camelcase}" useGeneratedKeys="true" keyProperty="${model_camelcase}.id">
+    <insert id="insert${model_name_pascal_case}" useGeneratedKeys="true" keyProperty="${model_name_camel_case}.id">
         INSERT INTO `${table_name}`(
 ${name_list})
         VALUES(
 ${value_list})
     </insert>
 
-    <update id="update${model_upper_camelcase}">
+    <update id="update${model_name_pascal_case}">
         UPDATE `${table_name}` SET
 ${update_list}
-        WHERE `id` = #{${model_camelcase}.id}
+        WHERE `id` = #{${model_name_camel_case}.id}
         AND `is_delete` = 0
     </update>
 
-    <update id="update${model_upper_camelcase}Partly">
+    <update id="update${model_name_pascal_case}Partly">
         UPDATE `${table_name}` SET
 ${update_partly_list}
         WHERE `id` = #{request.id}
         AND `is_delete` = 0
     </update>
 
-    <update id="delete${model_upper_camelcase}">
+    <update id="delete${model_name_pascal_case}">
         UPDATE `${table_name}`
         SET `is_delete` = 1
         <where>
@@ -44,25 +44,25 @@ ${update_partly_list}
         </where>
     </update>
 
-    <select id="select${model_upper_camelcase}ById" resultType="${package_name}.models.${model_upper_camelcase}">
+    <select id="select${model_name_pascal_case}ById" resultType="${package_name}.models.${model_name_pascal_case}">
         SELECT
-        <include refid="${model_camelcase}Columns"/>
+        <include refid="${model_name_camel_case}Columns"/>
         FROM
-        <include refid="${model_camelcase}Tables"/>
+        <include refid="${model_name_camel_case}Tables"/>
         <where>
-            AND `${model_camelcase}`.`id` = #{id}
-            AND `${model_camelcase}`.`is_delete` = 0
+            AND `${model_name_camel_case}`.`id` = #{id}
+            AND `${model_name_camel_case}`.`is_delete` = 0
         </where>
         LIMIT 1
     </select>
 
-    <select id="selectPaging${model_upper_camelcase}s" resultType="${package_name}.models.${model_upper_camelcase}">
+    <select id="selectPaging${model_name_pascal_case}s" resultType="${package_name}.models.${model_name_pascal_case}">
         SELECT
-        <include refid="${model_camelcase}Columns"/>
+        <include refid="${model_name_camel_case}Columns"/>
         FROM
-        <include refid="${model_camelcase}Tables"/>
+        <include refid="${model_name_camel_case}Tables"/>
         <where>
-            <include refid="${model_camelcase}SearchWhere"/>
+            <include refid="${model_name_camel_case}SearchWhere"/>
         </where>
         <choose>
             <when test="request.sortOrders != null and request.sortOrders.size() != 0">
@@ -78,12 +78,12 @@ ${update_partly_list}
         LIMIT #{request.paging.offset}, #{request.paging.pageSize}
     </select>
 
-    <select id="selectPaging${model_upper_camelcase}sCount" resultType="Long">
+    <select id="selectPaging${model_name_pascal_case}sCount" resultType="Long">
         SELECT COUNT(*)
         FROM
-        <include refid="${model_camelcase}Tables"/>
+        <include refid="${model_name_camel_case}Tables"/>
         <where>
-            <include refid="${model_camelcase}SearchWhere"/>
+            <include refid="${model_name_camel_case}SearchWhere"/>
         </where>
     </select>
 </mapper>

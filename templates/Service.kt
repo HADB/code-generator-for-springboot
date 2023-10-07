@@ -1,51 +1,51 @@
 package ${package_name}.services
 
-import ${package_name}.mappers.${model_upper_camelcase}Mapper
-import ${package_name}.models.${model_upper_camelcase}
-import ${package_name}.viewmodels.${model_camelcase}.${model_upper_camelcase}EditRequest
-import ${package_name}.viewmodels.${model_camelcase}.${model_upper_camelcase}PartlyEditRequest
-import ${package_name}.viewmodels.${model_camelcase}.${model_upper_camelcase}SearchRequest
+import ${package_name}.mappers.${model_name_pascal_case}Mapper
+import ${package_name}.models.${model_name_pascal_case}
+import ${package_name}.viewmodels.${model_name_camel_case}.${model_name_pascal_case}EditRequest
+import ${package_name}.viewmodels.${model_name_camel_case}.${model_name_pascal_case}PartlyEditRequest
+import ${package_name}.viewmodels.${model_name_camel_case}.${model_name_pascal_case}SearchRequest
 import org.springframework.stereotype.Component
 import jakarta.annotation.Resource
 
 @Component
-class ${model_upper_camelcase}Service {
+class ${model_name_pascal_case}Service {
     @Resource
-    private lateinit var ${model_camelcase}Mapper: ${model_upper_camelcase}Mapper
+    private lateinit var ${model_name_camel_case}Mapper: ${model_name_pascal_case}Mapper
 
-    fun edit${model_upper_camelcase}(request: ${model_upper_camelcase}EditRequest): Long {
-        val ${model_camelcase} = ${model_upper_camelcase}(
+    fun edit${model_name_pascal_case}(request: ${model_name_pascal_case}EditRequest): Long {
+        val ${model_name_camel_case} = ${model_name_pascal_case}(
 ${columns_data}
         )
-        return edit${model_upper_camelcase}(${model_camelcase})
+        return edit${model_name_pascal_case}(${model_name_camel_case})
     }
 
-    fun edit${model_upper_camelcase}(${model_camelcase}: ${model_upper_camelcase}): Long {
-        if (${model_camelcase}.id == 0L) {
-            ${model_camelcase}Mapper.insert${model_upper_camelcase}(${model_camelcase})
+    fun edit${model_name_pascal_case}(${model_name_camel_case}: ${model_name_pascal_case}): Long {
+        if (${model_name_camel_case}.id == 0L) {
+            ${model_name_camel_case}Mapper.insert${model_name_pascal_case}(${model_name_camel_case})
         } else {
-            ${model_camelcase}Mapper.update${model_upper_camelcase}(${model_camelcase})
+            ${model_name_camel_case}Mapper.update${model_name_pascal_case}(${model_name_camel_case})
         }
-        return ${model_camelcase}.id
+        return ${model_name_camel_case}.id
     }
 
-    fun edit${model_upper_camelcase}Partly(request: ${model_upper_camelcase}PartlyEditRequest) {
-        ${model_camelcase}Mapper.update${model_upper_camelcase}Partly(request)
+    fun edit${model_name_pascal_case}Partly(request: ${model_name_pascal_case}PartlyEditRequest) {
+        ${model_name_camel_case}Mapper.update${model_name_pascal_case}Partly(request)
     }
 
-    fun delete${model_upper_camelcase}(id: Long) {
-        ${model_camelcase}Mapper.delete${model_upper_camelcase}(id)
+    fun delete${model_name_pascal_case}(id: Long) {
+        ${model_name_camel_case}Mapper.delete${model_name_pascal_case}(id)
     }
 
-    fun get${model_upper_camelcase}ById(id: Long): ${model_upper_camelcase}? {
-        return ${model_camelcase}Mapper.select${model_upper_camelcase}ById(id)
+    fun get${model_name_pascal_case}ById(id: Long): ${model_name_pascal_case}? {
+        return ${model_name_camel_case}Mapper.select${model_name_pascal_case}ById(id)
     }
 
-    fun searchPaging${model_upper_camelcase}s(request: ${model_upper_camelcase}SearchRequest): List<${model_upper_camelcase}> {
-        return ${model_camelcase}Mapper.selectPaging${model_upper_camelcase}s(request)
+    fun searchPaging${model_name_pascal_case}s(request: ${model_name_pascal_case}SearchRequest): List<${model_name_pascal_case}> {
+        return ${model_name_camel_case}Mapper.selectPaging${model_name_pascal_case}s(request)
     }
 
-    fun searchPaging${model_upper_camelcase}sCount(request: ${model_upper_camelcase}SearchRequest): Long {
-        return ${model_camelcase}Mapper.selectPaging${model_upper_camelcase}sCount(request)
+    fun searchPaging${model_name_pascal_case}sCount(request: ${model_name_pascal_case}SearchRequest): Long {
+        return ${model_name_camel_case}Mapper.selectPaging${model_name_pascal_case}sCount(request)
     }
 }
