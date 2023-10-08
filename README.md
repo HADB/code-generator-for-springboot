@@ -64,7 +64,7 @@ CREATE TABLE `t_shop` (
     KEY         `idx_create_time`           (`create_time`),
     KEY         `idx_update_time`           (`update_time`),
     KEY         `idx_is_delete`             (`is_delete`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='商铺';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='商铺';
 ```
 
 建议自动生成的代码放到单独的分支管理，每次生成后合并到主分支

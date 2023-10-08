@@ -15,4 +15,4 @@ CREATE TABLE `t_permission` (
     KEY         `idx_create_time`   (`create_time`),
     KEY         `idx_update_time`   (`update_time`),
     KEY         `idx_is_delete`     (`is_delete`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='权限';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='权限';

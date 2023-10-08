@@ -155,6 +155,8 @@ def run_package():
             file_name = os.path.splitext(input_file_name)[0].strip()  # 文件名
             if not payment and file_name == "t_payment":
                 continue
+            if file_name == "t_flyway_history":
+                continue
             table_name = file_name  # 表名默认为文件名
             model_name = table_name[2:] if table_name.startswith("t_") else table_name
             model_name_pascal_case = inflection.camelize(model_name, True)  # PascalCase
@@ -168,7 +170,7 @@ def run_package():
 
             for line in file_read:
                 if line.find("CREATE TABLE ") >= 0:
-                    if line.strip().split()[2].strip("`") != table_name:
+                    if line.strip().split()[2].split(".")[-1].strip("`") != table_name:
                         print("表名与文件名不一致！")
                         return
                     controller_names.append('"%s"' % inflection.camelize(model_name))
