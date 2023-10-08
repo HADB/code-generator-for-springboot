@@ -221,8 +221,6 @@ def run_package():
                 property_name = column["name"]
                 if column["name"] == "is_delete":
                     continue
-                if column["name"].startswith("is_"):
-                    property_name = column["name"][3:]
 
                 lines.append("        `%s`.`%s`" % (model_name_camel_case, column["name"]))
                 if model_name == "user" and column["name"] != "password" and column["name"] != "salt":
@@ -276,32 +274,18 @@ def run_package():
                             inflection.camelize(column["name"], False),
                         )
                     )
-                elif column["name"].startswith("is_"):
-                    lines.append(
-                        '        <if test="request.%s != null">' % (inflection.camelize(column["name"][3:], False))
-                    )
                 else:
                     lines.append(
                         '        <if test="request.%s != null">' % (inflection.camelize(column["name"], False))
                     )
-                if column["name"].startswith("is_"):
-                    lines.append(
-                        "            AND `%s`.`%s` = #{request.%s}"
-                        % (
-                            model_name_camel_case,
-                            column["name"],
-                            inflection.camelize(column["name"][3:], False),
-                        )
+                lines.append(
+                    "            AND `%s`.`%s` = #{request.%s}"
+                    % (
+                        model_name_camel_case,
+                        column["name"],
+                        inflection.camelize(column["name"], False),
                     )
-                else:
-                    lines.append(
-                        "            AND `%s`.`%s` = #{request.%s}"
-                        % (
-                            model_name_camel_case,
-                            column["name"],
-                            inflection.camelize(column["name"], False),
-                        )
-                    )
+                )
                 lines.append("        </if>")
             search_where = "\n".join(lines)
 
@@ -323,10 +307,6 @@ def run_package():
                     or column["name"] == "updated_time"
                 ):
                     lines.append("        NOW()")
-                elif column["name"].startswith("is_"):
-                    lines.append(
-                        "        #{%s.%s}" % (model_name_camel_case, inflection.camelize(column["name"][3:], False))
-                    )
                 else:
                     lines.append(
                         "        #{%s.%s}" % (model_name_camel_case, inflection.camelize(column["name"], False))
@@ -344,11 +324,6 @@ def run_package():
                     continue
                 elif column["name"] == "update_time" or column["name"] == "updated_time":
                     lines.append("        `%s` = NOW()" % (column["name"]))
-                elif column["name"].startswith("is_"):
-                    lines.append(
-                        "        `%s` = #{%s.%s}"
-                        % (column["name"], model_name_camel_case, inflection.camelize(column["name"][3:], False))
-                    )
                 else:
                     lines.append(
                         "        `%s` = #{%s.%s}"
@@ -367,15 +342,6 @@ def run_package():
                     continue
                 elif column["name"] == "update_time" or column["name"] == "updated_time":
                     lines.append("        `%s` = NOW()" % (column["name"]))
-                elif column["name"].startswith("is_"):
-                    lines.append(
-                        '        <if test="request.%s != null">' % (inflection.camelize(column["name"][3:], False))
-                    )
-                    lines.append(
-                        "            `%s` = #{request.%s},"
-                        % (column["name"], inflection.camelize(column["name"][3:], False))
-                    )
-                    lines.append("        </if>")
                 else:
                     if column["type"] == "varchar" or column["type"] == "text":
                         lines.append(
@@ -702,8 +668,6 @@ def run_package():
                         or column["name"] == "is_delete"
                     ):
                         continue
-                    if column["name"].startswith("is_"):
-                        property_name = column["name"][3:]
                     columns_data.append(
                         "            %s = request.%s"
                         % (
@@ -757,8 +721,6 @@ def run_package():
                         or column["name"] == "is_delete"
                     ):
                         continue
-                    if column["name"].startswith("is_"):
-                        property_name = column["name"][3:]
                     columns_data.append(
                         "            %s = request.%s"
                         % (
