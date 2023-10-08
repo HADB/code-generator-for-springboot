@@ -1,5 +1,7 @@
 package ${package_name}.configurations
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import io.swagger.v3.core.jackson.ModelResolver
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeIn
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType
 import io.swagger.v3.oas.annotations.security.SecurityScheme
@@ -24,5 +26,10 @@ class SwaggerConfiguration {
                     .version("v${version}")
             )
             .security(listOf(SecurityRequirement().addList("Token")))
+    }
+
+    @Bean
+    fun modelResolver(objectMapper: ObjectMapper): ModelResolver {
+        return ModelResolver(objectMapper)
     }
 }

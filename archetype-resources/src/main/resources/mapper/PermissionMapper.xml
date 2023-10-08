@@ -3,15 +3,15 @@
 
 <mapper namespace="${package_name}.mappers.PermissionMapper">
     <sql id="permissionColumns">
-        `permission`.`id` as `id`,
-        `permission`.`key` as `key`,
-        `permission`.`name` as `name`,
-        `permission`.`description` as `description`,
-        `permission`.`type` as `type`,
-        `permission`.`api_path` as `apiPath`,
-        `permission`.`api_method` as `apiMethod`,
-        `permission`.`create_time` as `createTime`,
-        `permission`.`update_time` as `updateTime`
+        `permission`.`id`,
+        `permission`.`key`,
+        `permission`.`name`,
+        `permission`.`description`,
+        `permission`.`type`,
+        `permission`.`api_path`,
+        `permission`.`api_method`,
+        `permission`.`create_time`,
+        `permission`.`update_time`
     </sql>
 
     <sql id="permissionTables">

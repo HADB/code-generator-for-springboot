@@ -173,7 +173,7 @@ def run_package():
                     if line.strip().split()[2].split(".")[-1].strip("`") != table_name:
                         print("表名与文件名不一致！")
                         return
-                    controller_names.append('"%s"' % inflection.camelize(model_name))
+                    controller_names.append('"%s"' % model_name_pascal_case)
                     continue
                 if line.find(" KEY ") >= 0:
                     continue  # 跳过索引
@@ -225,23 +225,9 @@ def run_package():
                 if column["name"].startswith("is_"):
                     property_name = column["name"][3:]
 
-                lines.append(
-                    "        `%s`.`%s` as `%s`"
-                    % (
-                        model_name_camel_case,
-                        column["name"],
-                        inflection.camelize(property_name, False),
-                    )
-                )
+                lines.append("        `%s`.`%s`" % (model_name_camel_case, column["name"]))
                 if model_name == "user" and column["name"] != "password" and column["name"] != "salt":
-                    lines_without_password.append(
-                        "        `%s`.`%s` as `%s`"
-                        % (
-                            model_name_camel_case,
-                            column["name"],
-                            inflection.camelize(property_name, False),
-                        )
-                    )
+                    lines_without_password.append("        `%s`.`%s`" % (model_name_camel_case, column["name"]))
             column_list = ",\n".join(lines)
             if model_name == "user":
                 column_list_without_password = ",\n".join(lines_without_password)
@@ -441,6 +427,7 @@ def run_package():
                     model_name_pascal_case=model_name_pascal_case,
                     model_name_camel_case=model_name_camel_case,
                     model_name_plural_pascal_case=model_name_plural_pascal_case,
+                    model_name_snake_case=model_name_snake_case,
                     column_list=column_list,
                     search_where=search_where,
                     orders=orders,

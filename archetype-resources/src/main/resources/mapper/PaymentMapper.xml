@@ -3,23 +3,23 @@
 
 <mapper namespace="${package_name}.mappers.PaymentMapper">
     <sql id="paymentColumns">
-        `payment`.`id` as `id`,
-        `payment`.`user_id` as `userId`,
-        `payment`.`body` as `body`,
-        `payment`.`detail` as `detail`,
-        `payment`.`amount` as `amount`,
-        `payment`.`status` as `status`,
-        `payment`.`payment_type` as `paymentType`,
-        `payment`.`wx_transaction_id` as `wxTransactionId`,
-        `payment`.`wx_out_trade_no` as `wxOutTradeNo`,
-        `payment`.`wx_payment_open_id` as `wxPaymentOpenId`,
-        `payment`.`message` as `message`,
-        `payment`.`prepay_time` as `prepayTime`,
-        `payment`.`canceled_time` as `canceledTime`,
-        `payment`.`payment_time` as `paymentTime`,
-        `payment`.`refund_time` as `refundTime`,
-        `payment`.`created_time` as `createdTime`,
-        `payment`.`updated_time` as `updatedTime`
+        `payment`.`id`,
+        `payment`.`user_id`,
+        `payment`.`body`,
+        `payment`.`detail`,
+        `payment`.`amount`,
+        `payment`.`status`,
+        `payment`.`payment_type`,
+        `payment`.`wx_transaction_id`,
+        `payment`.`wx_out_trade_no`,
+        `payment`.`wx_payment_open_id`,
+        `payment`.`message`,
+        `payment`.`prepay_time`,
+        `payment`.`canceled_time`,
+        `payment`.`payment_time`,
+        `payment`.`refund_time`,
+        `payment`.`created_time`,
+        `payment`.`updated_time`
     </sql>
 
     <sql id="paymentTables">

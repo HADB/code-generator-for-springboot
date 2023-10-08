@@ -7,7 +7,7 @@ ${column_list}
     </sql>
 
     <sql id="${model_name_camel_case}Tables">
-        `${table_name}` `${model_name_camel_case}`
+        `${table_name}` `${model_name_snake_case}`
     </sql>
 
     <sql id="${model_name_camel_case}SearchWhere">
@@ -50,8 +50,8 @@ ${update_partly_list}
         FROM
         <include refid="${model_name_camel_case}Tables"/>
         <where>
-            AND `${model_name_camel_case}`.`id` = #{id}
-            AND `${model_name_camel_case}`.`is_delete` = 0
+            AND `${model_name_snake_case}`.`id` = #{id}
+            AND `${model_name_snake_case}`.`is_delete` = 0
         </where>
         LIMIT 1
     </select>

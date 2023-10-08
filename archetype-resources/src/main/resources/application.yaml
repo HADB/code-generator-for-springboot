@@ -4,6 +4,8 @@ app:
     qiniu-secret-key: ''
 mybatis:
     mapper-locations: classpath:mapper/*.xml
+    configuration:
+        map-underscore-to-camel-case: true
 server:
     port: ${port}
     servlet:
@@ -21,6 +23,7 @@ spring:
             minimum-idle: 2
     jackson:
         default-property-inclusion: non_null
+        property-naming-strategy: SNAKE_CASE
         time-zone: GMT+8
     main:
         allow-circular-references: true

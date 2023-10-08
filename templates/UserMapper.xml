@@ -7,8 +7,8 @@ ${column_list_without_password}
     </sql>
 
     <sql id="userColumnsPassword">
-        `user`.`password` as `password`,
-        `user`.`salt` as `salt`
+        `user`.`password`,
+        `user`.`salt`
     </sql>
 
     <sql id="userColumns">

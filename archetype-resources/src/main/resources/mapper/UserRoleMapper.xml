@@ -3,37 +3,37 @@
 
 <mapper namespace="${package_name}.mappers.UserRoleMapper">
     <sql id="userRoleColumns">
-        `userRole`.`id` as `id`,
-        `userRole`.`user_id` as `userId`,
-        `userRole`.`role_id` as `roleId`,
-        `userRole`.`create_time` as `createTime`,
-        `userRole`.`update_time` as `updateTime`
+        `user_role`.`id`,
+        `user_role`.`user_id`,
+        `user_role`.`role_id`,
+        `user_role`.`create_time`,
+        `user_role`.`update_time`
     </sql>
 
     <sql id="userRoleTables">
-        `t_user_role` `userRole`
+        `t_user_role` `user_role`
     </sql>
 
     <sql id="userRoleSearchWhere">
         <if test="request.userId != null">
-            AND `userRole`.`user_id` = #{request.userId}
+            AND `user_role`.`user_id` = #{request.userId}
         </if>
         <if test="request.roleId != null">
-            AND `userRole`.`role_id` = #{request.roleId}
+            AND `user_role`.`role_id` = #{request.roleId}
         </if>
         <if test="request.createTimeFrom != null">
-            AND `userRole`.`create_time` &gt;= #{request.createTimeFrom}
+            AND `user_role`.`create_time` &gt;= #{request.createTimeFrom}
         </if>
         <if test="request.createTimeTo != null">
-            AND `userRole`.`create_time` &lt;= #{request.createTimeTo}
+            AND `user_role`.`create_time` &lt;= #{request.createTimeTo}
         </if>
         <if test="request.updateTimeFrom != null">
-            AND `userRole`.`update_time` &gt;= #{request.updateTimeFrom}
+            AND `user_role`.`update_time` &gt;= #{request.updateTimeFrom}
         </if>
         <if test="request.updateTimeTo != null">
-            AND `userRole`.`update_time` &lt;= #{request.updateTimeTo}
+            AND `user_role`.`update_time` &lt;= #{request.updateTimeTo}
         </if>
-        AND `userRole`.`is_delete` = 0
+        AND `user_role`.`is_delete` = 0
     </sql>
 
     <insert id="insertUserRole" useGeneratedKeys="true" keyProperty="userRole.id">
@@ -86,8 +86,8 @@
         FROM
         <include refid="userRoleTables"/>
         <where>
-            AND `userRole`.`id` = #{id}
-            AND `userRole`.`is_delete` = 0
+            AND `user_role`.`id` = #{id}
+            AND `user_role`.`is_delete` = 0
         </where>
         LIMIT 1
     </select>
@@ -108,7 +108,7 @@
                 </foreach>
             </when>
             <otherwise>
-                ORDER BY `userRole`.`id` DESC
+                ORDER BY `user_role`.`id` DESC
             </otherwise>
         </choose>
         LIMIT #{request.paging.offset}, #{request.paging.pageSize}

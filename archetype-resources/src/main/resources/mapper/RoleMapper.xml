@@ -3,13 +3,13 @@
 
 <mapper namespace="${package_name}.mappers.RoleMapper">
     <sql id="roleColumns">
-        `role`.`id` as `id`,
-        `role`.`key` as `key`,
-        `role`.`name` as `name`,
-        `role`.`description` as `description`,
-        `role`.`built_in` as `builtIn`,
-        `role`.`create_time` as `createTime`,
-        `role`.`update_time` as `updateTime`
+        `role`.`id`,
+        `role`.`key`,
+        `role`.`name`,
+        `role`.`description`,
+        `role`.`built_in`,
+        `role`.`create_time`,
+        `role`.`update_time`
     </sql>
 
     <sql id="roleTables">

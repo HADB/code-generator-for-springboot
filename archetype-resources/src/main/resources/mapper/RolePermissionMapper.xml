@@ -3,37 +3,37 @@
 
 <mapper namespace="${package_name}.mappers.RolePermissionMapper">
     <sql id="rolePermissionColumns">
-        `rolePermission`.`id` as `id`,
-        `rolePermission`.`role_id` as `roleId`,
-        `rolePermission`.`permission_id` as `permissionId`,
-        `rolePermission`.`create_time` as `createTime`,
-        `rolePermission`.`update_time` as `updateTime`
+        `role_permission`.`id`,
+        `role_permission`.`role_id`,
+        `role_permission`.`permission_id`,
+        `role_permission`.`create_time`,
+        `role_permission`.`update_time`
     </sql>
 
     <sql id="rolePermissionTables">
-        `t_role_permission` `rolePermission`
+        `t_role_permission` `role_permission`
     </sql>
 
     <sql id="rolePermissionSearchWhere">
         <if test="request.roleId != null">
-            AND `rolePermission`.`role_id` = #{request.roleId}
+            AND `role_permission`.`role_id` = #{request.roleId}
         </if>
         <if test="request.permissionId != null">
-            AND `rolePermission`.`permission_id` = #{request.permissionId}
+            AND `role_permission`.`permission_id` = #{request.permissionId}
         </if>
         <if test="request.createTimeFrom != null">
-            AND `rolePermission`.`create_time` &gt;= #{request.createTimeFrom}
+            AND `role_permission`.`create_time` &gt;= #{request.createTimeFrom}
         </if>
         <if test="request.createTimeTo != null">
-            AND `rolePermission`.`create_time` &lt;= #{request.createTimeTo}
+            AND `role_permission`.`create_time` &lt;= #{request.createTimeTo}
         </if>
         <if test="request.updateTimeFrom != null">
-            AND `rolePermission`.`update_time` &gt;= #{request.updateTimeFrom}
+            AND `role_permission`.`update_time` &gt;= #{request.updateTimeFrom}
         </if>
         <if test="request.updateTimeTo != null">
-            AND `rolePermission`.`update_time` &lt;= #{request.updateTimeTo}
+            AND `role_permission`.`update_time` &lt;= #{request.updateTimeTo}
         </if>
-        AND `rolePermission`.`is_delete` = 0
+        AND `role_permission`.`is_delete` = 0
     </sql>
 
     <insert id="insertRolePermission" useGeneratedKeys="true" keyProperty="rolePermission.id">
@@ -86,8 +86,8 @@
         FROM
         <include refid="rolePermissionTables"/>
         <where>
-            AND `rolePermission`.`id` = #{id}
-            AND `rolePermission`.`is_delete` = 0
+            AND `role_permission`.`id` = #{id}
+            AND `role_permission`.`is_delete` = 0
         </where>
         LIMIT 1
     </select>
@@ -108,7 +108,7 @@
                 </foreach>
             </when>
             <otherwise>
-                ORDER BY `rolePermission`.`id` DESC
+                ORDER BY `role_permission`.`id` DESC
             </otherwise>
         </choose>
         LIMIT #{request.paging.offset}, #{request.paging.pageSize}
