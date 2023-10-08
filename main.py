@@ -62,7 +62,6 @@ def get_column_type_property_name(column):
         column_type = "BigDecimal"
     elif column["type"] == "tinyint" and column["name"].startswith("is_"):
         column_type = "Boolean"
-        property_name = column["name"][3:]
     elif column["type"] == "tinyint" or column["type"] == "int":
         column_type = "Int"
     elif column["type"] == "datetime" or column["type"] == "time" or column["type"] == "date":
