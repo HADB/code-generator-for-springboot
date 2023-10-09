@@ -4,6 +4,9 @@ spring:
         password: ''
         url: ''
         username: ''
+    devtools:
+        restart:
+            enabled: false
     redis:
         primary:
             database: ''
