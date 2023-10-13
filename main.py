@@ -11,6 +11,7 @@ import sys
 
 import inflection
 import inflect
+import platform
 
 inflect_engine = inflect.engine()
 CURRENT_PATH = os.getcwd()  # 当前目录
@@ -125,7 +126,7 @@ def copy_archetype_resources():
                     file_write.write(content)
                     if debug:
                         print("已复制:" + file_path)
-                if file_name == "generator.sh":
+                if file_name == "generator.sh" and platform.system() != "Windows":
                     subprocess.run(["chmod", "+x", file_path])
 
 
