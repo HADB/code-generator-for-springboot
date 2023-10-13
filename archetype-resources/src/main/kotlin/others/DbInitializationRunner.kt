@@ -1,6 +1,5 @@
 package ${package_name}.others
 
-import com.google.common.base.CaseFormat
 import io.swagger.v3.oas.annotations.Operation
 import ${package_name}.constants.BuiltInRoleKey
 import ${package_name}.services.PermissionService
@@ -34,6 +33,7 @@ class DbInitializationRunner : CommandLineRunner {
     private val logger = LoggerFactory.getLogger(this.javaClass)
 
     override fun run(vararg args: String?) {
+        logger.info("db runner started")
         val builtInAdminRoleId = roleService.getRoleByKey(BuiltInRoleKey.Admin)?.id
             ?: roleService.editRole(
                 RoleEditRequest(
@@ -65,35 +65,38 @@ class DbInitializationRunner : CommandLineRunner {
         val controllerNames = listOf(${controller_names_text})
         for (controllerName in controllerNames) {
             val controller = Class.forName("${package_name}.controllers.$${controllerName}Controller")
-            val controllerMappingPaths = controller.getAnnotation(RequestMapping::class.java).value
-            for (controllerMappingPath in controllerMappingPaths) {
-                val methods = controller.declaredMethods
-                for (method in methods) {
-                    val key = "$${CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, controllerName)}_$${CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, method.name)}"
-                    val methodMappingPaths = method.getAnnotation(RequestMapping::class.java).value
-                    for (methodMappingPath in methodMappingPaths) {
-                        val apiMethods = method.getAnnotation(RequestMapping::class.java).method
-                        for (apiMethod in apiMethods) {
-                            val permission = permissionService.getPermissionByKey(key)
+            val controllerPaths = controller.getAnnotation(RequestMapping::class.java).value
+            for (controllerPath in controllerPaths) {
+                val functions = controller.declaredMethods
+                for (function in functions) {
+                    val summary = function.getAnnotation(Operation::class.java).summary
+                    val paths = function.getAnnotation(RequestMapping::class.java).value
+                    for (path in paths) {
+                        val methods = function.getAnnotation(RequestMapping::class.java).method
+                        for (method in methods) {
+                            val apiPath = "$${controllerPath}$${path}"
+                            val apiMethod = method.name
+                            val permissionKey = "$${apiMethod}:$${apiPath}"
+                            val permission = permissionService.getPermissionByKey(permissionKey)
                             if (permission == null) {
                                 permissionService.editPermission(
                                     PermissionEditRequest(
-                                        key = key,
-                                        name = method.getAnnotation(Operation::class.java).summary,
+                                        key = permissionKey,
+                                        name = summary,
                                         type = 0,
-                                        apiPath = "$${controllerMappingPath}$${methodMappingPath}",
-                                        apiMethod = apiMethod.name
+                                        apiPath = apiPath,
+                                        apiMethod = apiMethod
                                     )
                                 )
-                            } else {
+                            } else if (permission.name != summary) {
                                 permissionService.editPermission(
                                     PermissionEditRequest(
                                         id = permission.id,
-                                        key = key,
-                                        name = method.getAnnotation(Operation::class.java).summary,
+                                        key = permissionKey,
+                                        name = summary,
                                         type = 0,
-                                        apiPath = "$${controllerMappingPath}$${methodMappingPath}",
-                                        apiMethod = apiMethod.name
+                                        apiPath = apiPath,
+                                        apiMethod = apiMethod
                                     )
                                 )
                             }
@@ -102,5 +105,7 @@ class DbInitializationRunner : CommandLineRunner {
                 }
             }
         }
+
+        logger.info("db runner done")
     }
 }

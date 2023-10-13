@@ -18,16 +18,27 @@ CURRENT_PATH = os.getcwd()  # 当前目录
 TEMPLATE_PATH = os.path.join(CURRENT_PATH, "templates")  # 模板目录
 ARCHETYPE_RESOURCE_PATH = os.path.join(CURRENT_PATH, "archetype-resources")  # 原型资源目录
 
-project_path = None
-package_name = None
-group_id = None
-artifact_id = None
-version = None
-description = None
-port = None
-payment = False
 controller_names = []
-debug = False
+
+project_info = {
+    "project_path": None,
+    "package_name": None,
+    "group_id": None,
+    "artifact_id": None,
+    "version": None,
+    "description": None,
+    "port": None,
+    "payment": False,
+    "debug": False,
+}
+
+file_info = {}
+
+
+def substitute(template_str, **vars):
+    merged_vars = {**project_info, **file_info, **vars}
+    template = string.Template(template_str)
+    return template.substitute(merged_vars)
 
 
 def init_project():
@@ -35,17 +46,17 @@ def init_project():
     g = os.walk(ARCHETYPE_RESOURCE_PATH)
     for path, _, file_list in g:
         for file_name in file_list:
-            if file_name == ".DS_Store" or (not payment and file_name == "t_payment.sql"):
+            if file_name == ".DS_Store" or (not project_info["payment"] and file_name == "t_payment.sql"):
                 continue
             sub_path = path[len(ARCHETYPE_RESOURCE_PATH) + 1 :]
 
             with open(os.path.join(path, file_name), "r", encoding="utf-8") as file_read:
                 if "src/main/resources/sql" in path or "src\\main\\resources\\sql" in path:
-                    directory_path = os.path.join(project_path, sub_path)
+                    directory_path = os.path.join(project_info["project_path"], sub_path)
                     if not os.path.exists(directory_path):
                         os.makedirs(directory_path)
                     file_path = os.path.join(directory_path, file_name)
-                    if debug:
+                    if project_info["debug"]:
                         print(file_path)
                     content = file_read.read()
                     with open(file_path, "w", encoding="utf-8") as file_write:
@@ -71,7 +82,7 @@ def get_column_type_property_name(column):
 
 
 def copy_archetype_resources():
-    if debug:
+    if project_info["debug"]:
         print("复制骨架资源文件")
     g = os.walk(ARCHETYPE_RESOURCE_PATH)
     controller_names.sort()
@@ -83,22 +94,22 @@ def copy_archetype_resources():
             sub_path = path[len(ARCHETYPE_RESOURCE_PATH) + 1 :]
 
             with open(os.path.join(path, file_name), "r", encoding="utf-8") as file_read:
-                directory_path = os.path.join(project_path, sub_path)
+                directory_path = os.path.join(project_info["project_path"], sub_path)
                 if "src/main/kotlin" in path or "src\\main\\kotlin" in path:
                     directory_path = os.path.join(
-                        project_path,
+                        project_info["project_path"],
                         "src/main/kotlin",
-                        *package_name.split("."),
+                        *project_info["package_name"].split("."),
                         sub_path[len("src/main/kotlin") + 1 :]
                     )
                 if not os.path.exists(directory_path):
                     os.makedirs(directory_path)
                 file_path = os.path.join(directory_path, file_name)
                 if os.path.exists(file_path) and os.path.splitext(file_name)[-1] == ".sql":
-                    if debug:
+                    if project_info["debug"]:
                         print("跳过:" + file_path)
                     continue
-                if not payment and file_name in [
+                if not project_info["payment"] and file_name in [
                     "t_payment.sql",
                     "PaymentController.kt",
                     "PaymentService.kt",
@@ -108,72 +119,69 @@ def copy_archetype_resources():
                     "WxPrepayResponse.kt",
                 ]:
                     continue
-                if debug:
+                if project_info["debug"]:
                     print("准备复制:" + file_path)
-                content = file_read.read()
-                t = string.Template(content)
-                content = t.substitute(
-                    package_name=package_name,
-                    group_id=group_id,
-                    artifact_id=artifact_id,
-                    version=version,
-                    description=description,
-                    port=port,
-                    project_path=project_path,
-                    controller_names_text=controller_names_text,
-                )
+                content = substitute(file_read.read(), controller_names_text=controller_names_text)
+
                 with open(file_path, "w", encoding="utf-8") as file_write:
                     file_write.write(content)
-                    if debug:
+                    if project_info["debug"]:
                         print("已复制:" + file_path)
                 if file_name == "generator.sh" and platform.system() != "Windows":
                     subprocess.run(["chmod", "+x", file_path])
 
 
 def run_package():
-    if debug:
+    global file_info
+    if project_info["debug"]:
         print("执行 CRUD")
-    input_path = os.path.join(project_path, "src/main/resources/sql")
+    input_path = os.path.join(project_info["project_path"], "src/main/resources/sql")
     # kotlin 输出目录
-    kotlin_output_path = os.path.join(project_path, "src", "main", "kotlin", *package_name.split("."))
+    kotlin_output_path = os.path.join(
+        project_info["project_path"], "src", "main", "kotlin", *project_info["package_name"].split(".")
+    )
     # mapper 输出目录
-    mapper_output_path = os.path.join(project_path, "src", "main", "resources", "mapper")
+    mapper_output_path = os.path.join(project_info["project_path"], "src", "main", "resources", "mapper")
     if os.path.exists(kotlin_output_path):
         shutil.rmtree(kotlin_output_path)
     if os.path.exists(mapper_output_path):
         shutil.rmtree(mapper_output_path)
 
     for input_file_name in os.listdir(input_path):
+        file_info = {}
         input_file_path = os.path.join(input_path, input_file_name)
         if not os.path.isdir(input_file_path):
             if not input_file_name.endswith(".sql"):
-                if debug:
+                if project_info["debug"]:
                     print("跳过: " + input_file_name)
                 continue
-            if debug:
+            if project_info["debug"]:
                 print("处理: " + input_file_name)
-            file_name = os.path.splitext(input_file_name)[0].strip()  # 文件名
-            if not payment and file_name == "t_payment":
+            file_info["table_name"] = os.path.splitext(input_file_name)[0].strip()  # 文件名
+            if not project_info["payment"] and file_info["table_name"] == "t_payment":
                 continue
-            if file_name == "t_flyway_history":
+            if file_info["table_name"] == "t_flyway_history":
                 continue
-            table_name = file_name  # 表名默认为文件名
-            model_name = table_name[2:] if table_name.startswith("t_") else table_name
-            model_name_pascal_case = inflection.camelize(model_name, True)  # PascalCase
-            model_name_plural_pascal_case = inflection.camelize(inflect_engine.plural(model_name), True)  # PascalCases
-            model_name_camel_case = inflection.camelize(model_name, False)  # camelCase
-            model_name_snake_case = inflection.dasherize(model_name)  # snake_case
+            file_info["model_name"] = (
+                file_info["table_name"][2:] if file_info["table_name"].startswith("t_") else file_info["table_name"]
+            )
+            file_info["model_name_pascal_case"] = inflection.camelize(file_info["model_name"], True)  # PascalCase
+            file_info["model_name_plural_pascal_case"] = inflection.camelize(
+                inflect_engine.plural(file_info["model_name"]), True
+            )  # PascalCases
+            file_info["model_name_camel_case"] = inflection.camelize(file_info["model_name"], False)  # camelCase
+            file_info["model_name_snake_case"] = inflection.dasherize(file_info["model_name"])  # snake_case
 
-            table_description = model_name  # 表注释
+            table_description = file_info["model_name"]  # 表注释
             file_read = open(input_file_path, "r", encoding="UTF-8")
             columns = []  # 字段数组
 
             for line in file_read:
                 if line.find("CREATE TABLE ") >= 0:
-                    if line.strip().split()[2].split(".")[-1].strip("`") != table_name:
+                    if line.strip().split()[2].split(".")[-1].strip("`") != file_info["table_name"]:
                         print("表名与文件名不一致！")
                         return
-                    controller_names.append('"%s"' % model_name_pascal_case)
+                    controller_names.append('"%s"' % file_info["model_name_pascal_case"])
                     continue
                 if line.find(" KEY ") >= 0:
                     continue  # 跳过索引
@@ -217,25 +225,24 @@ def run_package():
 
             # [Model]Mapper.xml
             lines = []
-            lines_without_password = []
             for column in columns:
                 property_name = column["name"]
                 if column["name"] == "is_delete":
                     continue
+                if file_info["model_name"] == "user" and (column["name"] == "password" or column["name"] == "salt"):
+                    continue
+                lines.append("        `%s`.`%s`" % (file_info["model_name_camel_case"], column["name"]))
 
-                lines.append("        `%s`.`%s`" % (model_name_camel_case, column["name"]))
-                if model_name == "user" and column["name"] != "password" and column["name"] != "salt":
-                    lines_without_password.append("        `%s`.`%s`" % (model_name_camel_case, column["name"]))
             column_list = ",\n".join(lines)
-            if model_name == "user":
-                column_list_without_password = ",\n".join(lines_without_password)
 
             lines = []
             for column in columns:
                 if (
                     column["name"] == "id"
                     or column["name"] == "sort_weight"
-                    or (model_name == "user" and (column["name"] == "password" or column["name"] == "salt"))
+                    or (
+                        file_info["model_name"] == "user" and (column["name"] == "password" or column["name"] == "salt")
+                    )
                 ):
                     continue
                 if column["type"] == "datetime" or column["type"] == "time" or column["type"] == "date":
@@ -245,7 +252,7 @@ def run_package():
                     lines.append(
                         "            AND `%s`.`%s` &gt;= #{request.%sFrom}"
                         % (
-                            model_name_camel_case,
+                            file_info["model_name_camel_case"],
                             column["name"],
                             inflection.camelize(column["name"], False),
                         )
@@ -257,7 +264,7 @@ def run_package():
                     lines.append(
                         "            AND `%s`.`%s` &lt;= #{request.%sTo}"
                         % (
-                            model_name_camel_case,
+                            file_info["model_name_camel_case"],
                             column["name"],
                             inflection.camelize(column["name"], False),
                         )
@@ -265,7 +272,7 @@ def run_package():
                     lines.append("        </if>")
                     continue
                 if column["name"] == "is_delete":
-                    lines.append("        AND `%s`.`%s` = 0" % (model_name_camel_case, column["name"]))
+                    lines.append("        AND `%s`.`%s` = 0" % (file_info["model_name_camel_case"], column["name"]))
                     continue
                 if column["type"] == "varchar" or column["type"] == "text":
                     lines.append(
@@ -282,7 +289,7 @@ def run_package():
                 lines.append(
                     "            AND `%s`.`%s` = #{request.%s}"
                     % (
-                        model_name_camel_case,
+                        file_info["model_name_camel_case"],
                         column["name"],
                         inflection.camelize(column["name"], False),
                     )
@@ -310,7 +317,8 @@ def run_package():
                     lines.append("        NOW()")
                 else:
                     lines.append(
-                        "        #{%s.%s}" % (model_name_camel_case, inflection.camelize(column["name"], False))
+                        "        #{%s.%s}"
+                        % (file_info["model_name_camel_case"], inflection.camelize(column["name"], False))
                     )
             value_list = ",\n".join(lines)
 
@@ -328,7 +336,11 @@ def run_package():
                 else:
                     lines.append(
                         "        `%s` = #{%s.%s}"
-                        % (column["name"], model_name_camel_case, inflection.camelize(column["name"], False))
+                        % (
+                            column["name"],
+                            file_info["model_name_camel_case"],
+                            inflection.camelize(column["name"], False),
+                        )
                     )
             update_list = ",\n".join(lines)
 
@@ -363,63 +375,46 @@ def run_package():
             lines = []
             for column in columns:
                 if column["name"] == "sort_weight":
-                    lines.append("`%s`.`sort_weight` DESC" % (model_name_camel_case))
+                    lines.append("`%s`.`sort_weight` DESC" % (file_info["model_name_camel_case"]))
             if not lines:
-                lines.append("`%s`.`id` DESC" % (model_name_camel_case))
+                lines.append("`%s`.`id` DESC" % (file_info["model_name_camel_case"]))
             orders = ", ".join(lines)
 
-            if model_name == "user":
+            if file_info["model_name"] == "user":
                 file_read = open(os.path.join(TEMPLATE_PATH, "UserMapper.xml"), "r", encoding="UTF-8")
             else:
                 file_read = open(os.path.join(TEMPLATE_PATH, "Mapper.xml"), "r", encoding="UTF-8")
 
-            content = file_read.read()
-            t = string.Template(content)
-            if model_name == "user":
-                content = t.substitute(
-                    package_name=package_name,
-                    column_list_without_password=column_list_without_password,
-                    search_where=search_where,
-                    orders=orders,
-                    name_list=name_list,
-                    value_list=value_list,
-                    update_list=update_list,
-                    update_partly_list=update_partly_list,
-                )
-            else:
-                content = t.substitute(
-                    table_name=table_name,
-                    package_name=package_name,
-                    model_name_pascal_case=model_name_pascal_case,
-                    model_name_camel_case=model_name_camel_case,
-                    model_name_plural_pascal_case=model_name_plural_pascal_case,
-                    model_name_snake_case=model_name_snake_case,
-                    column_list=column_list,
-                    search_where=search_where,
-                    orders=orders,
-                    name_list=name_list,
-                    value_list=value_list,
-                    update_list=update_list,
-                    update_partly_list=update_partly_list,
-                )
+            content = substitute(
+                file_read.read(),
+                column_list=column_list,
+                name_list=name_list,
+                orders=orders,
+                search_where=search_where,
+                update_list=update_list,
+                update_partly_list=update_partly_list,
+                value_list=value_list,
+            )
 
             if not os.path.exists(mapper_output_path):
                 os.makedirs(mapper_output_path)
 
             file_write = open(
-                os.path.join(mapper_output_path, model_name_pascal_case + "Mapper.xml"), "w", encoding="UTF-8"
+                os.path.join(mapper_output_path, file_info["model_name_pascal_case"] + "Mapper.xml"),
+                "w",
+                encoding="UTF-8",
             )
             file_write.write(content)
             file_write.close()
 
             # [Model].kt
-            content = "package %s.models\n\n" % package_name
+            content = "package %s.models\n\n" % project_info["package_name"]
             content += "import io.swagger.v3.oas.annotations.media.Schema\n"
-            content += "import %s.annotations.NoArg\n" % package_name
+            content += "import %s.annotations.NoArg\n" % project_info["package_name"]
             content += "import java.math.BigDecimal\n"
             content += "import java.util.*\n\n"
             content += "@NoArg\n"
-            content += "data class %s(\n" % (model_name_pascal_case)
+            content += "data class %s(\n" % (file_info["model_name_pascal_case"])
             lines = []
             swagger_index = 0
             for column in columns:
@@ -437,7 +432,7 @@ def run_package():
                     line_text = '    @Schema(description = "%s")\n' % (column["comment"])
 
                     # 特殊处理 for Payment.kt
-                    if model_name == "payment" and (
+                    if file_info["model_name"] == "payment" and (
                         property_name == "status"
                         or property_name == "wx_transaction_id"
                         or property_name == "wx_payment_open_id"
@@ -450,7 +445,7 @@ def run_package():
                         )
 
                     # 特殊处理 for User.kt
-                    elif model_name == "user" and (
+                    elif file_info["model_name"] == "user" and (
                         property_name != "id" and property_name != "create_time" and property_name != "update_time"
                     ):
                         line_text += "    var %s: %s" % (inflection.camelize(property_name, False), column_type)
@@ -464,14 +459,19 @@ def run_package():
             output_models_path = os.path.join(kotlin_output_path, "models")
             if not os.path.exists(output_models_path):
                 os.makedirs(output_models_path)
-            file_write = open(os.path.join(output_models_path, model_name_pascal_case + ".kt"), "w", encoding="UTF-8")
+            file_write = open(
+                os.path.join(output_models_path, file_info["model_name_pascal_case"] + ".kt"), "w", encoding="UTF-8"
+            )
             file_write.write(content)
             file_write.close()
 
             # [Model]EditRequest.kt
-            content = "package %s.viewmodels.%s\n\n" % (package_name, model_name_camel_case)
+            content = "package %s.viewmodels.%s\n\n" % (
+                project_info["package_name"],
+                file_info["model_name_camel_case"],
+            )
             content += "import io.swagger.v3.oas.annotations.media.Schema\nimport java.math.BigDecimal\nimport java.util.*\nimport jakarta.validation.constraints.NotNull\n\n"
-            content += "data class %sEditRequest(\n" % (model_name_pascal_case)
+            content += "data class %sEditRequest(\n" % (file_info["model_name_pascal_case"])
             lines = []
             swagger_index = 0
             for column in columns:
@@ -513,19 +513,24 @@ def run_package():
             content += "%s,\n" % (",\n\n".join(lines))
             content += ")\n"
 
-            output_viewmodels_path = os.path.join(kotlin_output_path, "viewmodels", model_name_camel_case)
+            output_viewmodels_path = os.path.join(kotlin_output_path, "viewmodels", file_info["model_name_camel_case"])
             if not os.path.exists(output_viewmodels_path):
                 os.makedirs(output_viewmodels_path)
             file_write = open(
-                os.path.join(output_viewmodels_path, model_name_pascal_case + "EditRequest.kt"), "w", encoding="UTF-8"
+                os.path.join(output_viewmodels_path, file_info["model_name_pascal_case"] + "EditRequest.kt"),
+                "w",
+                encoding="UTF-8",
             )
             file_write.write(content)
             file_write.close()
 
             # [Model]PartlyEditRequest.kt
-            content = "package %s.viewmodels.%s\n\n" % (package_name, model_name_camel_case)
+            content = "package %s.viewmodels.%s\n\n" % (
+                project_info["package_name"],
+                file_info["model_name_camel_case"],
+            )
             content += "import io.swagger.v3.oas.annotations.media.Schema\nimport java.math.BigDecimal\nimport java.util.*\nimport jakarta.validation.constraints.NotNull\n\n"
-            content += "data class %sPartlyEditRequest(\n" % (model_name_pascal_case)
+            content += "data class %sPartlyEditRequest(\n" % (file_info["model_name_pascal_case"])
             lines = []
             swagger_index = 0
             for column in columns:
@@ -545,7 +550,7 @@ def run_package():
                     hidden = "false"
                     column_type += "? = null"
                 # 特殊处理 for UserPartlyEditRequest.kt
-                if model_name == "user" and (column["name"] == "password" or column["name"] == "salt"):
+                if file_info["model_name"] == "user" and (column["name"] == "password" or column["name"] == "salt"):
                     define = "var"
                 line_text = '    @Schema(description = "%s", required = false, hidden = %s)\n' % (
                     column["comment"],
@@ -557,11 +562,11 @@ def run_package():
             content += "%s,\n" % (",\n\n".join(lines))
             content += ")\n"
 
-            output_viewmodels_path = os.path.join(kotlin_output_path, "viewmodels", model_name_camel_case)
+            output_viewmodels_path = os.path.join(kotlin_output_path, "viewmodels", file_info["model_name_camel_case"])
             if not os.path.exists(output_viewmodels_path):
                 os.makedirs(output_viewmodels_path)
             file_write = open(
-                os.path.join(output_viewmodels_path, model_name_pascal_case + "PartlyEditRequest.kt"),
+                os.path.join(output_viewmodels_path, file_info["model_name_pascal_case"] + "PartlyEditRequest.kt"),
                 "w",
                 encoding="UTF-8",
             )
@@ -569,12 +574,15 @@ def run_package():
             file_write.close()
 
             # [Model]SearchRequest.kt
-            content = "package %s.viewmodels.%s\n\n" % (package_name, model_name_camel_case)
+            content = "package %s.viewmodels.%s\n\n" % (
+                project_info["package_name"],
+                file_info["model_name_camel_case"],
+            )
             content += (
                 "import io.swagger.v3.oas.annotations.media.Schema\nimport %s.models.Paging\nimport %s.viewmodels.common.SortOrder\nimport java.math.BigDecimal\nimport java.util.*\n\n"
-                % (package_name, package_name)
+                % (project_info["package_name"], project_info["package_name"])
             )
-            content += "data class %sSearchRequest(\n" % (model_name_pascal_case)
+            content += "data class %sSearchRequest(\n" % (file_info["model_name_pascal_case"])
             lines = []
             swagger_index = 0
             for column in columns:
@@ -622,40 +630,35 @@ def run_package():
             content += "%s,\n" % (",\n\n".join(lines))
             content += ")\n"
 
-            output_viewmodels_path = os.path.join(kotlin_output_path, "viewmodels", model_name_camel_case)
+            output_viewmodels_path = os.path.join(kotlin_output_path, "viewmodels", file_info["model_name_camel_case"])
             if not os.path.exists(output_viewmodels_path):
                 os.makedirs(output_viewmodels_path)
             file_write = open(
-                os.path.join(output_viewmodels_path, model_name_pascal_case + "SearchRequest.kt"), "w", encoding="UTF-8"
+                os.path.join(output_viewmodels_path, file_info["model_name_pascal_case"] + "SearchRequest.kt"),
+                "w",
+                encoding="UTF-8",
             )
             file_write.write(content)
             file_write.close()
 
             # [Model]Mapper.kt
             file_read = open(os.path.join(TEMPLATE_PATH, "Mapper.kt"), "r", encoding="UTF-8")
-            content = file_read.read()
-            t = string.Template(content)
-            content = t.substitute(
-                package_name=package_name,
-                model_name_pascal_case=model_name_pascal_case,
-                model_name_camel_case=model_name_camel_case,
-                model_name_plural_pascal_case=model_name_plural_pascal_case,
-            )
+            content = substitute(file_read.read())
 
             output_mappers_path = os.path.join(kotlin_output_path, "mappers")
             if not os.path.exists(output_mappers_path):
                 os.makedirs(output_mappers_path)
             file_write = open(
-                os.path.join(output_mappers_path, model_name_pascal_case + "Mapper.kt"), "w", encoding="UTF-8"
+                os.path.join(output_mappers_path, file_info["model_name_pascal_case"] + "Mapper.kt"),
+                "w",
+                encoding="UTF-8",
             )
             file_write.write(content)
             file_write.close()
 
             # [Model]Service.kt
-            if model_name == "user":
+            if file_info["model_name"] == "user":
                 file_read = open(os.path.join(TEMPLATE_PATH, "UserService.kt"), "r", encoding="UTF-8")
-                content = file_read.read()
-                t = string.Template(content)
                 columns_data = []
                 add_user_with_password_columns_data = []
                 bind_mobile_columns_data = []
@@ -701,16 +704,16 @@ def run_package():
                                 inflection.camelize(property_name, False),
                             )
                         )
-                content = t.substitute(
-                    package_name=package_name,
+
+                content = substitute(
+                    file_read.read(),
                     columns_data=",\n".join(columns_data),
                     add_user_with_password_columns_data=",\n".join(add_user_with_password_columns_data),
                     bind_mobile_columns_data="\n".join(bind_mobile_columns_data),
                 )
             else:
                 file_read = open(os.path.join(TEMPLATE_PATH, "Service.kt"), "r", encoding="UTF-8")
-                content = file_read.read()
-                t = string.Template(content)
+
                 columns_data = []
                 for column in columns:
                     property_name = column["name"]
@@ -729,41 +732,31 @@ def run_package():
                             inflection.camelize(property_name, False),
                         )
                     )
-                content = t.substitute(
-                    package_name=package_name,
-                    model_name_pascal_case=model_name_pascal_case,
-                    model_name_camel_case=model_name_camel_case,
-                    model_name_plural_pascal_case=model_name_plural_pascal_case,
-                    columns_data=",\n".join(columns_data),
-                )
+                content = substitute(file_read.read(), columns_data=",\n".join(columns_data))
 
             output_services_path = os.path.join(kotlin_output_path, "services")
             if not os.path.exists(output_services_path):
                 os.makedirs(output_services_path)
             file_write = open(
-                os.path.join(output_services_path, model_name_pascal_case + "Service.kt"), "w", encoding="UTF-8"
+                os.path.join(output_services_path, file_info["model_name_pascal_case"] + "Service.kt"),
+                "w",
+                encoding="UTF-8",
             )
             file_write.write(content)
             file_write.close()
 
             # [Model]Controller.kt
             file_read = open(os.path.join(TEMPLATE_PATH, "Controller.kt"), "r", encoding="UTF-8")
-            content = file_read.read()
-            t = string.Template(content)
-            content = t.substitute(
-                package_name=package_name,
-                model_name_snake_case=model_name_snake_case,
-                model_name_pascal_case=model_name_pascal_case,
-                model_name_camel_case=model_name_camel_case,
-                model_name_plural_pascal_case=model_name_plural_pascal_case,
-                model_description=table_description,
-            )
+
+            content = substitute(file_read.read(), model_description=table_description)
 
             output_controllers_path = os.path.join(kotlin_output_path, "controllers")
             if not os.path.exists(output_controllers_path):
                 os.makedirs(output_controllers_path)
             file_write = open(
-                os.path.join(output_controllers_path, model_name_pascal_case + "Controller.kt"), "w", encoding="UTF-8"
+                os.path.join(output_controllers_path, file_info["model_name_pascal_case"] + "Controller.kt"),
+                "w",
+                encoding="UTF-8",
             )
             file_write.write(content)
             file_write.close()
@@ -787,30 +780,30 @@ if __name__ == "__main__":
     )
     for name, value in OPTS:
         if name == "--group_id":
-            group_id = value
+            project_info["group_id"] = value
         elif name == "--artifact_id":
-            artifact_id = value
+            project_info["artifact_id"] = value
         elif name == "--version":
-            version = value
+            project_info["version"] = value
         elif name == "--port":
-            port = value
+            project_info["port"] = value
         elif name == "--package_name":
-            package_name = value
+            project_info["package_name"] = value
         elif name == "--project_path":
-            project_path = value
+            project_info["project_path"] = value
         elif name == "--description":
-            description = value
+            project_info["description"] = value
         elif name == "--payment":
-            payment = True
+            project_info["payment"] = True
         elif name == "--debug":
-            debug = True
-    if debug:
+            project_info["debug"] = True
+    if project_info["debug"]:
         print("debug mode")
-        print(group_id, artifact_id, version, port, package_name, project_path, description)
-    if not os.path.exists(project_path):
-        os.makedirs(project_path)
+        print(project_info)
+    if not os.path.exists(project_info["project_path"]):
+        os.makedirs(project_info["project_path"])
 
-    if not os.path.exists(os.path.join(project_path, "pom.xml")):
+    if not os.path.exists(os.path.join(project_info["project_path"], "pom.xml")):
         # 初始化项目（复制 .sql 文件）
         init_project()
     run_package()

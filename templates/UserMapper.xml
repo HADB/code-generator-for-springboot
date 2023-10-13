@@ -3,7 +3,7 @@
 
 <mapper namespace="${package_name}.mappers.UserMapper">
     <sql id="userColumnsBasic">
-${column_list_without_password}
+${column_list}
     </sql>
 
     <sql id="userColumnsPassword">
