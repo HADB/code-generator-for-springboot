@@ -7,7 +7,7 @@ $$ echo 'export CODE_GENERATOR_PATH="/path/to/code-generator-for-springboot"' >>
 $$ source ~/.zshrc
 $$ cd "/path/to/code-generator-for-springboot"
 $$ python3 main.py \
-    --project_path=${project_path} \
+    --project_path=/path/to/your/project \
     --package_name=${package_name} \
     --group_id=${group_id} \
     --artifact_id=${artifact_id} \

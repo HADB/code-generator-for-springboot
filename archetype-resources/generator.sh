@@ -1,6 +1,4 @@
-#!/bin/zsh
-
-project_path="${project_path}"
+project_path=$$(pwd)
 package_name="${package_name}"
 group_id="${group_id}"
 artifact_id="${artifact_id}"
