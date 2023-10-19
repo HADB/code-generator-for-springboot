@@ -12,8 +12,11 @@ import ${package_name}.viewmodels.user.UserEditRequest
 import ${package_name}.viewmodels.userRole.UserRoleEditRequest
 import org.slf4j.LoggerFactory
 import org.springframework.boot.CommandLineRunner
+import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider
+import org.springframework.core.type.filter.AnnotationTypeFilter
 import org.springframework.stereotype.Component
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RestController
 import jakarta.annotation.Resource
 
 @Component
@@ -62,9 +65,8 @@ class DbInitializationRunner : CommandLineRunner {
                 logger.info("已创建初始管理员用户")
             }
 
-        val controllerNames = listOf(${controller_names_text})
-        for (controllerName in controllerNames) {
-            val controller = Class.forName("${package_name}.controllers.$${controllerName}Controller")
+        val controllers = getAllControllerClasses("net.yuanfen.oa.controllers")
+        for (controller in controllers) {
             val controllerPaths = controller.getAnnotation(RequestMapping::class.java).value
             for (controllerPath in controllerPaths) {
                 val functions = controller.declaredMethods
@@ -107,5 +109,16 @@ class DbInitializationRunner : CommandLineRunner {
         }
 
         logger.info("db runner done")
+    }
+
+    fun getAllControllerClasses(basePackage: String): List<Class<*>> {
+        val scanner = ClassPathScanningCandidateComponentProvider(false)
+        scanner.addIncludeFilter(AnnotationTypeFilter(RestController::class.java))
+        val controllers = ArrayList<Class<*>>()
+        for (beanDefinition in scanner.findCandidateComponents(basePackage)) {
+            val controllerClass = Class.forName(beanDefinition.beanClassName)
+            controllers.add(controllerClass)
+        }
+        return controllers
     }
 }

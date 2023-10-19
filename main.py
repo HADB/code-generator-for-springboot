@@ -18,8 +18,6 @@ CURRENT_PATH = os.getcwd()  # 当前目录
 TEMPLATE_PATH = os.path.join(CURRENT_PATH, "templates")  # 模板目录
 ARCHETYPE_RESOURCE_PATH = os.path.join(CURRENT_PATH, "archetype-resources")  # 原型资源目录
 
-controller_names = []
-
 project_info = {
     "project_path": None,
     "package_name": None,
@@ -85,8 +83,6 @@ def copy_archetype_resources():
     if project_info["debug"]:
         print("复制骨架资源文件")
     g = os.walk(ARCHETYPE_RESOURCE_PATH)
-    controller_names.sort()
-    controller_names_text = ", ".join(controller_names)
     for path, _, file_list in g:
         for file_name in file_list:
             if file_name == ".DS_Store":
@@ -121,7 +117,7 @@ def copy_archetype_resources():
                     continue
                 if project_info["debug"]:
                     print("准备复制:" + file_path)
-                content = substitute(file_read.read(), controller_names_text=controller_names_text)
+                content = substitute(file_read.read())
 
                 with open(file_path, "w", encoding="utf-8") as file_write:
                     file_write.write(content)
@@ -181,7 +177,6 @@ def run_package():
                     if line.strip().split()[2].split(".")[-1].strip("`") != file_info["table_name"]:
                         print("表名与文件名不一致！")
                         return
-                    controller_names.append('"%s"' % file_info["model_name_pascal_case"])
                     continue
                 if line.find(" KEY ") >= 0:
                     continue  # 跳过索引
