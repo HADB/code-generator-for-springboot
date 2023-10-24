@@ -226,7 +226,7 @@ def run_package():
                     continue
                 if file_info["model_name"] == "user" and (column["name"] == "password" or column["name"] == "salt"):
                     continue
-                lines.append("        `%s`.`%s`" % (file_info["model_name_camel_case"], column["name"]))
+                lines.append("        `%s`.`%s`" % (file_info["model_name_snake_case"], column["name"]))
 
             column_list = ",\n".join(lines)
 
