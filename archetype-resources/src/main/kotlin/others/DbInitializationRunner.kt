@@ -65,7 +65,7 @@ class DbInitializationRunner : CommandLineRunner {
                 logger.info("已创建初始管理员用户")
             }
 
-        val controllers = getAllControllerClasses("net.yuanfen.oa.controllers")
+        val controllers = getAllControllerClasses("${package_name}.controllers")
         for (controller in controllers) {
             val controllerPaths = controller.getAnnotation(RequestMapping::class.java).value
             for (controllerPath in controllerPaths) {
