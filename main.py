@@ -166,7 +166,7 @@ def run_package():
                 inflect_engine.plural(file_info["model_name"]), True
             )  # PascalCases
             file_info["model_name_camel_case"] = inflection.camelize(file_info["model_name"], False)  # camelCase
-            file_info["model_name_snake_case"] = inflection.dasherize(file_info["model_name"])  # snake_case
+            file_info["model_name_snake_case"] = inflection.underscore(file_info["model_name"])  # snake_case
 
             table_description = file_info["model_name"]  # 表注释
             file_read = open(input_file_path, "r", encoding="UTF-8")
