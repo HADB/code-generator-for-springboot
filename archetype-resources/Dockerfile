@@ -1,4 +1,4 @@
-FROM eclipse-temurin:17-jdk-alpine
+FROM eclipse-temurin:17-jre-alpine
 WORKDIR /app
 COPY target/${artifact_id}.jar /app
 ENV SPRING_PROFILES_ACTIVE="prd"
