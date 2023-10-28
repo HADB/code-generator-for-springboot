@@ -56,7 +56,7 @@ ${update_partly_list}
         LIMIT 1
     </select>
 
-    <select id="selectPaging${model_name_plural_pascal_case}" resultType="${package_name}.models.${model_name_pascal_case}">
+    <select id="selectPaging${model_name_pascal_case_plural}" resultType="${package_name}.models.${model_name_pascal_case}">
         SELECT
         <include refid="${model_name_camel_case}Columns"/>
         FROM
@@ -78,7 +78,7 @@ ${update_partly_list}
         LIMIT #{request.paging.offset}, #{request.paging.pageSize}
     </select>
 
-    <select id="selectPaging${model_name_plural_pascal_case}Count" resultType="Long">
+    <select id="selectPaging${model_name_pascal_case_plural}Count" resultType="Long">
         SELECT COUNT(*)
         FROM
         <include refid="${model_name_camel_case}Tables"/>

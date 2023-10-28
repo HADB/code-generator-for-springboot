@@ -41,11 +41,11 @@ ${columns_data}
         return ${model_name_camel_case}Mapper.select${model_name_pascal_case}ById(id)
     }
 
-    fun searchPaging${model_name_plural_pascal_case}(request: ${model_name_pascal_case}SearchRequest): List<${model_name_pascal_case}> {
-        return ${model_name_camel_case}Mapper.selectPaging${model_name_plural_pascal_case}(request)
+    fun searchPaging${model_name_pascal_case_plural}(request: ${model_name_pascal_case}SearchRequest): List<${model_name_pascal_case}> {
+        return ${model_name_camel_case}Mapper.selectPaging${model_name_pascal_case_plural}(request)
     }
 
-    fun searchPaging${model_name_plural_pascal_case}Count(request: ${model_name_pascal_case}SearchRequest): Long {
-        return ${model_name_camel_case}Mapper.selectPaging${model_name_plural_pascal_case}Count(request)
+    fun searchPaging${model_name_pascal_case_plural}Count(request: ${model_name_pascal_case}SearchRequest): Long {
+        return ${model_name_camel_case}Mapper.selectPaging${model_name_pascal_case_plural}Count(request)
     }
 }

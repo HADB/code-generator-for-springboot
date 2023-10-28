@@ -10,10 +10,8 @@ import subprocess
 import sys
 
 import inflection
-import inflect
 import platform
 
-inflect_engine = inflect.engine()
 CURRENT_PATH = os.getcwd()  # 当前目录
 TEMPLATE_PATH = os.path.join(CURRENT_PATH, "templates")  # 模板目录
 ARCHETYPE_RESOURCE_PATH = os.path.join(CURRENT_PATH, "archetype-resources")  # 原型资源目录
@@ -153,9 +151,10 @@ def run_package():
                 continue
             file_info["model_name"] = file_info["table_name"][2:] if file_info["table_name"].startswith("t_") else file_info["table_name"]
             file_info["model_name_pascal_case"] = inflection.camelize(file_info["model_name"], True)  # PascalCase
-            file_info["model_name_plural_pascal_case"] = inflection.camelize(inflect_engine.plural(file_info["model_name"]), True)  # PascalCases 复数形式
+            file_info["model_name_pascal_case_plural"] = inflection.pluralize(file_info["model_name_pascal_case"])  # PascalCases 复数形式
             file_info["model_name_camel_case"] = inflection.camelize(file_info["model_name"], False)  # camelCase
             file_info["model_name_snake_case"] = inflection.underscore(file_info["model_name"])  # snake_case
+            file_info["model_name_kebab_case"] = inflection.dasherize(file_info["model_name_snake_case"])  # kebab-case
 
             table_description = file_info["model_name"]  # 表注释
             file_read = open(input_file_path, "r", encoding="UTF-8")
