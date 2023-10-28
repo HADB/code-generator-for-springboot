@@ -1,2 +1,3 @@
-inflection
+black
 inflect
+inflection

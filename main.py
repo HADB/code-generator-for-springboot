@@ -92,12 +92,7 @@ def copy_archetype_resources():
             with open(os.path.join(path, file_name), "r", encoding="utf-8") as file_read:
                 directory_path = os.path.join(project_info["project_path"], sub_path)
                 if "src/main/kotlin" in path or "src\\main\\kotlin" in path:
-                    directory_path = os.path.join(
-                        project_info["project_path"],
-                        "src/main/kotlin",
-                        *project_info["package_name"].split("."),
-                        sub_path[len("src/main/kotlin") + 1 :]
-                    )
+                    directory_path = os.path.join(project_info["project_path"], "src/main/kotlin", *project_info["package_name"].split("."), sub_path[len("src/main/kotlin") + 1 :])
                 if not os.path.exists(directory_path):
                     os.makedirs(directory_path)
                 file_path = os.path.join(directory_path, file_name)
@@ -133,9 +128,7 @@ def run_package():
         print("执行 CRUD")
     input_path = os.path.join(project_info["project_path"], "src/main/resources/sql")
     # kotlin 输出目录
-    kotlin_output_path = os.path.join(
-        project_info["project_path"], "src", "main", "kotlin", *project_info["package_name"].split(".")
-    )
+    kotlin_output_path = os.path.join(project_info["project_path"], "src", "main", "kotlin", *project_info["package_name"].split("."))
     # mapper 输出目录
     mapper_output_path = os.path.join(project_info["project_path"], "src", "main", "resources", "mapper")
     if os.path.exists(kotlin_output_path):
@@ -158,13 +151,9 @@ def run_package():
                 continue
             if file_info["table_name"] == "t_flyway_history":
                 continue
-            file_info["model_name"] = (
-                file_info["table_name"][2:] if file_info["table_name"].startswith("t_") else file_info["table_name"]
-            )
+            file_info["model_name"] = file_info["table_name"][2:] if file_info["table_name"].startswith("t_") else file_info["table_name"]
             file_info["model_name_pascal_case"] = inflection.camelize(file_info["model_name"], True)  # PascalCase
-            file_info["model_name_plural_pascal_case"] = inflection.camelize(
-                inflect_engine.plural(file_info["model_name"]), True
-            )  # PascalCases
+            file_info["model_name_plural_pascal_case"] = inflection.camelize(inflect_engine.plural(file_info["model_name"]), True)  # PascalCases 复数形式
             file_info["model_name_camel_case"] = inflection.camelize(file_info["model_name"], False)  # camelCase
             file_info["model_name_snake_case"] = inflection.underscore(file_info["model_name"])  # snake_case
 
@@ -202,11 +191,7 @@ def run_package():
                         column["default"] = "null"
                     if column["type"].find("decimal") >= 0:
                         column["default"] = "BigDecimal(%s)" % column["default"].replace('"', "")
-                    if (
-                        column["type"].find("int") >= 0
-                        or column["type"].find("double") >= 0
-                        or column["type"].find("decimal") >= 0
-                    ) and column["default"].find('"') >= 0:
+                    if (column["type"].find("int") >= 0 or column["type"].find("double") >= 0 or column["type"].find("decimal") >= 0) and column["default"].find('"') >= 0:
                         column["default"] = column["default"].replace('"', "")
                     if column["type"] == "tinyint" and column["name"].startswith("is_"):
                         if column["default"] == "0":
@@ -232,18 +217,10 @@ def run_package():
 
             lines = []
             for column in columns:
-                if (
-                    column["name"] == "id"
-                    or column["name"] == "sort_weight"
-                    or (
-                        file_info["model_name"] == "user" and (column["name"] == "password" or column["name"] == "salt")
-                    )
-                ):
+                if column["name"] == "id" or column["name"] == "sort_weight" or (file_info["model_name"] == "user" and (column["name"] == "password" or column["name"] == "salt")):
                     continue
                 if column["type"] == "datetime" or column["type"] == "time" or column["type"] == "date":
-                    lines.append(
-                        '        <if test="request.%sFrom != null">' % (inflection.camelize(column["name"], False))
-                    )
+                    lines.append('        <if test="request.%sFrom != null">' % (inflection.camelize(column["name"], False)))
                     lines.append(
                         "            AND `%s`.`%s` &gt;= #{request.%sFrom}"
                         % (
@@ -253,9 +230,7 @@ def run_package():
                         )
                     )
                     lines.append("        </if>")
-                    lines.append(
-                        '        <if test="request.%sTo != null">' % (inflection.camelize(column["name"], False))
-                    )
+                    lines.append('        <if test="request.%sTo != null">' % (inflection.camelize(column["name"], False)))
                     lines.append(
                         "            AND `%s`.`%s` &lt;= #{request.%sTo}"
                         % (
@@ -278,9 +253,7 @@ def run_package():
                         )
                     )
                 else:
-                    lines.append(
-                        '        <if test="request.%s != null">' % (inflection.camelize(column["name"], False))
-                    )
+                    lines.append('        <if test="request.%s != null">' % (inflection.camelize(column["name"], False)))
                 lines.append(
                     "            AND `%s`.`%s` = #{request.%s}"
                     % (
@@ -303,28 +276,15 @@ def run_package():
             for column in columns:
                 if column["name"] == "id" or column["name"] == "is_delete":
                     continue
-                elif (
-                    column["name"] == "create_time"
-                    or column["name"] == "update_time"
-                    or column["name"] == "created_time"
-                    or column["name"] == "updated_time"
-                ):
+                elif column["name"] == "create_time" or column["name"] == "update_time" or column["name"] == "created_time" or column["name"] == "updated_time":
                     lines.append("        NOW()")
                 else:
-                    lines.append(
-                        "        #{%s.%s}"
-                        % (file_info["model_name_camel_case"], inflection.camelize(column["name"], False))
-                    )
+                    lines.append("        #{%s.%s}" % (file_info["model_name_camel_case"], inflection.camelize(column["name"], False)))
             value_list = ",\n".join(lines)
 
             lines = []
             for column in columns:
-                if (
-                    column["name"] == "id"
-                    or column["name"] == "create_time"
-                    or column["name"] == "created_time"
-                    or column["name"] == "is_delete"
-                ):
+                if column["name"] == "id" or column["name"] == "create_time" or column["name"] == "created_time" or column["name"] == "is_delete":
                     continue
                 elif column["name"] == "update_time" or column["name"] == "updated_time":
                     lines.append("        `%s` = NOW()" % (column["name"]))
@@ -341,12 +301,7 @@ def run_package():
 
             lines = []
             for column in columns:
-                if (
-                    column["name"] == "id"
-                    or column["name"] == "create_time"
-                    or column["name"] == "created_time"
-                    or column["name"] == "is_delete"
-                ):
+                if column["name"] == "id" or column["name"] == "create_time" or column["name"] == "created_time" or column["name"] == "is_delete":
                     continue
                 elif column["name"] == "update_time" or column["name"] == "updated_time":
                     lines.append("        `%s` = NOW()" % (column["name"]))
@@ -357,13 +312,8 @@ def run_package():
                             % (inflection.camelize(column["name"], False), inflection.camelize(column["name"], False))
                         )
                     else:
-                        lines.append(
-                            '        <if test="request.%s != null">' % (inflection.camelize(column["name"], False))
-                        )
-                    lines.append(
-                        "            `%s` = #{request.%s},"
-                        % (column["name"], inflection.camelize(column["name"], False))
-                    )
+                        lines.append('        <if test="request.%s != null">' % (inflection.camelize(column["name"], False)))
+                    lines.append("            `%s` = #{request.%s}," % (column["name"], inflection.camelize(column["name"], False)))
                     lines.append("        </if>")
             update_partly_list = "\n".join(lines)
 
@@ -440,9 +390,7 @@ def run_package():
                         )
 
                     # 特殊处理 for User.kt
-                    elif file_info["model_name"] == "user" and (
-                        property_name != "id" and property_name != "create_time" and property_name != "update_time"
-                    ):
+                    elif file_info["model_name"] == "user" and (property_name != "id" and property_name != "create_time" and property_name != "update_time"):
                         line_text += "    var %s: %s" % (inflection.camelize(property_name, False), column_type)
                     else:
                         line_text += "    val %s: %s" % (inflection.camelize(property_name, False), column_type)
@@ -454,9 +402,7 @@ def run_package():
             output_models_path = os.path.join(kotlin_output_path, "models")
             if not os.path.exists(output_models_path):
                 os.makedirs(output_models_path)
-            file_write = open(
-                os.path.join(output_models_path, file_info["model_name_pascal_case"] + ".kt"), "w", encoding="UTF-8"
-            )
+            file_write = open(os.path.join(output_models_path, file_info["model_name_pascal_case"] + ".kt"), "w", encoding="UTF-8")
             file_write.write(content)
             file_write.close()
 
@@ -524,7 +470,11 @@ def run_package():
                 project_info["package_name"],
                 file_info["model_name_camel_case"],
             )
-            content += "import io.swagger.v3.oas.annotations.media.Schema\nimport java.math.BigDecimal\nimport java.util.*\nimport jakarta.validation.constraints.NotNull\n\n"
+            content += "import io.swagger.v3.oas.annotations.media.Schema\n"
+            content += "import java.math.BigDecimal\n"
+            content += "import java.util.*\n"
+            content += "import jakarta.validation.constraints.NotNull\n"
+            content += "\n"
             content += "data class %sPartlyEditRequest(\n" % (file_info["model_name_pascal_case"])
             lines = []
             swagger_index = 0
