@@ -247,7 +247,7 @@ def run_package():
                     lines.append(
                         "            AND `%s`.`%s` &gt;= #{request.%sFrom}"
                         % (
-                            file_info["model_name_camel_case"],
+                            file_info["model_name_snake_case"],
                             column["name"],
                             inflection.camelize(column["name"], False),
                         )
@@ -259,7 +259,7 @@ def run_package():
                     lines.append(
                         "            AND `%s`.`%s` &lt;= #{request.%sTo}"
                         % (
-                            file_info["model_name_camel_case"],
+                            file_info["model_name_snake_case"],
                             column["name"],
                             inflection.camelize(column["name"], False),
                         )
@@ -267,7 +267,7 @@ def run_package():
                     lines.append("        </if>")
                     continue
                 if column["name"] == "is_delete":
-                    lines.append("        AND `%s`.`%s` = 0" % (file_info["model_name_camel_case"], column["name"]))
+                    lines.append("        AND `%s`.`%s` = 0" % (file_info["model_name_snake_case"], column["name"]))
                     continue
                 if column["type"] == "varchar" or column["type"] == "text":
                     lines.append(
@@ -284,7 +284,7 @@ def run_package():
                 lines.append(
                     "            AND `%s`.`%s` = #{request.%s}"
                     % (
-                        file_info["model_name_camel_case"],
+                        file_info["model_name_snake_case"],
                         column["name"],
                         inflection.camelize(column["name"], False),
                     )
@@ -370,9 +370,9 @@ def run_package():
             lines = []
             for column in columns:
                 if column["name"] == "sort_weight":
-                    lines.append("`%s`.`sort_weight` DESC" % (file_info["model_name_camel_case"]))
+                    lines.append("`%s`.`sort_weight` DESC" % (file_info["model_name_snake_case"]))
             if not lines:
-                lines.append("`%s`.`id` DESC" % (file_info["model_name_camel_case"]))
+                lines.append("`%s`.`id` DESC" % (file_info["model_name_snake_case"]))
             orders = ", ".join(lines)
 
             if file_info["model_name"] == "user":
