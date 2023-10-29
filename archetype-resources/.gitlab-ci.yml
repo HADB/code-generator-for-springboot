@@ -15,6 +15,8 @@ maven-package:
     script:
         - mvn $$MAVEN_OPTS clean package -Dmaven.test.skip=true
         - cp target/$$PROJECT_NAME.jar /cache/jars/
+    only:
+        - tags
 
 docker-build:
     stage: build
