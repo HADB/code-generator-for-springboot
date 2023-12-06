@@ -23,6 +23,7 @@ if [ "$$current_branch" != "generator" ]; then
 
     echo "切换到 generator 分支"
     git checkout generator
+    git pull
 fi
 
 # 检查是否存在 CODE_GENERATOR_PATH 环境变量
