@@ -45,7 +45,7 @@ ${columns_data}
         return ${model_name_camel_case}Mapper.selectPaging${model_name_pascal_case_plural}(request)
     }
 
-    fun searchPaging${model_name_pascal_case_plural}Count(request: ${model_name_pascal_case}SearchRequest): Long {
-        return ${model_name_camel_case}Mapper.selectPaging${model_name_pascal_case_plural}Count(request)
+    fun search${model_name_pascal_case_plural}Count(request: ${model_name_pascal_case}SearchRequest): Long {
+        return ${model_name_camel_case}Mapper.select${model_name_pascal_case_plural}Count(request)
     }
 }

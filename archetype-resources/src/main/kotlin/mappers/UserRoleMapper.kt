@@ -14,5 +14,5 @@ interface UserRoleMapper {
     fun deleteUserRole(@Param("id") id: Long)
     fun selectUserRoleById(@Param("id") id: Long): UserRole?
     fun selectPagingUserRoles(@Param("request") request: UserRoleSearchRequest): List<UserRole>
-    fun selectPagingUserRolesCount(@Param("request") request: UserRoleSearchRequest): Long
+    fun selectUserRolesCount(@Param("request") request: UserRoleSearchRequest): Long
 }

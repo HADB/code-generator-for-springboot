@@ -47,7 +47,7 @@ class UserRoleService {
         return userRoleMapper.selectPagingUserRoles(request)
     }
 
-    fun searchPagingUserRolesCount(request: UserRoleSearchRequest): Long {
-        return userRoleMapper.selectPagingUserRolesCount(request)
+    fun searchUserRolesCount(request: UserRoleSearchRequest): Long {
+        return userRoleMapper.selectUserRolesCount(request)
     }
 }

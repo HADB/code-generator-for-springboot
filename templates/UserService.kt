@@ -85,8 +85,8 @@ ${add_user_with_password_columns_data}
         return userMapper.selectPagingUsers(request)
     }
 
-    fun searchPagingUsersCount(request: UserSearchRequest): Long {
-        return userMapper.selectPagingUsersCount(request)
+    fun searchUsersCount(request: UserSearchRequest): Long {
+        return userMapper.selectUsersCount(request)
     }
 
     fun getUserByOpenId(openId: String): User? {

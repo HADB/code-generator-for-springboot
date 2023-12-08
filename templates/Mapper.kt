@@ -14,5 +14,5 @@ interface ${model_name_pascal_case}Mapper {
     fun delete${model_name_pascal_case}(@Param("id") id: Long)
     fun select${model_name_pascal_case}ById(@Param("id") id: Long): ${model_name_pascal_case}?
     fun selectPaging${model_name_pascal_case_plural}(@Param("request") request: ${model_name_pascal_case}SearchRequest): List<${model_name_pascal_case}>
-    fun selectPaging${model_name_pascal_case_plural}Count(@Param("request") request: ${model_name_pascal_case}SearchRequest): Long
+    fun select${model_name_pascal_case_plural}Count(@Param("request") request: ${model_name_pascal_case}SearchRequest): Long
 }

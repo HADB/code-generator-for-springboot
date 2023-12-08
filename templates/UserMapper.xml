@@ -146,7 +146,7 @@ ${update_partly_list}
         LIMIT #{request.paging.offset}, #{request.paging.pageSize}
     </select>
 
-    <select id="selectPagingUsersCount" resultType="Long">
+    <select id="selectUsersCount" resultType="Long">
         SELECT COUNT(*)
         FROM
         <include refid="userTables"/>

@@ -45,7 +45,7 @@ class PaymentController {
     @RequestMapping("/search", method = [RequestMethod.POST])
     fun search(@RequestBody request: PaymentSearchRequest): Response<SearchResponse<Payment>> {
         val results = paymentService.searchPagingPayments(request)
-        val count = paymentService.searchPagingPaymentsCount(request)
+        val count = paymentService.searchPaymentsCount(request)
         val response = SearchResponse(results, count)
         return Response.success(response)
     }

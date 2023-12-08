@@ -14,7 +14,7 @@ interface PermissionMapper {
     fun deletePermission(@Param("id") id: Long)
     fun selectPermissionById(@Param("id") id: Long): Permission?
     fun selectPagingPermissions(@Param("request") request: PermissionSearchRequest): List<Permission>
-    fun selectPagingPermissionsCount(@Param("request") request: PermissionSearchRequest): Long
+    fun selectPermissionsCount(@Param("request") request: PermissionSearchRequest): Long
 
     fun selectPermissionsByRoleId(@Param("roleId") roleId: Long): List<Permission>
     fun selectPermissionsByUserId(@Param("userId") roleId: Long): List<Permission>

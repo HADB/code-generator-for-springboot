@@ -97,8 +97,8 @@ class PaymentService {
         return paymentMapper.selectPagingPayments(request)
     }
 
-    fun searchPagingPaymentsCount(request: PaymentSearchRequest): Long {
-        return paymentMapper.selectPagingPaymentsCount(request)
+    fun searchPaymentsCount(request: PaymentSearchRequest): Long {
+        return paymentMapper.selectPaymentsCount(request)
     }
 
     fun getPaymentByWxOutTradeNo(wxOutTradeNo: String?): Payment? {

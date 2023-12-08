@@ -49,8 +49,8 @@ class RoleService {
         return roleMapper.selectPagingRoles(request)
     }
 
-    fun searchPagingRolesCount(request: RoleSearchRequest): Long {
-        return roleMapper.selectPagingRolesCount(request)
+    fun searchRolesCount(request: RoleSearchRequest): Long {
+        return roleMapper.selectRolesCount(request)
     }
 
     fun getRoleByKey(key: String): Role? {

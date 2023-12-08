@@ -246,7 +246,7 @@
         LIMIT #{request.paging.offset}, #{request.paging.pageSize}
     </select>
 
-    <select id="selectPagingPaymentsCount" resultType="Long">
+    <select id="selectPaymentsCount" resultType="Long">
         SELECT COUNT(*)
         FROM
         <include refid="paymentTables"/>

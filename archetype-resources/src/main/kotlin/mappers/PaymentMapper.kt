@@ -14,7 +14,7 @@ interface PaymentMapper {
     fun deletePayment(@Param("id") id: Long)
     fun selectPaymentById(@Param("id") id: Long): Payment?
     fun selectPagingPayments(@Param("request") request: PaymentSearchRequest): List<Payment>
-    fun selectPagingPaymentsCount(@Param("request") request: PaymentSearchRequest): Long
+    fun selectPaymentsCount(@Param("request") request: PaymentSearchRequest): Long
 
     fun selectPaymentByWxOutTradeNo(@Param("wxOutTradeNo") wxOutTradeNo: String): Payment?
 }

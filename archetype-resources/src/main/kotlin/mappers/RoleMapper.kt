@@ -14,7 +14,7 @@ interface RoleMapper {
     fun deleteRole(@Param("id") id: Long)
     fun selectRoleById(@Param("id") id: Long): Role?
     fun selectPagingRoles(@Param("request") request: RoleSearchRequest): List<Role>
-    fun selectPagingRolesCount(@Param("request") request: RoleSearchRequest): Long
+    fun selectRolesCount(@Param("request") request: RoleSearchRequest): Long
 
     fun selectRoleByKey(@Param("key") key: String): Role
     fun selectRolesByUserId(@Param("userId") userId: Long): List<Role>

@@ -14,7 +14,7 @@ interface UserMapper {
     fun deleteUser(@Param("id") id: Long)
     fun selectUserById(@Param("id") id: Long): User?
     fun selectPagingUsers(@Param("request") request: UserSearchRequest): List<User>
-    fun selectPagingUsersCount(@Param("request") request: UserSearchRequest): Long
+    fun selectUsersCount(@Param("request") request: UserSearchRequest): Long
 
     fun selectUserByOpenId(@Param("openId") openId: String): User?
     fun selectUserByUsername(@Param("username") username: String): User?
