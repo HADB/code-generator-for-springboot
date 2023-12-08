@@ -38,7 +38,7 @@ class UserService {
     fun editUser(request: UserEditRequest): Long {
         val salt = passwordHelper.salt
         var password = passwordHelper.salt
-        if (request.password != null && request.password.isNotEmpty()) {
+        if (!request.password.isNullOrEmpty()) {
             password = passwordHelper.generate(request.password, salt)
         }
         val user = User(

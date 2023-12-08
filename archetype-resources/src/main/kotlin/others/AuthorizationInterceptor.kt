@@ -115,7 +115,7 @@ class AuthorizationInterceptor : HandlerInterceptor {
         }
 
         // 验证代码内置角色
-        if (builtInRole != null && builtInRole.roles.isNotEmpty()) {
+        if (!builtInRole?.roles.isNullOrEmpty()) {
             for (role in builtInRole.roles) {
                 // 拥有其中一种角色则通过
                 if (userRoles.any { r -> r.key == role }) {
