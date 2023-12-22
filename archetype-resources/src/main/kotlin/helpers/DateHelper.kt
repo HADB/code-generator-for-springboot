@@ -1,6 +1,7 @@
 package ${package_name}.helpers
 
 import org.springframework.stereotype.Component
+import java.text.SimpleDateFormat
 import java.time.Duration
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -18,5 +19,9 @@ class DateHelper {
 
     private fun getLocalDateTime(date: Date): LocalDateTime {
         return LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault())
+    }
+
+    fun format(date: Date, format: String = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX"): String {
+        return SimpleDateFormat(format).format(date)
     }
 }
