@@ -146,7 +146,7 @@
     </dependencies>
     <build>
         <sourceDirectory>$${project.basedir}/src/main/kotlin</sourceDirectory>
-        <finalName>${artifact_id}</finalName>
+        <finalName>app</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
