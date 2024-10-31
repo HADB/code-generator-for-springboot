@@ -6,14 +6,7 @@
 $$ echo 'export CODE_GENERATOR_PATH="/path/to/code-generator-for-springboot"' >> ~/.zshrc
 $$ source ~/.zshrc
 $$ cd "/path/to/code-generator-for-springboot"
-$$ python3 main.py \
-    --project_path=/path/to/your/project \
-    --package_name=${package_name} \
-    --group_id=${group_id} \
-    --artifact_id=${artifact_id} \
-    --version=${version} \
-    --description=${description} \
-    --port=${port}
+$$ python3 main.py init
 ```
 
 #### 更新项目
