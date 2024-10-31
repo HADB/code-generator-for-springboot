@@ -22,6 +22,10 @@ spring:
             idle-timeout: 600000
             maximum-pool-size: 10
             minimum-idle: 2
+    flyway:
+        locations:
+            - classpath:flyway
+        table: t_flyway_history
     jackson:
         default-property-inclusion: non_null
         property-naming-strategy: SNAKE_CASE

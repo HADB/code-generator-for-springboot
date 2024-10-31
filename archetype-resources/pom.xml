@@ -172,6 +172,21 @@
                     </dependency>
                 </dependencies>
             </plugin>
+            <plugin>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-maven-plugin</artifactId>
+                <version>10.20.1</version>
+                <configuration>
+                    <url></url>
+                    <user></user>
+                    <password></password>
+                    <driver>com.mysql.cj.jdbc.Driver</driver>
+                    <locations>
+                        <location>classpath:flyway</location>
+                    </locations>
+                    <table>t_flyway_history</table>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 </project>
