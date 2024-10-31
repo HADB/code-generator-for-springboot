@@ -6,7 +6,7 @@ version="${version}"
 description="${description}"
 port=${port}
 
-cd "$$project_path"
+cd "$$project_path" || exit
 
 # 获取当前分支的名称
 current_branch=$$(git symbolic-ref --short HEAD)
@@ -33,11 +33,12 @@ if [ -z "$$CODE_GENERATOR_PATH" ]; then
 fi
 
 # 进入 code generator 目录
-cd "$$CODE_GENERATOR_PATH"
+cd "$$CODE_GENERATOR_PATH" || exit
+
 
 # 运行 main.py 并传递参数
-python3 main.py \
---project_path=$$project_path \
+poetry run python3 main.py run \
+--project_path="$$project_path" \
 --package_name=$$package_name \
 --group_id=$$group_id \
 --artifact_id=$$artifact_id \

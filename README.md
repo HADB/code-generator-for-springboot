@@ -12,12 +12,13 @@
 
 ## 使用方式
 
-注意，请使用 Python 3，另外建议开启 Idea -> Preferences -> Editor -> Code Style -> Kotlin -> Other -> Use trailing comma，以减少手动添加字段导致的合并冲突 
+注意，请使用 Python 3，另外建议开启 Idea -> Preferences -> Editor -> Code Style -> Kotlin -> Other -> Use trailing comma，以减少手动添加字段导致的合并冲突
 
-#### 安装 `inflection`
+#### 安装依赖（使用 [poetry](https://python-poetry.org/docs/)）
 
 ```bash
-$ pip install inflection
+$ poetry shell
+$ poetry install
 ```
 
 #### 首次创建项目
@@ -26,14 +27,7 @@ $ pip install inflection
 $ echo 'export CODE_GENERATOR_PATH="/path/to/code-generator-for-springboot"' >> ~/.zshrc
 $ source ~/.zshrc
 $ cd "/path/to/code-generator-for-springboot"
-$ python3 main.py \
-    --project_path=${project_path} \
-    --package_name=${package_name} \
-    --group_id=${group_id} \
-    --artifact_id=${artifact_id} \
-    --version=${version} \
-    --description=${description} \
-    --port=${port}
+$ python3 main.py init
 ```
 
 #### 更新项目
@@ -46,6 +40,7 @@ $ ./generator.sh
 首次执行会在 `package_path` 目录下初始化项目， `src/main/resources/sql` 文件夹内是 SQL 文件，新增文件后执行命令会自动更新代码，注意 SQL 文件名必须为：`t_xxx.sql`
 
 #### SQL 文件示例
+
 ```sql
 CREATE TABLE `t_shop` (
     `id`                    BIGINT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
@@ -67,4 +62,4 @@ CREATE TABLE `t_shop` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='商铺';
 ```
 
-建议自动生成的代码放到单独的分支管理，每次生成后合并到主分支
+自动生成的代码会自动放到 `generate` 分支管理，业务代码请在主分支提交，每次自动生成后将 `generate` 分支合并到主分支，这样可减少合并冲突

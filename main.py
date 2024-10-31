@@ -2,15 +2,14 @@
 """
 crud-code-generator-for-springboot
 """
-import getopt
+import argparse
 import os
+import platform
 import shutil
 import string
 import subprocess
-import sys
 
 import inflection
-import platform
 
 CURRENT_PATH = os.getcwd()  # 当前目录
 TEMPLATE_PATH = os.path.join(CURRENT_PATH, "templates")  # 模板目录
@@ -706,41 +705,69 @@ def run_package():
             file_write.close()
 
 
+def str_input(prompt, required=False, default=None):
+    required_str = " (必填)" if required else ""
+    default_str = f" [{default}]" if default is not None else ""
+    user_input = input(f"{prompt}{required_str}{default_str}: ").strip()
+    result = user_input or default
+    if required and not result:
+        print("该项输入为必填项")
+        return str_input(prompt, required, default)
+    return result
+
+
+def bool_input(prompt, default):
+    user_input = input(f"{prompt} [{'Y/n' if default else 'y/N'}]: ").strip().lower()
+    if user_input in ["y", "yes"]:
+        return True
+    elif user_input in ["n", "no"]:
+        return False
+    elif user_input == "":
+        return default
+    else:
+        print("请输入 y 或 n，或者直接回车使用默认值")
+        return bool_input(prompt, default)
+
+
 if __name__ == "__main__":
-    OPTS, ARGS = getopt.getopt(
-        sys.argv[1:],
-        "",
-        [
-            "group_id=",
-            "artifact_id=",
-            "version=",
-            "port=",
-            "package_name=",
-            "project_path=",
-            "description=",
-            "payment",
-            "debug",
-        ],
-    )
-    for name, value in OPTS:
-        if name == "--group_id":
-            project_info["group_id"] = value
-        elif name == "--artifact_id":
-            project_info["artifact_id"] = value
-        elif name == "--version":
-            project_info["version"] = value
-        elif name == "--port":
-            project_info["port"] = value
-        elif name == "--package_name":
-            project_info["package_name"] = value
-        elif name == "--project_path":
-            project_info["project_path"] = value
-        elif name == "--description":
-            project_info["description"] = value
-        elif name == "--payment":
-            project_info["payment"] = True
-        elif name == "--debug":
-            project_info["debug"] = True
+    parser = argparse.ArgumentParser(description="Code Generator for Spring Boot")
+    parser.add_argument("command", choices=["init", "run"], help="Command to execute (init for interactive mode, run for non-interactive mode)")
+    parser.add_argument("--group_id", help="项目 Group ID")
+    parser.add_argument("--artifact_id", help="项目 Artifact ID")
+    parser.add_argument("--version", help="项目版本号", default="1.0.0")
+    parser.add_argument("--port", help="端口号", default=8000)
+    parser.add_argument("--package_name", help="项目包名")
+    parser.add_argument("--project_path", help="项目路径")
+    parser.add_argument("--description", help="项目描述")
+    parser.add_argument("--payment", action="store_true", help="是否包含支付模块", default=False)
+    parser.add_argument("--debug", action="store_true", help="是否开启调试模式", default=False)
+
+    args = parser.parse_args()
+
+    if args.command == "init":
+        project_info["group_id"] = str_input("请输入项目 Group ID", required=True)
+        project_info["artifact_id"] = str_input("请输入项目 Artifact ID", required=True)
+        default_package_name = f"{project_info['group_id']}.{project_info['artifact_id']}".replace("-", "_")
+        project_info["package_name"] = str_input("请输入项目包名", required=False, default=default_package_name)
+        project_info["version"] = str_input("请输入项目版本号", required=True, default=args.version)
+        project_info["port"] = str_input("请输入端口号", required=True, default=args.port)
+        project_info["project_path"] = str_input("请输入项目路径", required=True)
+        project_info["description"] = str_input("请输入项目描述")
+        project_info["payment"] = bool_input("是否包含支付模块", args.payment)
+        project_info["debug"] = bool_input("是否开启调试模式", args.debug)
+
+    elif args.command == "run":
+        project_info["group_id"] = args.group_id
+        project_info["artifact_id"] = args.artifact_id
+        default_package_name = f"{project_info['group_id']}.{project_info['artifact_id']}".replace("-", "_")
+        project_info["package_name"] = args.package_name or default_package_name
+        project_info["version"] = args.version
+        project_info["port"] = args.port
+        project_info["project_path"] = args.project_path
+        project_info["description"] = args.description
+        project_info["payment"] = args.payment
+        project_info["debug"] = args.debug
+
     if project_info["debug"]:
         print("debug mode")
         print(project_info)
@@ -750,6 +777,15 @@ if __name__ == "__main__":
     if not os.path.exists(os.path.join(project_info["project_path"], "pom.xml")):
         # 初始化项目（复制 .sql 文件）
         init_project()
+
     run_package()
     copy_archetype_resources()
+
+    if args.command == "init":
+        # 提交 commit
+        os.chdir(project_info["project_path"])
+        subprocess.run(["git", "init"])
+        subprocess.run(["git", "checkout", "-b", "generator"])
+        subprocess.run(["git", "add", "."])
+        subprocess.run(["git", "commit", "-m", "gen: init project"])
     print("generator 执行完成")

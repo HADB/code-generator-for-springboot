@@ -1,31 +1,30 @@
-image: docker:latest
-
 variables:
-    MAVEN_OPTS: '-Dmaven.repo.local=/cache/.m2/repository'
-    PROJECT_NAME: '${artifact_id}'
-    PORT: ${port}
+  MAVEN_OPTS: '-Dmaven.repo.local=/cache/.m2/repository'
 
 stages:
-    - package
-    - build
+  - package
+  - build
 
 maven-package:
-    image: maven:latest
-    stage: package
-    script:
-        - mvn $$MAVEN_OPTS clean package -Dmaven.test.skip=true
-        - cp target/$$PROJECT_NAME.jar /cache/jars/
-    only:
-        - tags
+  image: maven:latest
+  stage: package
+  script:
+    - mvn $$MAVEN_OPTS clean package -Dmaven.test.skip=true
+  artifacts:
+    paths:
+      - target/app.jar
+    expire_in: '1 hour'
+  only:
+    - main
 
 docker-build:
-    stage: build
-    image: docker:latest
-    script:
-        - mkdir target
-        - cp /cache/jars/$$PROJECT_NAME.jar target
-        - docker build -t $$PROJECT_NAME:latest .
-        - if [ $$(docker ps -aq --filter name=$$PROJECT_NAME) ]; then docker rm -f $$PROJECT_NAME;fi
-        - docker run -d --restart=always -p $$PORT:$$PORT -v /root/nas/docker/$$PROJECT_NAME/logs:/app/logs --name $$PROJECT_NAME $$PROJECT_NAME:latest
-    only:
-        - tags
+  image: docker:latest
+  stage: build
+  dependencies:
+    - maven-package
+  script:
+    - echo "$$CI_DEPLOY_PASSWORD" | docker login $$CI_REGISTRY -u $$CI_DEPLOY_USER --password-stdin
+    - docker build -t $$CI_REGISTRY_IMAGE:latest .
+    - docker push $$CI_REGISTRY_IMAGE:latest
+  only:
+    - main
