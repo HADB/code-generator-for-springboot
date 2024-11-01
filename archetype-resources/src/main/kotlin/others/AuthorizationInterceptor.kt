@@ -76,11 +76,6 @@ class AuthorizationInterceptor : HandlerInterceptor {
             return false
         }
 
-        // 万能Token
-        if (token == "2njpzZ1JdtCBfTsy" || token == "bean") {
-            return true
-        }
-
         val key = tokenHelper.getTokenKey(service, token)
 
         // Token 失效
