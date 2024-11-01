@@ -1,7 +1,9 @@
 package ${package_name}.others
 
 import io.swagger.v3.oas.annotations.Operation
+import jakarta.annotation.Resource
 import ${package_name}.constants.BuiltInRoleKey
+import ${package_name}.helpers.PasswordHelper
 import ${package_name}.services.PermissionService
 import ${package_name}.services.RoleService
 import ${package_name}.services.UserRoleService
@@ -17,7 +19,6 @@ import org.springframework.core.type.filter.AnnotationTypeFilter
 import org.springframework.stereotype.Component
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import jakarta.annotation.Resource
 
 @Component
 class DbInitializationRunner : CommandLineRunner {
@@ -32,6 +33,9 @@ class DbInitializationRunner : CommandLineRunner {
 
     @Resource
     private lateinit var permissionService: PermissionService
+
+    @Resource
+    private lateinit var passwordHelper: PasswordHelper
 
     private val logger = LoggerFactory.getLogger(this.javaClass)
 
@@ -49,21 +53,22 @@ class DbInitializationRunner : CommandLineRunner {
                 logger.info("已创建系统内置管理员角色")
             }
 
-        userService.getUserByUsername("Admin")?.id
-            ?: userService.editUser(
+        userService.getUserByUsername("Admin")?.id ?: let {
+            val password = passwordHelper.random(16)
+            val adminUserId = userService.editUser(
                 UserEditRequest(
                     username = "Admin",
-                    password = "Qcga1WKe3idhi2r1"
+                    password = password
                 )
-            ).also {
-                userRoleService.editUserRole(
-                    UserRoleEditRequest(
-                        userId = it,
-                        roleId = builtInAdminRoleId
-                    )
+            )
+            userRoleService.editUserRole(
+                UserRoleEditRequest(
+                    userId = adminUserId,
+                    roleId = builtInAdminRoleId
                 )
-                logger.info("已创建初始管理员用户")
-            }
+            )
+            logger.info("已创建初始管理员用户, 用户名: Admin, 密码: $$password")
+        }
 
         val controllers = getAllControllerClasses("${package_name}.controllers")
         for (controller in controllers) {

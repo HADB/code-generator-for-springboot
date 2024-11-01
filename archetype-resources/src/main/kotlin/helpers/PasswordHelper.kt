@@ -15,18 +15,27 @@ class PasswordHelper {
     @Resource
     private lateinit var redisHelper: RedisHelper
 
+    /**
+     * 生成随机密码
+     */
+    fun random(length: Int): String {
+        val buffer = StringBuffer("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+        val sb = StringBuffer()
+        val random = Random()
+        val range = buffer.length
+        for (i in 0 until length) {
+            sb.append(buffer[random.nextInt(range)])
+        }
+        return sb.toString()
+    }
+
+    /**
+     * 生成随机盐
+     */
     val salt: String
         get() {
-            val buffer = StringBuffer("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
-            val sb = StringBuffer()
-            val random = Random()
-            val range = buffer.length
-            for (i in 0 until 16) {
-                sb.append(buffer[random.nextInt(range)])
-            }
-            return sb.toString()
+            return random(16)
         }
-
 
     /**
      * 生成含有随机盐的密码
