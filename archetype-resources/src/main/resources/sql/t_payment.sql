@@ -25,4 +25,4 @@ CREATE TABLE `t_payment` (
     KEY         `idx_created_time`          (`created_time`),
     KEY         `idx_updated_time`          (`updated_time`),
     KEY         `idx_is_delete`             (`is_delete`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='支付';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='支付';
