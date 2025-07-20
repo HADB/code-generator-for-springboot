@@ -21,12 +21,18 @@ $ poetry shell
 $ poetry install
 ```
 
-#### 首次创建项目
+### 设置环境变量
+
+在 `code-generator-for-springboot` 目录下执行以下命令
 
 ```bash
-$ echo 'export CODE_GENERATOR_PATH="/path/to/code-generator-for-springboot"' >> ~/.zshrc
+$ echo "export CODE_GENERATOR_PATH=\"$(pwd)\"" >> ~/.zshrc
 $ source ~/.zshrc
-$ cd "/path/to/code-generator-for-springboot"
+```
+
+#### 创建项目
+
+```bash
 $ python3 main.py init
 ```
 
