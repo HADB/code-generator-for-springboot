@@ -21,11 +21,7 @@ ${columns_data}
     }
 
     fun edit${model_name_pascal_case}(${model_name_camel_case}: ${model_name_pascal_case}): Long {
-        if (${model_name_camel_case}.id == 0L) {
-            ${model_name_camel_case}Mapper.insert${model_name_pascal_case}(${model_name_camel_case})
-        } else {
-            ${model_name_camel_case}Mapper.update${model_name_pascal_case}(${model_name_camel_case})
-        }
+        ${model_name_camel_case}Mapper.insertOrUpdate${model_name_pascal_case}(${model_name_camel_case})
         return ${model_name_camel_case}.id
     }
 

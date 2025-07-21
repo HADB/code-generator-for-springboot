@@ -14,19 +14,16 @@ ${column_list}
 ${search_where}
     </sql>
 
-    <insert id="insert${model_name_pascal_case}" useGeneratedKeys="true" keyProperty="${model_name_camel_case}.id">
+    <insert id="insertOrUpdate${model_name_pascal_case}" useGeneratedKeys="true" keyProperty="${model_name_camel_case}.id">
         INSERT INTO `${table_name}`(
+        <if test="${model_name_camel_case}.id != 0">`id`,</if>
 ${name_list})
         VALUES(
+        <if test="${model_name_camel_case}.id != 0">#{${model_name_camel_case}.id},</if>
 ${value_list})
-    </insert>
-
-    <update id="update${model_name_pascal_case}">
-        UPDATE `${table_name}` SET
+        ON DUPLICATE KEY UPDATE
 ${update_list}
-        WHERE `id` = #{${model_name_camel_case}.id}
-        AND `is_delete` = 0
-    </update>
+    </insert>
 
     <update id="update${model_name_pascal_case}Partly">
         UPDATE `${table_name}` SET
