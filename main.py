@@ -175,20 +175,19 @@ def run_package():
                 column = {
                     "name": line.strip().split()[0].strip("`"),
                     "type": line.strip().split()[1].split("(")[0].lower(),
+                    "nullable": True,
+                    "default": "null",
                 }
                 if line.find("NOT NULL ") > 0:
-                    column["nullable"] = False  # 字段是否可空
+                    column["nullable"] = False
                     column["default"] = None
-                else:
-                    column["nullable"] = True
-                    column["default"] = "null"
 
                 if line.find("DEFAULT ") > 0:
                     column["default"] = line[line.find("DEFAULT ") + 8 :].split()[0].replace("'", '"')  # 字段默认值
                     if column["default"] == "NULL" or column["default"] == "CURRENT_TIMESTAMP":
                         column["default"] = "null"
                     if column["type"].find("decimal") >= 0:
-                        column["default"] = "BigDecimal(%s)" % column["default"].replace('"', "")
+                        column["default"] = f"BigDecimal({column['default'].replace('\"', '')})"
                     if (column["type"].find("int") >= 0 or column["type"].find("double") >= 0 or column["type"].find("decimal") >= 0) and column["default"].find('"') >= 0:
                         column["default"] = column["default"].replace('"', "")
                     if column["type"] == "tinyint" and column["name"].startswith("is_"):
@@ -209,7 +208,7 @@ def run_package():
                     continue
                 if file_info["model_name"] == "user" and (column["name"] == "password" or column["name"] == "salt"):
                     continue
-                lines.append("        `%s`.`%s`" % (file_info["model_name_snake_case"], column["name"]))
+                lines.append(f"        `{file_info['model_name_snake_case']}`.`{column['name']}`")
 
             column_list = ",\n".join(lines)
 
@@ -218,48 +217,23 @@ def run_package():
                 if column["name"] == "id" or column["name"] == "sort_weight" or (file_info["model_name"] == "user" and (column["name"] == "password" or column["name"] == "salt")):
                     continue
                 if column["type"] == "datetime" or column["type"] == "time" or column["type"] == "date":
-                    lines.append('        <if test="request.%sFrom != null">' % (inflection.camelize(column["name"], False)))
-                    lines.append(
-                        "            AND `%s`.`%s` &gt;= #{request.%sFrom}"
-                        % (
-                            file_info["model_name_snake_case"],
-                            column["name"],
-                            inflection.camelize(column["name"], False),
-                        )
-                    )
+                    lines.append(f'        <if test="request.{inflection.camelize(column["name"], False)}From != null">')
+                    lines.append(f"            AND `{file_info['model_name_snake_case']}`.`{column['name']}` &gt;= #{{request.{inflection.camelize(column['name'], False)}From}}")
                     lines.append("        </if>")
-                    lines.append('        <if test="request.%sTo != null">' % (inflection.camelize(column["name"], False)))
-                    lines.append(
-                        "            AND `%s`.`%s` &lt;= #{request.%sTo}"
-                        % (
-                            file_info["model_name_snake_case"],
-                            column["name"],
-                            inflection.camelize(column["name"], False),
-                        )
-                    )
+                    lines.append(f'        <if test="request.{inflection.camelize(column["name"], False)}To != null">')
+                    lines.append(f"            AND `{file_info['model_name_snake_case']}`.`{column['name']}` &lt;= #{{request.{inflection.camelize(column['name'], False)}To}}")
                     lines.append("        </if>")
                     continue
                 if column["name"] == "is_delete":
-                    lines.append("        AND `%s`.`%s` = 0" % (file_info["model_name_snake_case"], column["name"]))
+                    lines.append(f"        AND `{file_info['model_name_snake_case']}`.`{column['name']}` = 0")
                     continue
                 if column["type"] == "varchar" or column["type"] == "text":
                     lines.append(
-                        "        <if test=\"request.%s != null and request.%s !=''\">"
-                        % (
-                            inflection.camelize(column["name"], False),
-                            inflection.camelize(column["name"], False),
-                        )
+                        f"        <if test=\"request.{inflection.camelize(column['name'], False)} != null and request.{inflection.camelize(column['name'], False)} !=''\">"
                     )
                 else:
-                    lines.append('        <if test="request.%s != null">' % (inflection.camelize(column["name"], False)))
-                lines.append(
-                    "            AND `%s`.`%s` = #{request.%s}"
-                    % (
-                        file_info["model_name_snake_case"],
-                        column["name"],
-                        inflection.camelize(column["name"], False),
-                    )
-                )
+                    lines.append(f'        <if test="request.{inflection.camelize(column["name"], False)} != null">')
+                lines.append(f"            AND `{file_info['model_name_snake_case']}`.`{column['name']}` = #{{request.{inflection.camelize(column['name'], False)}}}")
                 lines.append("        </if>")
             search_where = "\n".join(lines)
 
@@ -267,7 +241,7 @@ def run_package():
             for column in columns:
                 if column["name"] == "id" or column["name"] == "is_delete":
                     continue
-                lines.append("        `%s`" % (column["name"]))
+                lines.append(f"        `{column['name']}`")
             name_list = ",\n".join(lines)
 
             lines = []
@@ -277,7 +251,7 @@ def run_package():
                 elif column["name"] == "create_time" or column["name"] == "update_time" or column["name"] == "created_time" or column["name"] == "updated_time":
                     lines.append("        NOW()")
                 else:
-                    lines.append("        #{%s.%s}" % (file_info["model_name_camel_case"], inflection.camelize(column["name"], False)))
+                    lines.append(f"        #{{{file_info['model_name_camel_case']}.{inflection.camelize(column['name'], False)}}}")
             value_list = ",\n".join(lines)
 
             lines = []
@@ -285,16 +259,9 @@ def run_package():
                 if column["name"] == "id" or column["name"] == "create_time" or column["name"] == "created_time" or column["name"] == "is_delete":
                     continue
                 elif column["name"] == "update_time" or column["name"] == "updated_time":
-                    lines.append("        `%s` = NOW()" % (column["name"]))
+                    lines.append(f"        `{column['name']}` = NOW()")
                 else:
-                    lines.append(
-                        "        `%s` = #{%s.%s}"
-                        % (
-                            column["name"],
-                            file_info["model_name_camel_case"],
-                            inflection.camelize(column["name"], False),
-                        )
-                    )
+                    lines.append(f"        `{column['name']}` = #{{{file_info['model_name_camel_case']}.{inflection.camelize(column['name'], False)}}}")
             update_list = ",\n".join(lines)
 
             lines = []
@@ -302,25 +269,24 @@ def run_package():
                 if column["name"] == "id" or column["name"] == "create_time" or column["name"] == "created_time" or column["name"] == "is_delete":
                     continue
                 elif column["name"] == "update_time" or column["name"] == "updated_time":
-                    lines.append("        `%s` = NOW()" % (column["name"]))
+                    lines.append(f"        `{column['name']}` = NOW()")
                 else:
                     if column["type"] == "varchar" or column["type"] == "text":
                         lines.append(
-                            "        <if test=\"request.%s != null and request.%s !=''\">"
-                            % (inflection.camelize(column["name"], False), inflection.camelize(column["name"], False))
+                            f"        <if test=\"request.{inflection.camelize(column['name'], False)} != null and request.{inflection.camelize(column['name'], False)} !=''\">"
                         )
                     else:
-                        lines.append('        <if test="request.%s != null">' % (inflection.camelize(column["name"], False)))
-                    lines.append("            `%s` = #{request.%s}," % (column["name"], inflection.camelize(column["name"], False)))
+                        lines.append(f'        <if test="request.{inflection.camelize(column["name"], False)} != null">')
+                    lines.append(f"            `{column['name']}` = #{{request.{inflection.camelize(column['name'], False)}}},")
                     lines.append("        </if>")
             update_partly_list = "\n".join(lines)
 
             lines = []
             for column in columns:
                 if column["name"] == "sort_weight":
-                    lines.append("`%s`.`sort_weight` DESC" % (file_info["model_name_snake_case"]))
+                    lines.append(f"`{file_info['model_name_snake_case']}`.`sort_weight` DESC")
             if not lines:
-                lines.append("`%s`.`id` DESC" % (file_info["model_name_snake_case"]))
+                lines.append(f"`{file_info['model_name_snake_case']}`.`id` DESC")
             orders = ", ".join(lines)
 
             if file_info["model_name"] == "user":
@@ -351,13 +317,16 @@ def run_package():
             file_write.close()
 
             # [Model].kt
-            content = "package %s.models\n\n" % project_info["package_name"]
-            content += "import io.swagger.v3.oas.annotations.media.Schema\n"
-            content += "import %s.annotations.NoArg\n" % project_info["package_name"]
-            content += "import java.math.BigDecimal\n"
-            content += "import java.util.*\n\n"
-            content += "@NoArg\n"
-            content += "data class %s(\n" % (file_info["model_name_pascal_case"])
+            content = (
+                f"package {project_info['package_name']}.models\n\n"
+                f"import io.swagger.v3.oas.annotations.media.Schema\n"
+                f"import {project_info['package_name']}.annotations.NoArg\n"
+                f"import java.math.BigDecimal\n"
+                f"import java.util.*\n"
+                f"\n"
+                f"@NoArg\n"
+                f"data class {file_info['model_name_pascal_case']}(\n"
+            )
             lines = []
             swagger_index = 0
             for column in columns:
@@ -372,7 +341,7 @@ def run_package():
                         column_type += " = " + column["default"]
                     if column["name"] == "id":
                         column_type += " = 0"
-                    line_text = '    @Schema(description = "%s")\n' % (column["comment"])
+                    line_text = f'    @Schema(description = "{column["comment"]}")\n'
 
                     # 特殊处理 for Payment.kt
                     if file_info["model_name"] == "payment" and (
@@ -382,19 +351,16 @@ def run_package():
                         or property_name == "message"
                         or property_name == "payment_time"
                     ):
-                        line_text += "    var %s: %s" % (
-                            inflection.camelize(property_name, False),
-                            column_type,
-                        )
+                        line_text += f"    var {inflection.camelize(property_name, False)}: {column_type}"
 
                     # 特殊处理 for User.kt
                     elif file_info["model_name"] == "user" and (property_name != "id" and property_name != "create_time" and property_name != "update_time"):
-                        line_text += "    var %s: %s" % (inflection.camelize(property_name, False), column_type)
+                        line_text += f"    var {inflection.camelize(property_name, False)}: {column_type}"
                     else:
-                        line_text += "    val %s: %s" % (inflection.camelize(property_name, False), column_type)
+                        line_text += f"    val {inflection.camelize(property_name, False)}: {column_type}"
                     lines.append(line_text)
                     swagger_index += 1
-            content += "%s,\n" % (",\n\n".join(lines))
+            content += f"{',\n\n'.join(lines)},\n"
             content += ")\n"
 
             output_models_path = os.path.join(kotlin_output_path, "models")
@@ -405,12 +371,15 @@ def run_package():
             file_write.close()
 
             # [Model]EditRequest.kt
-            content = "package %s.viewmodels.%s\n\n" % (
-                project_info["package_name"],
-                file_info["model_name_camel_case"],
+            content = (
+                f"package {project_info['package_name']}.viewmodels.{file_info['model_name_camel_case']}\n\n"
+                f"import io.swagger.v3.oas.annotations.media.Schema\n"
+                f"import java.math.BigDecimal\n"
+                f"import java.util.*\n"
+                f"import jakarta.validation.constraints.NotNull\n"
+                f"\n"
+                f"data class {file_info['model_name_pascal_case']}EditRequest(\n"
             )
-            content += "import io.swagger.v3.oas.annotations.media.Schema\nimport java.math.BigDecimal\nimport java.util.*\nimport jakarta.validation.constraints.NotNull\n\n"
-            content += "data class %sEditRequest(\n" % (file_info["model_name_pascal_case"])
             lines = []
             swagger_index = 0
             for column in columns:
@@ -440,16 +409,12 @@ def run_package():
                 if column["name"] == "id":
                     column_type += " = 0"
                 if required:
-                    line_text += '    @NotNull(message = "%s 不能为空")\n' % (inflection.camelize(property_name, False))
-                line_text += '    @Schema(description = "%s", required = %s, hidden = %s)\n' % (
-                    column["comment"],
-                    "true" if required else "false",
-                    "true" if hidden else "false",
-                )
-                line_text += "    %s %s: %s" % (define, inflection.camelize(property_name, False), column_type)
+                    line_text += f'    @NotNull(message = "{inflection.camelize(property_name, False)} 不能为空")\n'
+                line_text += f'    @Schema(description = "{column["comment"]}", required = { 'true' if required else 'false'}, hidden = { 'true' if hidden else 'false'})\n'
+                line_text += f"    {define} {inflection.camelize(property_name, False)}: {column_type}"
                 lines.append(line_text)
                 swagger_index += 1
-            content += "%s,\n" % (",\n\n".join(lines))
+            content += f"{',\n\n'.join(lines)},\n"
             content += ")\n"
 
             output_viewmodels_path = os.path.join(kotlin_output_path, "viewmodels", file_info["model_name_camel_case"])
@@ -464,16 +429,15 @@ def run_package():
             file_write.close()
 
             # [Model]PartlyEditRequest.kt
-            content = "package %s.viewmodels.%s\n\n" % (
-                project_info["package_name"],
-                file_info["model_name_camel_case"],
+            content = (
+                f"package {project_info['package_name']}.viewmodels.{file_info['model_name_camel_case']}\n\n"
+                f"import io.swagger.v3.oas.annotations.media.Schema\n"
+                f"import java.math.BigDecimal\n"
+                f"import java.util.*\n"
+                f"import jakarta.validation.constraints.NotNull\n"
+                f"\n"
+                f"data class {file_info['model_name_pascal_case']}PartlyEditRequest(\n"
             )
-            content += "import io.swagger.v3.oas.annotations.media.Schema\n"
-            content += "import java.math.BigDecimal\n"
-            content += "import java.util.*\n"
-            content += "import jakarta.validation.constraints.NotNull\n"
-            content += "\n"
-            content += "data class %sPartlyEditRequest(\n" % (file_info["model_name_pascal_case"])
             lines = []
             swagger_index = 0
             for column in columns:
@@ -495,14 +459,12 @@ def run_package():
                 # 特殊处理 for UserPartlyEditRequest.kt
                 if file_info["model_name"] == "user" and (column["name"] == "password" or column["name"] == "salt"):
                     define = "var"
-                line_text = '    @Schema(description = "%s", required = false, hidden = %s)\n' % (
-                    column["comment"],
-                    hidden,
-                )
-                line_text += "    %s %s: %s" % (define, inflection.camelize(property_name, False), column_type)
+                line_text = f'    @Schema(description = "{column["comment"]}", required = false, hidden = {hidden})\n'
+                line_text += f"    {define} {inflection.camelize(property_name, False)}: {column_type}"
+
                 lines.append(line_text)
                 swagger_index += 1
-            content += "%s,\n" % (",\n\n".join(lines))
+            content += f"{',\n\n'.join(lines)},\n"
             content += ")\n"
 
             output_viewmodels_path = os.path.join(kotlin_output_path, "viewmodels", file_info["model_name_camel_case"])
@@ -517,15 +479,16 @@ def run_package():
             file_write.close()
 
             # [Model]SearchRequest.kt
-            content = "package %s.viewmodels.%s\n\n" % (
-                project_info["package_name"],
-                file_info["model_name_camel_case"],
+            content = (
+                f"package {project_info['package_name']}.viewmodels.{file_info['model_name_camel_case']}\n\n"
+                f"import io.swagger.v3.oas.annotations.media.Schema\n"
+                f"import {project_info['package_name']}.models.Paging\n"
+                f"import {project_info['package_name']}.viewmodels.common.SortOrder\n"
+                f"import java.math.BigDecimal\n"
+                f"import java.util.*\n"
+                f"\n"
+                f"data class {file_info['model_name_pascal_case']}SearchRequest(\n"
             )
-            content += (
-                "import io.swagger.v3.oas.annotations.media.Schema\nimport %s.models.Paging\nimport %s.viewmodels.common.SortOrder\nimport java.math.BigDecimal\nimport java.util.*\n\n"
-                % (project_info["package_name"], project_info["package_name"])
-            )
-            content += "data class %sSearchRequest(\n" % (file_info["model_name_pascal_case"])
             lines = []
             swagger_index = 0
             for column in columns:
@@ -535,30 +498,18 @@ def run_package():
                 column_type += "? = null"
                 define = "val"
                 if column["type"] == "datetime" or column["type"] == "time" or column["type"] == "date":
-                    line_text = '    @Schema(description = "%s From")\n' % (column["comment"])
-                    line_text += "    %s %s: %s" % (
-                        define,
-                        inflection.camelize(column["name"] + "From", False),
-                        column_type,
-                    )
+                    line_text = f'    @Schema(description = "{column["comment"]} From")\n'
+                    line_text += f'    {define} {inflection.camelize(column["name"] + "From", False)}: {column_type}'
                     lines.append(line_text)
                     swagger_index += 1
-                    line_text = '    @Schema(description = "%s To")\n' % (column["comment"])
-                    line_text += "    %s %s: %s" % (
-                        define,
-                        inflection.camelize(column["name"] + "To", False),
-                        column_type,
-                    )
+                    line_text = f'    @Schema(description = "{column["comment"]} To")\n'
+                    line_text += f'    {define} {inflection.camelize(column["name"] + "To", False)}: {column_type}'
                     lines.append(line_text)
                     swagger_index += 1
                     continue
 
-                line_text = '    @Schema(description = "%s")\n' % (column["comment"])
-                line_text += "    %s %s: %s" % (
-                    define,
-                    inflection.camelize(property_name, False),
-                    column_type,
-                )
+                line_text = f'    @Schema(description = "{column["comment"]}")\n'
+                line_text += f"    {define} {inflection.camelize(property_name, False)}: {column_type}"
                 lines.append(line_text)
                 swagger_index += 1
 
@@ -570,7 +521,7 @@ def run_package():
             line_text = '    @Schema(description = "分页(默认第1页，每页显示10条)")\n'
             line_text += "    val paging: Paging = Paging(1, 10)"
             lines.append(line_text)
-            content += "%s,\n" % (",\n\n".join(lines))
+            content += f"{',\n\n'.join(lines)},\n"
             content += ")\n"
 
             output_viewmodels_path = os.path.join(kotlin_output_path, "viewmodels", file_info["model_name_camel_case"])
@@ -615,37 +566,15 @@ def run_package():
                         or column["name"] == "is_delete"
                     ):
                         continue
-                    columns_data.append(
-                        "            %s = request.%s"
-                        % (
-                            inflection.camelize(property_name, False),
-                            inflection.camelize(property_name, False),
-                        )
-                    )
+                    columns_data.append(f"            {inflection.camelize(property_name, False)} = request.{inflection.camelize(property_name, False)}")
 
                     if column["name"] != "password" and column["name"] != "salt":
-                        add_user_with_password_columns_data.append(
-                            "            %s = request.%s"
-                            % (
-                                inflection.camelize(property_name, False),
-                                inflection.camelize(property_name, False),
-                            )
-                        )
+                        add_user_with_password_columns_data.append(f"            {inflection.camelize(property_name, False)} = request.{inflection.camelize(property_name, False)}")
                     else:
-                        add_user_with_password_columns_data.append(
-                            "            %s = %s"
-                            % (
-                                inflection.camelize(property_name, False),
-                                inflection.camelize(property_name, False),
-                            )
-                        )
+                        add_user_with_password_columns_data.append(f"            {inflection.camelize(property_name, False)} = {inflection.camelize(property_name, False)}")
                     if column["name"] != "mobile" and column["name"] != "id":
                         bind_mobile_columns_data.append(
-                            "            mobileUser.%s = currentUser.%s"
-                            % (
-                                inflection.camelize(property_name, False),
-                                inflection.camelize(property_name, False),
-                            )
+                            f"            mobileUser.{inflection.camelize(property_name, False)} = currentUser.{inflection.camelize(property_name, False)}"
                         )
 
                 content = substitute(
@@ -668,14 +597,8 @@ def run_package():
                         or column["name"] == "is_delete"
                     ):
                         continue
-                    columns_data.append(
-                        "            %s = request.%s"
-                        % (
-                            inflection.camelize(property_name, False),
-                            inflection.camelize(property_name, False),
-                        )
-                    )
-                content = substitute(file_read.read(), columns_data=",\n".join(columns_data))
+                    columns_data.append(f"            {inflection.camelize(property_name, False)} = request.{inflection.camelize(property_name, False)},")
+                content = substitute(file_read.read(), columns_data="\n".join(columns_data))
 
             output_services_path = os.path.join(kotlin_output_path, "services")
             if not os.path.exists(output_services_path):
@@ -771,10 +694,11 @@ if __name__ == "__main__":
     if project_info["debug"]:
         print("debug mode")
         print(project_info)
-    if not os.path.exists(project_info["project_path"]):
-        os.makedirs(project_info["project_path"])
+    project_path = project_info.get("project_path", "")
+    if not os.path.exists(project_path):
+        os.makedirs(project_path)
 
-    if not os.path.exists(os.path.join(project_info["project_path"], "pom.xml")):
+    if not os.path.exists(os.path.join(project_path, "pom.xml")):
         # 初始化项目（复制 .sql 文件）
         init_project()
 
@@ -783,7 +707,7 @@ if __name__ == "__main__":
 
     if args.command == "init":
         # 提交 commit
-        os.chdir(project_info["project_path"])
+        os.chdir(project_path)
         subprocess.run(["git", "init"])
         subprocess.run(["git", "checkout", "-b", "generator"])
         subprocess.run(["git", "add", "."])
