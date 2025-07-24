@@ -76,7 +76,7 @@ class DbInitializationRunner : CommandLineRunner {
             for (controllerPath in controllerPaths) {
                 val functions = controller.declaredMethods
                 for (function in functions) {
-                    val summary = function.getAnnotation(Operation::class.java).summary
+                    val summary = function.getAnnotation(Operation::class.java)?.summary ?: continue
                     val paths = function.getAnnotation(RequestMapping::class.java).value
                     for (path in paths) {
                         val methods = function.getAnnotation(RequestMapping::class.java).method
