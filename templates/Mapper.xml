@@ -29,27 +29,19 @@ ${update_list}
         UPDATE `${table_name}` SET
 ${update_partly_list}
         WHERE `id` = #{request.id}
-        AND `is_delete` = 0
     </update>
 
-    <update id="delete${model_name_pascal_case}">
-        UPDATE `${table_name}`
-        SET `is_delete` = 1
-        <where>
-            AND `id` = #{id}
-            AND `is_delete` = 0
-        </where>
-    </update>
+    <delete id="delete${model_name_pascal_case}">
+        DELETE FROM `${table_name}`
+        WHERE `id` = #{id}
+    </delete>
 
     <select id="select${model_name_pascal_case}ById" resultType="${package_name}.models.${model_name_pascal_case}">
         SELECT
         <include refid="${model_name_camel_case}Columns"/>
         FROM
         <include refid="${model_name_camel_case}Tables"/>
-        <where>
-            AND `${model_name_snake_case}`.`id` = #{id}
-            AND `${model_name_snake_case}`.`is_delete` = 0
-        </where>
+        WHERE `${model_name_snake_case}`.`id` = #{id}
         LIMIT 1
     </select>
 
