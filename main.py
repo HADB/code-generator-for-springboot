@@ -23,7 +23,6 @@ project_info = {
     "version": None,
     "description": None,
     "port": None,
-    "payment": False,
     "debug": False,
 }
 
@@ -41,7 +40,7 @@ def init_project():
     g = os.walk(ARCHETYPE_RESOURCE_PATH)
     for path, _, file_list in g:
         for file_name in file_list:
-            if file_name == ".DS_Store" or (not project_info["payment"] and file_name == "t_payment.sql"):
+            if file_name == ".DS_Store":
                 continue
             sub_path = path[len(ARCHETYPE_RESOURCE_PATH) + 1 :]
 
@@ -97,16 +96,6 @@ def copy_archetype_resources():
                     if project_info["debug"]:
                         print("跳过:" + file_path)
                     continue
-                if not project_info["payment"] and file_name in [
-                    "t_payment.sql",
-                    "PaymentController.kt",
-                    "PaymentService.kt",
-                    "PaymentMapper.kt",
-                    "PaymentStatus.kt",
-                    "PaymentMapper.xml",
-                    "WxPrepayResponse.kt",
-                ]:
-                    continue
                 if project_info["debug"]:
                     print("准备复制:" + file_path)
                 content = substitute(file_read.read())
@@ -144,10 +133,10 @@ def run_package():
             if project_info["debug"]:
                 print("处理: " + input_file_name)
             file_info["table_name"] = os.path.splitext(input_file_name)[0].strip()  # 文件名
-            if not project_info["payment"] and file_info["table_name"] == "t_payment":
-                continue
+
             if file_info["table_name"] == "t_flyway_history":
                 continue
+
             file_info["model_name"] = file_info["table_name"][2:] if file_info["table_name"].startswith("t_") else file_info["table_name"]
             file_info["model_name_pascal_case"] = inflection.camelize(file_info["model_name"], True)  # PascalCase
             file_info["model_name_pascal_case_plural"] = inflection.pluralize(file_info["model_name_pascal_case"])  # PascalCases 复数形式
@@ -343,18 +332,8 @@ def run_package():
                         column_type += " = 0"
                     line_text = f'    @field:Schema(description = "{column["comment"]}")\n'
 
-                    # 特殊处理 for Payment.kt
-                    if file_info["model_name"] == "payment" and (
-                        property_name == "status"
-                        or property_name == "wx_transaction_id"
-                        or property_name == "wx_payment_open_id"
-                        or property_name == "message"
-                        or property_name == "payment_time"
-                    ):
-                        line_text += f"    var {inflection.camelize(property_name, False)}: {column_type}"
-
                     # 特殊处理 for User.kt
-                    elif file_info["model_name"] == "user" and (property_name != "id" and property_name != "create_time" and property_name != "update_time"):
+                    if file_info["model_name"] == "user" and (property_name != "id" and property_name != "create_time" and property_name != "update_time"):
                         line_text += f"    var {inflection.camelize(property_name, False)}: {column_type}"
                     else:
                         line_text += f"    val {inflection.camelize(property_name, False)}: {column_type}"
@@ -409,7 +388,7 @@ def run_package():
                 if column["name"] == "id":
                     column_type += " = 0"
                 if required:
-                    line_text += f'    @NotNull(message = "{inflection.camelize(property_name, False)} 不能为空")\n'
+                    line_text += f'    @field:NotNull(message = "{inflection.camelize(property_name, False)} 不能为空")\n'
                 line_text += f'    @field:Schema(description = "{column["comment"]}", required = { 'true' if required else 'false'}, hidden = { 'true' if hidden else 'false'})\n'
                 line_text += f"    {define} {inflection.camelize(property_name, False)}: {column_type}"
                 lines.append(line_text)
@@ -662,7 +641,6 @@ if __name__ == "__main__":
     parser.add_argument("--package_name", help="项目包名")
     parser.add_argument("--project_path", help="项目路径")
     parser.add_argument("--description", help="项目描述")
-    parser.add_argument("--payment", action="store_true", help="是否包含支付模块", default=False)
     parser.add_argument("--debug", action="store_true", help="是否开启调试模式", default=False)
 
     args = parser.parse_args()
@@ -676,7 +654,6 @@ if __name__ == "__main__":
         project_info["port"] = str_input("请输入端口号", required=True, default=args.port)
         project_info["project_path"] = str_input("请输入项目路径", required=True)
         project_info["description"] = str_input("请输入项目描述")
-        project_info["payment"] = bool_input("是否包含支付模块", args.payment)
         project_info["debug"] = bool_input("是否开启调试模式", args.debug)
 
     elif args.command == "run":
@@ -688,7 +665,6 @@ if __name__ == "__main__":
         project_info["port"] = args.port
         project_info["project_path"] = args.project_path
         project_info["description"] = args.description
-        project_info["payment"] = args.payment
         project_info["debug"] = args.debug
 
     if project_info["debug"]:

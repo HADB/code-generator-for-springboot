@@ -37,9 +37,6 @@ data class Response<T>(
         fun <T> permissionDenied() = error<T>(1003, "权限不足")
         fun <T> accountNotExist() = error<T>(1004, "用户不存在")
         fun <T> passwordIncorrect() = error<T>(1005, "账号或密码不正确")
-        fun <T> wechatNotAuthorized() = error<T>(1016, "微信授权失败")
-        fun <T> accountAlreadyExist() = error<T>(1008, "用户已存在")
-
-        fun <T> wechatPrepayError() = error<T>(3001, "微信预下单失败")
+        fun <T> accountAlreadyExist() = error<T>(1006, "用户已存在")
     }
 }

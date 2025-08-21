@@ -50,23 +50,9 @@ ${update_partly_list}
         AND `is_delete` = 0
     </update>
 
-    <update id="updateUserWechatInfo">
-        UPDATE `t_user` SET
-        `open_id` = #{user.openId},
-        `nickname` = #{user.nickname},
-        `avatar_url` = #{user.avatarUrl}
-        WHERE `id` = #{user.id}
-    </update>
-
     <update id="updateUserMobile">
         UPDATE `t_user` SET
         `mobile` = #{user.mobile}
-        WHERE `id` = #{user.id}
-    </update>
-
-    <update id="updateUserOpenId">
-        UPDATE `t_user` SET
-        `open_id` = #{user.openId}
         WHERE `id` = #{user.id}
     </update>
 
@@ -100,27 +86,12 @@ ${update_partly_list}
         LIMIT 1
     </select>
 
-    <select id="selectUserByMobile" resultType="${package_name}.models.User">
+    <select id="selectUserByMobile" resultType="net.yuanfen.sczone.models.User">
         SELECT
         <include refid="userColumns"/>
         FROM
         <include refid="userTables"/>
-        <where>
-            AND `user`.`mobile` = #{mobile}
-            AND `user`.`is_delete` = 0
-        </where>
-        LIMIT 1
-    </select>
-
-    <select id="selectUserByOpenId" resultType="${package_name}.models.User">
-        SELECT
-        <include refid="userColumns"/>
-        FROM
-        <include refid="userTables"/>
-        <where>
-            AND `user`.`open_id` = #{openId}
-            AND `user`.`is_delete` = 0
-        </where>
+        WHERE `user`.`mobile` = #{mobile}
         LIMIT 1
     </select>
 

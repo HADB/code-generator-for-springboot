@@ -1,7 +1,3 @@
-app:
-    qiniu-access-key: ''
-    qiniu-bucket: ''
-    qiniu-secret-key: ''
 mybatis:
     mapper-locations: classpath:mapper/*.xml
     configuration:
@@ -40,12 +36,3 @@ spring:
 springdoc:
     swagger-ui:
         url: /v3/api-docs
-wechat:
-    mch-cert-path: ''
-    mch-id: ''
-    mch-key: ''
-    payment-notify-url: ''
-    refund-notify-url: ''
-    weapp:
-        app-id: ''
-        app-secret: ''

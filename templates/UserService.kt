@@ -1,11 +1,9 @@
 package ${package_name}.services
 
-import ${package_name}.configurations.WechatConfiguration
 import ${package_name}.constants.AppConstants
 import ${package_name}.helpers.PasswordHelper
 import ${package_name}.helpers.RedisHelper
 import ${package_name}.helpers.TokenHelper
-import ${package_name}.helpers.WechatHelper
 import ${package_name}.mappers.UserMapper
 import ${package_name}.models.Response
 import ${package_name}.models.User
@@ -28,12 +26,6 @@ class UserService {
 
     @Resource
     private lateinit var redisHelper: RedisHelper
-
-    @Resource
-    private lateinit var wechatHelper: WechatHelper
-
-    @Resource
-    private lateinit var wechatConfiguration: WechatConfiguration
 
     fun editUser(request: UserEditRequest): Long {
         val salt = passwordHelper.salt
@@ -75,10 +67,7 @@ ${add_user_with_password_columns_data}
     }
 
     fun getUserByKey(service: String, key: String): User? {
-        return when (service) {
-            AppConstants.Service.WEAPP_C -> userMapper.selectUserByOpenId(key)
-            else -> userMapper.selectUserById(key.toLong())
-        }
+        return userMapper.selectUserById(key.toLong())
     }
 
     fun searchPagingUsers(request: UserSearchRequest): List<User> {
@@ -87,10 +76,6 @@ ${add_user_with_password_columns_data}
 
     fun searchUsersCount(request: UserSearchRequest): Long {
         return userMapper.selectUsersCount(request)
-    }
-
-    fun getUserByOpenId(openId: String): User? {
-        return userMapper.selectUserByOpenId(openId)
     }
 
     fun getUserByUsername(username: String): User? {
@@ -106,54 +91,6 @@ ${add_user_with_password_columns_data}
 
     fun signOut(service: String, user: User) {
         tokenHelper.deleteToken(service, user.id.toString())
-    }
-
-    fun weappSignIn(service: String, code: String): SignInResponse {
-        val sessionResult = wechatHelper.getSessionResultByCode(code, wechatConfiguration.weappAppId, wechatConfiguration.weappAppSecret)
-        val token = tokenHelper.createToken(service, sessionResult.openId)
-        val response = SignInResponse(token = token)
-        val user = getUserByOpenId(sessionResult.openId)
-        redisHelper.set(RedisKey.sessionKey(sessionResult.openId), sessionResult.sessionKey, 15, TimeUnit.MINUTES)
-        if (user != null) {
-            response.userExists = true
-            response.mobileBound = user.mobile != null
-        }
-        return response
-    }
-
-    fun weappRegister(request: WechatEncryptedDataRequest, openId: String): Response<Any> {
-        val sessionKey = redisHelper.get(RedisKey.sessionKey(openId)) ?: return Response.Errors.tokenInvalid()
-        val userInfo = wechatHelper.decryptUserProfile(sessionKey, request.encryptedData, request.iv)
-        val user = User(
-            nickname = userInfo.nickname,
-            avatarUrl = userInfo.avatarUrl,
-            openId = openId
-        )
-        userMapper.insertUser(user)
-        return Response.success()
-    }
-
-    fun weappSignOut(service: String, user: User) {
-        tokenHelper.deleteToken(service, user.openId)
-    }
-
-    fun bindMobile(request: WechatEncryptedDataRequest, openId: String): Response<Any> {
-        val sessionKey = redisHelper.get(RedisKey.sessionKey(openId)) ?: return Response.Errors.tokenInvalid()
-        val mobile = wechatHelper.decryptPhoneNumber(sessionKey, request.encryptedData, request.iv)
-        val mobileUser = getUserByMobile(mobile)
-        val currentUser = getUserByOpenId(openId)!!
-        if (mobileUser != null) {
-${bind_mobile_columns_data}
-
-            if (currentUser.id != mobileUser.id) {
-                userMapper.deleteUser(currentUser.id)
-            }
-            userMapper.updateUser(mobileUser)
-        } else {
-            currentUser.mobile = mobile
-            userMapper.updateUser(currentUser)
-        }
-        return Response.success()
     }
 
     fun getUserByMobile(mobile: String): User? {

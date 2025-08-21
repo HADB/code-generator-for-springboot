@@ -12,6 +12,7 @@ class AppConstants {
 
     object Service {
         const val DEFAULT = "default"
-        const val WEAPP_C = "weapp_c"
+        const val WEB_C = "web-c"
+        const val WEB_B = "web-b"
     }
 }

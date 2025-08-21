@@ -19,10 +19,6 @@ class RedisKey {
             return build("$${service ?: AppConstants.Service.DEFAULT}:token:$$token:key")
         }
 
-        fun sessionKey(openId: String?): String {
-            return build("open-id:$$openId:session-key")
-        }
-
         fun passwordErrorTimes(mobile: String?): String {
             return build("mobile:$$mobile:password-error-times")
         }

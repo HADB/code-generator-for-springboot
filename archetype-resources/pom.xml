@@ -132,19 +132,9 @@
             <version>$${flyway.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.qiniu</groupId>
-            <artifactId>qiniu-java-sdk</artifactId>
-            <version>7.16.0</version>
-        </dependency>
-        <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <version>33.4.8-jre</version>
-        </dependency>
-        <dependency>
-            <groupId>com.github.binarywang</groupId>
-            <artifactId>weixin-java-pay</artifactId>
-            <version>3.7.0</version>
         </dependency>
     </dependencies>
     <build>

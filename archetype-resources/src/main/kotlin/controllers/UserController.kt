@@ -118,47 +118,11 @@ class UserController {
         return Response.success()
     }
 
-    @Operation(summary = "小程序登录")
-    @RequestMapping(path = ["/weapp-sign-in", "/wxapp-sign-in"], method = [RequestMethod.POST])
-    @AllowAnonymous
-    fun weappSignIn(@RequestBody request: WeappSignInRequest, @RequestAttribute service: String): Response<SignInResponse> {
-        val response = userService.weappSignIn(service, request.code)
-        return Response.success(response)
-    }
-
-    @Operation(summary = "小程序注册")
-    @RequestMapping(path = ["/weapp-register", "/wxapp-register"], method = [RequestMethod.POST])
-    @AllowUserNotExist
-    fun weappRegister(@RequestBody request: WechatEncryptedDataRequest, @RequestAttribute key: String): Response<Any> {
-        if (request.encryptedData == null || request.iv == null) {
-            return Response.Errors.wechatNotAuthorized()
-        }
-        val userInfo = userService.getUserByOpenId(key)
-        if (userInfo != null) {
-            return Response.Errors.accountAlreadyExist()
-        }
-        return userService.weappRegister(request, key)
-    }
-
-    @Operation(summary = "注销登录")
-    @RequestMapping(path = ["/weapp-sign-out", "/wxapp-sign-out"], method = [RequestMethod.POST])
-    @AllowSignedIn
-    fun weappSignOut(@RequestAttribute service: String, @CurrentUser user: User): Response<Any> {
-        userService.weappSignOut(service, user)
-        return Response.success()
-    }
 
     @Operation(summary = "用户信息")
     @RequestMapping("/info", method = [RequestMethod.GET])
     @AllowSignedIn
     fun info(@RequestAttribute service: String, @CurrentUser user: User): Response<Any> {
         return Response.success(user)
-    }
-
-    @Operation(summary = "绑定「用户」手机号")
-    @RequestMapping("/bind-mobile", method = [RequestMethod.POST])
-    @AllowSignedIn
-    fun bindMobile(@RequestBody request: WechatEncryptedDataRequest, @RequestAttribute key: String): Response<Any> {
-        return userService.bindMobile(request, key)
     }
 }
