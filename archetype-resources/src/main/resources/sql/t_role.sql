@@ -6,10 +6,8 @@ CREATE TABLE `t_role` (
     `built_in`      TINYINT         NOT NULL DEFAULT 0          COMMENT '是否内置',
     `create_time`   DATETIME        DEFAULT CURRENT_TIMESTAMP   COMMENT '创建时间',
     `update_time`   DATETIME        DEFAULT CURRENT_TIMESTAMP   COMMENT '更新时间',
-    `is_delete`     TINYINT         NOT NULL DEFAULT 0          COMMENT '是否删除',
     PRIMARY KEY                     (`id`),
     UNIQUE KEY  `idx_key`           (`key`),
     KEY         `idx_create_time`   (`create_time`),
-    KEY         `idx_update_time`   (`update_time`),
-    KEY         `idx_is_delete`     (`is_delete`)
+    KEY         `idx_update_time`   (`update_time`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='角色';

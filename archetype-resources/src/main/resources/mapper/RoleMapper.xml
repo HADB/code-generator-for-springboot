@@ -41,7 +41,6 @@
         <if test="request.updateTimeTo != null">
             AND `role`.`update_time` &lt;= #{request.updateTimeTo}
         </if>
-        AND `role`.`is_delete` = 0
     </sql>
 
     <insert id="insertRole" useGeneratedKeys="true" keyProperty="role.id">
@@ -69,7 +68,6 @@
         `built_in` = #{role.builtIn},
         `update_time` = NOW()
         WHERE `id` = #{role.id}
-        AND `is_delete` = 0
     </update>
 
     <update id="updateRolePartly">
@@ -88,27 +86,19 @@
         </if>
         `update_time` = NOW()
         WHERE `id` = #{request.id}
-        AND `is_delete` = 0
     </update>
 
-    <update id="deleteRole">
-        UPDATE `t_role`
-        SET `is_delete` = 1
-        <where>
-            AND `id` = #{id}
-            AND `is_delete` = 0
-        </where>
-    </update>
+    <delete id="deleteRole">
+        DELETE FROM `t_role`
+        WHERE `id` = #{id}
+    </delete>
 
     <select id="selectRoleById" resultType="${package_name}.models.Role">
         SELECT
         <include refid="roleColumns"/>
         FROM
         <include refid="roleTables"/>
-        <where>
-            AND `role`.`id` = #{id}
-            AND `role`.`is_delete` = 0
-        </where>
+        WHERE `role`.`id` = #{id}
         LIMIT 1
     </select>
 
@@ -148,10 +138,7 @@
         <include refid="roleColumns"/>
         FROM
         <include refid="roleTables"/>
-        <where>
-            AND `role`.`key` = #{key}
-            AND `role`.`is_delete` = 0
-        </where>
+        WHERE `role`.`key` = #{key}
         LIMIT 1
     </select>
 
@@ -160,9 +147,6 @@
         <include refid="roleColumns"/>
         FROM
         <include refid="roleTables"/>
-        <where>
-            AND `role`.`id` IN (SELECT `role_id` FROM `t_user_role` `user_role` WHERE `user_role`.`user_id` = #{userId})
-            AND `role`.`is_delete` = 0
-        </where>
+        WHERE `role`.`id` IN (SELECT `role_id` FROM `t_user_role` `user_role` WHERE `user_role`.`user_id` = #{userId})
     </select>
 </mapper>

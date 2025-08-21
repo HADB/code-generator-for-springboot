@@ -33,7 +33,6 @@
         <if test="request.updateTimeTo != null">
             AND `role_permission`.`update_time` &lt;= #{request.updateTimeTo}
         </if>
-        AND `role_permission`.`is_delete` = 0
     </sql>
 
     <insert id="insertRolePermission" useGeneratedKeys="true" keyProperty="rolePermission.id">
@@ -55,7 +54,6 @@
         `permission_id` = #{rolePermission.permissionId},
         `update_time` = NOW()
         WHERE `id` = #{rolePermission.id}
-        AND `is_delete` = 0
     </update>
 
     <update id="updateRolePermissionPartly">
@@ -68,27 +66,19 @@
         </if>
         `update_time` = NOW()
         WHERE `id` = #{request.id}
-        AND `is_delete` = 0
     </update>
 
-    <update id="deleteRolePermission">
-        UPDATE `t_role_permission`
-        SET `is_delete` = 1
-        <where>
-            AND `id` = #{id}
-            AND `is_delete` = 0
-        </where>
-    </update>
+    <delete id="deleteRolePermission">
+        DELETE FROM `t_role_permission`
+        WHERE `id` = #{id}
+    </delete>
 
     <select id="selectRolePermissionById" resultType="${package_name}.models.RolePermission">
         SELECT
         <include refid="rolePermissionColumns"/>
         FROM
         <include refid="rolePermissionTables"/>
-        <where>
-            AND `role_permission`.`id` = #{id}
-            AND `role_permission`.`is_delete` = 0
-        </where>
+        WHERE `role_permission`.`id` = #{id}
         LIMIT 1
     </select>
 

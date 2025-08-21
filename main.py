@@ -193,8 +193,6 @@ def run_package():
             lines = []
             for column in columns:
                 property_name = column["name"]
-                if column["name"] == "is_delete":
-                    continue
                 if file_info["model_name"] == "user" and (column["name"] == "password" or column["name"] == "salt"):
                     continue
                 lines.append(f"        `{file_info['model_name_snake_case']}`.`{column['name']}`")
@@ -213,9 +211,6 @@ def run_package():
                     lines.append(f"            AND `{file_info['model_name_snake_case']}`.`{column['name']}` &lt;= #{{request.{inflection.camelize(column['name'], False)}To}}")
                     lines.append("        </if>")
                     continue
-                if column["name"] == "is_delete":
-                    lines.append(f"        AND `{file_info['model_name_snake_case']}`.`{column['name']}` = 0")
-                    continue
                 if column["type"] == "varchar" or column["type"] == "text":
                     lines.append(
                         f"        <if test=\"request.{inflection.camelize(column['name'], False)} != null and request.{inflection.camelize(column['name'], False)} !=''\">"
@@ -228,14 +223,14 @@ def run_package():
 
             lines = []
             for column in columns:
-                if column["name"] == "id" or column["name"] == "is_delete":
+                if column["name"] == "id":
                     continue
                 lines.append(f"        `{column['name']}`")
             name_list = ",\n".join(lines)
 
             lines = []
             for column in columns:
-                if column["name"] == "id" or column["name"] == "is_delete":
+                if column["name"] == "id":
                     continue
                 elif column["name"] == "create_time" or column["name"] == "update_time" or column["name"] == "created_time" or column["name"] == "updated_time":
                     lines.append("        NOW()")
@@ -245,7 +240,7 @@ def run_package():
 
             lines = []
             for column in columns:
-                if column["name"] == "id" or column["name"] == "create_time" or column["name"] == "created_time" or column["name"] == "is_delete":
+                if column["name"] == "id" or column["name"] == "create_time" or column["name"] == "created_time":
                     continue
                 elif column["name"] == "update_time" or column["name"] == "updated_time":
                     lines.append(f"        `{column['name']}` = NOW()")
@@ -255,7 +250,7 @@ def run_package():
 
             lines = []
             for column in columns:
-                if column["name"] == "id" or column["name"] == "create_time" or column["name"] == "created_time" or column["name"] == "is_delete":
+                if column["name"] == "id" or column["name"] == "create_time" or column["name"] == "created_time":
                     continue
                 elif column["name"] == "update_time" or column["name"] == "updated_time":
                     lines.append(f"        `{column['name']}` = NOW()")
@@ -319,26 +314,23 @@ def run_package():
             lines = []
             swagger_index = 0
             for column in columns:
-                if column["name"] == "is_delete":
-                    continue
+                column_type, property_name = get_column_type_property_name(column)
+
+                if column["nullable"]:
+                    column_type += "?"
+                if column["default"]:
+                    column_type += " = " + column["default"]
+                if column["name"] == "id":
+                    column_type += " = 0"
+                line_text = f'    @field:Schema(description = "{column["comment"]}")\n'
+
+                # 特殊处理 for User.kt
+                if file_info["model_name"] == "user" and (property_name != "id" and property_name != "create_time" and property_name != "update_time"):
+                    line_text += f"    var {inflection.camelize(property_name, False)}: {column_type}"
                 else:
-                    column_type, property_name = get_column_type_property_name(column)
-
-                    if column["nullable"]:
-                        column_type += "?"
-                    if column["default"]:
-                        column_type += " = " + column["default"]
-                    if column["name"] == "id":
-                        column_type += " = 0"
-                    line_text = f'    @field:Schema(description = "{column["comment"]}")\n'
-
-                    # 特殊处理 for User.kt
-                    if file_info["model_name"] == "user" and (property_name != "id" and property_name != "create_time" and property_name != "update_time"):
-                        line_text += f"    var {inflection.camelize(property_name, False)}: {column_type}"
-                    else:
-                        line_text += f"    val {inflection.camelize(property_name, False)}: {column_type}"
-                    lines.append(line_text)
-                    swagger_index += 1
+                    line_text += f"    val {inflection.camelize(property_name, False)}: {column_type}"
+                lines.append(line_text)
+                swagger_index += 1
             content += f"{',\n\n'.join(lines)},\n"
             content += ")\n"
 
@@ -377,13 +369,7 @@ def run_package():
                     define = "var"
                     required = False
                     hidden = True
-                if (
-                    column["name"] == "create_time"
-                    or column["name"] == "update_time"
-                    or column["name"] == "created_time"
-                    or column["name"] == "updated_time"
-                    or column["name"] == "is_delete"
-                ):
+                if column["name"] == "create_time" or column["name"] == "update_time" or column["name"] == "created_time" or column["name"] == "updated_time":
                     continue
                 if column["name"] == "id":
                     column_type += " = 0"
@@ -422,13 +408,7 @@ def run_package():
             for column in columns:
                 define = "var"
                 hidden = "true"
-                if (
-                    column["name"] == "create_time"
-                    or column["name"] == "update_time"
-                    or column["name"] == "created_time"
-                    or column["name"] == "updated_time"
-                    or column["name"] == "is_delete"
-                ):
+                if column["name"] == "create_time" or column["name"] == "update_time" or column["name"] == "created_time" or column["name"] == "updated_time":
                     continue
                 column_type, property_name = get_column_type_property_name(column)
                 if column["name"] != "id":
@@ -471,7 +451,7 @@ def run_package():
             lines = []
             swagger_index = 0
             for column in columns:
-                if column["name"] == "id" or column["name"] == "sort_weight" or column["name"] == "is_delete":
+                if column["name"] == "id" or column["name"] == "sort_weight":
                     continue
                 column_type, property_name = get_column_type_property_name(column)
                 column_type += "? = null"
@@ -537,13 +517,7 @@ def run_package():
                 bind_mobile_columns_data = []
                 for column in columns:
                     property_name = column["name"]
-                    if (
-                        column["name"] == "create_time"
-                        or column["name"] == "update_time"
-                        or column["name"] == "created_time"
-                        or column["name"] == "updated_time"
-                        or column["name"] == "is_delete"
-                    ):
+                    if column["name"] == "create_time" or column["name"] == "update_time" or column["name"] == "created_time" or column["name"] == "updated_time":
                         continue
                     columns_data.append(f"            {inflection.camelize(property_name, False)} = request.{inflection.camelize(property_name, False)}")
 
@@ -568,13 +542,7 @@ def run_package():
                 columns_data = []
                 for column in columns:
                     property_name = column["name"]
-                    if (
-                        column["name"] == "create_time"
-                        or column["name"] == "update_time"
-                        or column["name"] == "created_time"
-                        or column["name"] == "updated_time"
-                        or column["name"] == "is_delete"
-                    ):
+                    if column["name"] == "create_time" or column["name"] == "update_time" or column["name"] == "created_time" or column["name"] == "updated_time":
                         continue
                     columns_data.append(f"            {inflection.camelize(property_name, False)} = request.{inflection.camelize(property_name, False)},")
                 content = substitute(file_read.read(), columns_data="\n".join(columns_data))

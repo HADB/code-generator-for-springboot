@@ -33,7 +33,6 @@
         <if test="request.updateTimeTo != null">
             AND `user_role`.`update_time` &lt;= #{request.updateTimeTo}
         </if>
-        AND `user_role`.`is_delete` = 0
     </sql>
 
     <insert id="insertUserRole" useGeneratedKeys="true" keyProperty="userRole.id">
@@ -55,7 +54,6 @@
         `role_id` = #{userRole.roleId},
         `update_time` = NOW()
         WHERE `id` = #{userRole.id}
-        AND `is_delete` = 0
     </update>
 
     <update id="updateUserRolePartly">
@@ -68,27 +66,19 @@
         </if>
         `update_time` = NOW()
         WHERE `id` = #{request.id}
-        AND `is_delete` = 0
     </update>
 
-    <update id="deleteUserRole">
-        UPDATE `t_user_role`
-        SET `is_delete` = 1
-        <where>
-            AND `id` = #{id}
-            AND `is_delete` = 0
-        </where>
-    </update>
+    <delete id="deleteUserRole">
+        DELETE FROM `t_user_role`
+        WHERE `id` = #{id}
+    </delete>
 
     <select id="selectUserRoleById" resultType="${package_name}.models.UserRole">
         SELECT
         <include refid="userRoleColumns"/>
         FROM
         <include refid="userRoleTables"/>
-        <where>
-            AND `user_role`.`id` = #{id}
-            AND `user_role`.`is_delete` = 0
-        </where>
+        WHERE `user_role`.`id` = #{id}
         LIMIT 1
     </select>
 

@@ -40,14 +40,12 @@ ${value_list})
         UPDATE `t_user` SET
 ${update_list}
         WHERE `id` = #{user.id}
-        AND `is_delete` = 0
     </update>
 
     <update id="updateUserPartly">
         UPDATE `t_user` SET
 ${update_partly_list}
         WHERE `id` = #{request.id}
-        AND `is_delete` = 0
     </update>
 
     <update id="updateUserMobile">
@@ -63,26 +61,17 @@ ${update_partly_list}
         WHERE `id` = #{user.id}
     </update>
 
-    <update id="deleteUser">
-        UPDATE `t_user` SET
-        `mobile` = CONCAT(`mobile`, '-', `id`, '-deleted'),
-        `open_id` = CONCAT(`open_id`, '-', `id`, '-deleted'),
-        `is_delete` = 1
-        <where>
-            AND `id` = #{id}
-            AND `is_delete` = 0
-        </where>
-    </update>
+    <delete id="deleteUser">
+        DELETE FROM `t_user`
+        WHERE `id` = #{id}
+    </delete>
 
     <select id="selectUserById" resultType="${package_name}.models.User">
         SELECT
         <include refid="userColumns"/>
         FROM
         <include refid="userTables"/>
-        <where>
-            AND `user`.`id` = #{id}
-            AND `user`.`is_delete` = 0
-        </where>
+        WHERE `user`.`id` = #{id}
         LIMIT 1
     </select>
 
@@ -131,10 +120,7 @@ ${update_partly_list}
         <include refid="userColumnsWithPassword"/>
         FROM
         <include refid="userTables"/>
-        <where>
-            AND `user`.`username` = #{username}
-            AND `user`.`is_delete` = 0
-        </where>
+        WHERE `user`.`username` = #{username}
         LIMIT 1
     </select>
 </mapper>

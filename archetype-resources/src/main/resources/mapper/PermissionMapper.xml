@@ -49,7 +49,6 @@
         <if test="request.updateTimeTo != null">
             AND `permission`.`update_time` &lt;= #{request.updateTimeTo}
         </if>
-        AND `permission`.`is_delete` = 0
     </sql>
 
     <insert id="insertPermission" useGeneratedKeys="true" keyProperty="permission.id">
@@ -83,7 +82,6 @@
         `api_method` = #{permission.apiMethod},
         `update_time` = NOW()
         WHERE `id` = #{permission.id}
-        AND `is_delete` = 0
     </update>
 
     <update id="updatePermissionPartly">
@@ -108,27 +106,19 @@
         </if>
         `update_time` = NOW()
         WHERE `id` = #{request.id}
-        AND `is_delete` = 0
     </update>
 
-    <update id="deletePermission">
-        UPDATE `t_permission`
-        SET `is_delete` = 1
-        <where>
-            AND `id` = #{id}
-            AND `is_delete` = 0
-        </where>
-    </update>
+    <delete id="deletePermission">
+        DELETE FROM `t_permission`
+        WHERE `id` = #{id}
+    </delete>
 
     <select id="selectPermissionById" resultType="${package_name}.models.Permission">
         SELECT
         <include refid="permissionColumns"/>
         FROM
         <include refid="permissionTables"/>
-        <where>
-            AND `permission`.`id` = #{id}
-            AND `permission`.`is_delete` = 0
-        </where>
+        WHERE `permission`.`id` = #{id}
         LIMIT 1
     </select>
 
@@ -168,10 +158,7 @@
         <include refid="permissionColumns"/>
         FROM
         <include refid="permissionTables"/>
-        <where>
-            AND `permission`.`id` IN (SELECT `permission_id` FROM `t_role_permission` `role_permission` WHERE `role_permission`.`role_id` = #{roleId})
-            AND `permission`.`is_delete` = 0
-        </where>
+        WHERE `permission`.`id` IN (SELECT `permission_id` FROM `t_role_permission` `role_permission` WHERE `role_permission`.`role_id` = #{roleId})
     </select>
 
     <select id="selectPermissionsByUserId" resultType="${package_name}.models.Permission">
@@ -179,10 +166,7 @@
         <include refid="permissionColumns"/>
         FROM
         <include refid="permissionTables"/>
-        <where>
-            AND `permission`.`id` IN (SELECT `permission_id` FROM `t_role_permission` `role_permission` WHERE `role_permission`.`role_id` IN (SELECT `role_id` FROM `t_user_role` `user_role` WHERE `user_role`.`user_id` = #{userId}))
-            AND `permission`.`is_delete` = 0
-        </where>
+        WHERE `permission`.`id` IN (SELECT `permission_id` FROM `t_role_permission` `role_permission` WHERE `role_permission`.`role_id` IN (SELECT `role_id` FROM `t_user_role` `user_role` WHERE `user_role`.`user_id` = #{userId}))
     </select>
 
     <select id="selectPermissionByKey" resultType="${package_name}.models.Permission">
@@ -190,10 +174,7 @@
         <include refid="permissionColumns"/>
         FROM
         <include refid="permissionTables"/>
-        <where>
-            AND `permission`.`key` = #{key}
-            AND `permission`.`is_delete` = 0
-        </where>
+        WHERE `permission`.`key` = #{key}
         LIMIT 1
     </select>
 </mapper>

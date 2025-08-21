@@ -9,12 +9,10 @@ CREATE TABLE `t_user` (
     `avatar_url`        TEXT                                        COMMENT '微信头像url',
     `create_time`       DATETIME        DEFAULT CURRENT_TIMESTAMP   COMMENT '创建时间',
     `update_time`       DATETIME        DEFAULT CURRENT_TIMESTAMP   COMMENT '更新时间',
-    `is_delete`         TINYINT         NOT NULL DEFAULT 0          COMMENT '是否删除',
     PRIMARY KEY                     (`id`),
     UNIQUE KEY  `idx_mobile`        (`mobile`),
     UNIQUE KEY  `idx_open_id`       (`open_id`),
     UNIQUE KEY  `idx_username`      (`username`),
     KEY         `idx_create_time`   (`create_time`),
-    KEY         `idx_update_time`   (`update_time`),
-    KEY         `idx_is_delete`     (`is_delete`)
+    KEY         `idx_update_time`   (`update_time`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户';
