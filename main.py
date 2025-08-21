@@ -341,7 +341,7 @@ def run_package():
                         column_type += " = " + column["default"]
                     if column["name"] == "id":
                         column_type += " = 0"
-                    line_text = f'    @Schema(description = "{column["comment"]}")\n'
+                    line_text = f'    @field:Schema(description = "{column["comment"]}")\n'
 
                     # 特殊处理 for Payment.kt
                     if file_info["model_name"] == "payment" and (
@@ -410,7 +410,7 @@ def run_package():
                     column_type += " = 0"
                 if required:
                     line_text += f'    @NotNull(message = "{inflection.camelize(property_name, False)} 不能为空")\n'
-                line_text += f'    @Schema(description = "{column["comment"]}", required = { 'true' if required else 'false'}, hidden = { 'true' if hidden else 'false'})\n'
+                line_text += f'    @field:Schema(description = "{column["comment"]}", required = { 'true' if required else 'false'}, hidden = { 'true' if hidden else 'false'})\n'
                 line_text += f"    {define} {inflection.camelize(property_name, False)}: {column_type}"
                 lines.append(line_text)
                 swagger_index += 1
@@ -459,7 +459,7 @@ def run_package():
                 # 特殊处理 for UserPartlyEditRequest.kt
                 if file_info["model_name"] == "user" and (column["name"] == "password" or column["name"] == "salt"):
                     define = "var"
-                line_text = f'    @Schema(description = "{column["comment"]}", required = false, hidden = {hidden})\n'
+                line_text = f'    @field:Schema(description = "{column["comment"]}", required = false, hidden = {hidden})\n'
                 line_text += f"    {define} {inflection.camelize(property_name, False)}: {column_type}"
 
                 lines.append(line_text)
@@ -498,27 +498,27 @@ def run_package():
                 column_type += "? = null"
                 define = "val"
                 if column["type"] == "datetime" or column["type"] == "time" or column["type"] == "date":
-                    line_text = f'    @Schema(description = "{column["comment"]} From")\n'
+                    line_text = f'    @field:Schema(description = "{column["comment"]} From")\n'
                     line_text += f'    {define} {inflection.camelize(column["name"] + "From", False)}: {column_type}'
                     lines.append(line_text)
                     swagger_index += 1
-                    line_text = f'    @Schema(description = "{column["comment"]} To")\n'
+                    line_text = f'    @field:Schema(description = "{column["comment"]} To")\n'
                     line_text += f'    {define} {inflection.camelize(column["name"] + "To", False)}: {column_type}'
                     lines.append(line_text)
                     swagger_index += 1
                     continue
 
-                line_text = f'    @Schema(description = "{column["comment"]}")\n'
+                line_text = f'    @field:Schema(description = "{column["comment"]}")\n'
                 line_text += f"    {define} {inflection.camelize(property_name, False)}: {column_type}"
                 lines.append(line_text)
                 swagger_index += 1
 
-            line_text = '    @Schema(description = "排序条件")\n'
+            line_text = '    @field:Schema(description = "排序条件")\n'
             line_text += "    val sortOrders: List<SortOrder>? = null"
             lines.append(line_text)
             swagger_index += 1
 
-            line_text = '    @Schema(description = "分页(默认第1页，每页显示10条)")\n'
+            line_text = '    @field:Schema(description = "分页(默认第1页，每页显示10条)")\n'
             line_text += "    val paging: Paging = Paging(1, 10)"
             lines.append(line_text)
             content += f"{',\n\n'.join(lines)},\n"

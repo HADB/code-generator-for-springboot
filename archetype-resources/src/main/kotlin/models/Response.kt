@@ -4,16 +4,16 @@ import io.swagger.v3.oas.annotations.media.Schema
 import java.util.*
 
 data class Response<T>(
-    @Schema(description = "状态码(0:操作成功, 1000:未指定错误码的一般错误, 1001:尚未登录, 1002:登录信息已失效, 其他:指定了错误码需要做对应处理的错误)")
+    @field:Schema(description = "状态码(0:操作成功, 1000:未指定错误码的一般错误, 1001:尚未登录, 1002:登录信息已失效, 其他:指定了错误码需要做对应处理的错误)")
     val code: Int,
 
-    @Schema(description = "消息(操作成功是为:操作成功, 错误时为具体错误原因)")
+    @field:Schema(description = "消息(操作成功是为:操作成功, 错误时为具体错误原因)")
     val message: String?,
 
-    @Schema(description = "数据对象(没有数据返回时不会返回data)")
+    @field:Schema(description = "数据对象(没有数据返回时不会返回data)")
     val data: T? = null,
 
-    @Schema(description = "返回时间")
+    @field:Schema(description = "返回时间")
     val time: Date = Date()
 ) {
     companion object {
