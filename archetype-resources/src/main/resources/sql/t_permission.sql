@@ -1,7 +1,7 @@
 CREATE TABLE `t_permission` (
     `id`            BIGINT UNSIGNED     NOT NULL AUTO_INCREMENT     COMMENT '主键',
-    `key`           VARCHAR(64)         NOT NULL                    COMMENT '权限标识',
-    `name`          VARCHAR(64)         NOT NULL                    COMMENT '权限名称',
+    `key`           VARCHAR(128)        NOT NULL                    COMMENT '权限标识',
+    `name`          VARCHAR(128)        NOT NULL                    COMMENT '权限名称',
     `description`   VARCHAR(128)                                    COMMENT '权限描述',
     `type`          TINYINT             NOT NULL DEFAULT 0          COMMENT '权限类型(0:API权限,1:菜单权限)',
     `api_path`      VARCHAR(128)                                    COMMENT 'API 路径',
