@@ -101,8 +101,26 @@
         `update_time` = NOW()
     </insert>
 
-    <update id="updatePermissionPartly">
-        UPDATE `t_permission` SET
+    <insert id="insertOrUpdatePermissionPartly">
+        INSERT INTO `t_permission`(
+        `key`,
+        `name`,
+        `description`,
+        `type`,
+        `api_path`,
+        `api_method`,
+        `create_time`,
+        `update_time`)
+        VALUES(
+        #{permission.key},
+        #{permission.name},
+        #{permission.description},
+        #{permission.type},
+        #{permission.apiPath},
+        #{permission.apiMethod},
+        NOW(),
+        NOW())
+        ON DUPLICATE KEY UPDATE
         <if test="request.key != null and request.key !=''">
             `key` = #{request.key},
         </if>
@@ -122,8 +140,7 @@
             `api_method` = #{request.apiMethod},
         </if>
         `update_time` = NOW()
-        WHERE `id` = #{request.id}
-    </update>
+    </insert>
 
     <delete id="deletePermission">
         DELETE FROM `t_permission`

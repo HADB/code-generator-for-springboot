@@ -27,24 +27,34 @@ class UserService {
     @Resource
     private lateinit var redisHelper: RedisHelper
 
-    fun editUser(request: UserEditRequest): Long {
+    fun getUserFromEditRequest(request: UserEditRequest): User {
         val salt = passwordHelper.salt
         var password = passwordHelper.salt
         if (!request.password.isNullOrEmpty()) {
             password = passwordHelper.generate(request.password, salt)
         }
-        val user = User(
+        return User(
 ${add_user_with_password_columns_data}
         )
+    }
+
+    fun addUser(request: UserEditRequest): Long {
+        val user = getUserFromEditRequest(request)
+        return addUser(user)
+    }
+
+    fun addUser(user: User): Long {
+        userMapper.insertUser(user)
+        return user.id
+    }
+
+    fun editUser(request: UserEditRequest): Long {
+        val user = getUserFromEditRequest(request)
         return editUser(user)
     }
 
     fun editUser(user: User): Long {
-        if (user.id == 0L) {
-            userMapper.insertUser(user)
-        } else {
-            userMapper.updateUser(user)
-        }
+        userMapper.insertOrUpdateUser(user)
         return user.id
     }
 
@@ -55,7 +65,7 @@ ${add_user_with_password_columns_data}
         } else {
             request.salt = null
         }
-        userMapper.updateUserPartly(request)
+        userMapper.insertOrUpdateUserPartly(request)
     }
 
     fun deleteUser(id: Long) {

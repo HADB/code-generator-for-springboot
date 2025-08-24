@@ -40,7 +40,7 @@ ${columns_data}
     }
 
     fun edit${model_name_pascal_case}Partly(request: ${model_name_pascal_case}PartlyEditRequest) {
-        ${model_name_camel_case}Mapper.update${model_name_pascal_case}Partly(request)
+        ${model_name_camel_case}Mapper.insertOrUpdate${model_name_pascal_case}Partly(request)
     }
 
     fun delete${model_name_pascal_case}(id: Long) {

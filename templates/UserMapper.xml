@@ -29,24 +29,27 @@ ${search_where}
     </sql>
 
 
-    <insert id="insertUser" useGeneratedKeys="true" keyProperty="user.id">
+    <insert id="insertOrUpdateUser" useGeneratedKeys="true" keyProperty="user.id">
         INSERT INTO `t_user`(
+        <if test="user.id != 0">`id`,</if>
 ${name_list})
         VALUES(
+        <if test="user.id != 0">#{user.id},</if>
 ${value_list})
+        ON DUPLICATE KEY UPDATE
+${update_list}
     </insert>
 
-    <update id="updateUser">
-        UPDATE `t_user` SET
-${update_list}
-        WHERE `id` = #{user.id}
-    </update>
-
-    <update id="updateUserPartly">
-        UPDATE `t_user` SET
+    <insert id="insertOrUpdateUserPartly">
+        INSERT INTO `t_user`(
+        <if test="user.id != 0">`id`,</if>
+${name_list})
+        VALUES(
+        <if test="user.id != 0">#{user.id},</if>
+${value_list})
+        ON DUPLICATE KEY UPDATE
 ${update_partly_list}
-        WHERE `id` = #{request.id}
-    </update>
+    </insert>
 
     <update id="updateUserMobile">
         UPDATE `t_user` SET
