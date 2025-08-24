@@ -54,16 +54,6 @@ class UserController {
         return Response.success()
     }
 
-    @Operation(summary = "部分修改「用户」")
-    @Parameter(name = "id", description = "User ID", required = true)
-    @RequestMapping("/{id}/patch", method = [RequestMethod.PUT])
-    fun editPartlyCompatible(@PathVariable("id") id: Long, @RequestBody request: UserPartlyEditRequest): Response<Any> {
-        request.id = id
-        userService.getUserById(id) ?: return Response.error("User 不存在")
-        userService.editUserPartly(request)
-        return Response.success()
-    }
-
     @Operation(summary = "删除「用户」")
     @Parameter(name = "id", description = "User ID", required = true)
     @RequestMapping("/{id}", method = [RequestMethod.DELETE])

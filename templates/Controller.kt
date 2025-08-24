@@ -48,16 +48,6 @@ class ${model_name_pascal_case}Controller {
         return Response.success()
     }
 
-    @Operation(summary = "部分修改「${model_description}」")
-    @Parameter(name = "id", description = "${model_name_pascal_case} ID", required = true)
-    @RequestMapping("/{id}/patch", method = [RequestMethod.PUT])
-    fun editPartlyCompatible(@PathVariable("id") id: Long, @RequestBody request: ${model_name_pascal_case}PartlyEditRequest): Response<Any> {
-        request.id = id
-        ${model_name_camel_case}Service.get${model_name_pascal_case}ById(id) ?: return Response.error("${model_name_pascal_case} 不存在")
-        ${model_name_camel_case}Service.edit${model_name_pascal_case}Partly(request)
-        return Response.success()
-    }
-
     @Operation(summary = "删除「${model_description}」")
     @Parameter(name = "id", description = "${model_name_pascal_case} ID", required = true)
     @RequestMapping("/{id}", method = [RequestMethod.DELETE])
