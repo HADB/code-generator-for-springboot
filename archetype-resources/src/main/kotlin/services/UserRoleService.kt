@@ -42,7 +42,7 @@ class UserRoleService {
     }
 
     fun editUserRolePartly(request: UserRolePartlyEditRequest) {
-        userRoleMapper.insertOrUpdateUserRolePartly(request)
+        userRoleMapper.updateUserRolePartly(request)
     }
 
     fun deleteUserRole(id: Long) {

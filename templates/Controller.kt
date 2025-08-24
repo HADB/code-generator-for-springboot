@@ -45,13 +45,6 @@ class ${model_name_pascal_case}Controller {
         return Response.success()
     }
 
-    @Operation(summary = "新增或部分修改「${model_description}」")
-    @RequestMapping("", method = [RequestMethod.PATCH])
-    fun addOrEditPartly(@RequestBody request: ${model_name_pascal_case}PartlyEditRequest): Response<Any> {
-        ${model_name_camel_case}Service.edit${model_name_pascal_case}Partly(request)
-        return Response.success()
-    }
-
     @Operation(summary = "部分修改「${model_description}」")
     @Parameter(name = "id", description = "${model_name_pascal_case} ID", required = true)
     @RequestMapping("/{id}", method = [RequestMethod.PATCH])

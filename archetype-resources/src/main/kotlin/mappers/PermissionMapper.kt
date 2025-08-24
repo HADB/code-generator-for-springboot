@@ -10,7 +10,7 @@ import org.apache.ibatis.annotations.Param
 interface PermissionMapper {
     fun insertPermission(@Param("permission") permission: Permission)
     fun insertOrUpdatePermission(@Param("permission") permission: Permission)
-    fun insertOrUpdatePermissionPartly(@Param("request") request: PermissionPartlyEditRequest)
+    fun updatePermissionPartly(@Param("request") request: PermissionPartlyEditRequest)
     fun deletePermission(@Param("id") id: Long)
     fun selectPermissionById(@Param("id") id: Long): Permission?
     fun selectPagingPermissions(@Param("request") request: PermissionSearchRequest): List<Permission>

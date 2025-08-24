@@ -83,22 +83,8 @@
         `update_time` = NOW()
     </insert>
 
-    <insert id="insertOrUpdateRolePartly">
-        INSERT INTO `t_role`(
-        `key`,
-        `name`,
-        `description`,
-        `built_in`,
-        `create_time`,
-        `update_time`)
-        VALUES(
-        #{role.key},
-        #{role.name},
-        #{role.description},
-        #{role.builtIn},
-        NOW(),
-        NOW())
-        ON DUPLICATE KEY UPDATE
+    <update id="updateRolePartly">
+        UPDATE `t_role` SET
         <if test="request.key != null and request.key !=''">
             `key` = #{request.key},
         </if>
@@ -112,7 +98,8 @@
             `built_in` = #{request.builtIn},
         </if>
         `update_time` = NOW()
-    </insert>
+        WHERE `id` = #{request.id}
+    </update>
 
     <delete id="deleteRole">
         DELETE FROM `t_role`

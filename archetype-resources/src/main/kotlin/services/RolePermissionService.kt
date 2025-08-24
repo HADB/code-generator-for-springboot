@@ -42,7 +42,7 @@ class RolePermissionService {
     }
 
     fun editRolePermissionPartly(request: RolePermissionPartlyEditRequest) {
-        rolePermissionMapper.insertOrUpdateRolePermissionPartly(request)
+        rolePermissionMapper.updateRolePermissionPartly(request)
     }
 
     fun deleteRolePermission(id: Long) {

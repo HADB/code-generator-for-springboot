@@ -250,6 +250,16 @@ def run_package():
 
             lines = []
             for column in columns:
+                if column["name"] == "id":
+                    continue
+                elif column["name"] == "create_time" or column["name"] == "update_time" or column["name"] == "created_time" or column["name"] == "updated_time":
+                    lines.append("        NOW()")
+                else:
+                    lines.append(f"        #{{request.{inflection.camelize(column['name'], False)}}}")
+            partly_value_list = ",\n".join(lines)
+
+            lines = []
+            for column in columns:
                 if column["name"] == "id" or column["name"] == "create_time" or column["name"] == "created_time":
                     continue
                 elif column["name"] == "update_time" or column["name"] == "updated_time":
@@ -263,7 +273,7 @@ def run_package():
                         lines.append(f'        <if test="request.{inflection.camelize(column["name"], False)} != null">')
                     lines.append(f"            `{column['name']}` = #{{request.{inflection.camelize(column['name'], False)}}},")
                     lines.append("        </if>")
-            update_partly_list = "\n".join(lines)
+            partly_update_list = "\n".join(lines)
 
             lines = []
             for column in columns:
@@ -285,8 +295,9 @@ def run_package():
                 orders=orders,
                 search_where=search_where,
                 update_list=update_list,
-                update_partly_list=update_partly_list,
                 value_list=value_list,
+                partly_update_list=partly_update_list,
+                partly_value_list=partly_value_list,
             )
 
             if not os.path.exists(mapper_output_path):

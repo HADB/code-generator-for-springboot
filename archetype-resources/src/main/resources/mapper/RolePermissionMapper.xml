@@ -65,18 +65,8 @@
         `update_time` = NOW()
     </insert>
 
-    <insert id="insertOrUpdateRolePermissionPartly">
-        INSERT INTO `t_role_permission`(
-        `role_id`,
-        `permission_id`,
-        `create_time`,
-        `update_time`)
-        VALUES(
-        #{rolePermission.roleId},
-        #{rolePermission.permissionId},
-        NOW(),
-        NOW())
-        ON DUPLICATE KEY UPDATE
+    <update id="updateRolePermissionPartly">
+        UPDATE `t_role_permission` SET
         <if test="request.roleId != null">
             `role_id` = #{request.roleId},
         </if>
@@ -84,7 +74,8 @@
             `permission_id` = #{request.permissionId},
         </if>
         `update_time` = NOW()
-    </insert>
+        WHERE `id` = #{request.id}
+    </update>
 
     <delete id="deleteRolePermission">
         DELETE FROM `t_role_permission`

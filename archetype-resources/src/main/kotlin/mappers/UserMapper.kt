@@ -10,7 +10,7 @@ import org.apache.ibatis.annotations.Param
 interface UserMapper {
     fun insertUser(@Param("user") user: User)
     fun insertOrUpdateUser(@Param("user") user: User)
-    fun insertOrUpdateUserPartly(@Param("request") request: UserPartlyEditRequest)
+    fun updateUserPartly(@Param("request") request: UserPartlyEditRequest)
     fun deleteUser(@Param("id") id: Long)
     fun selectUserById(@Param("id") id: Long): User?
     fun selectPagingUsers(@Param("request") request: UserSearchRequest): List<User>

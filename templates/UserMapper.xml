@@ -40,16 +40,11 @@ ${value_list})
 ${update_list}
     </insert>
 
-    <insert id="insertOrUpdateUserPartly">
-        INSERT INTO `t_user`(
-        <if test="user.id != 0">`id`,</if>
-${name_list})
-        VALUES(
-        <if test="user.id != 0">#{user.id},</if>
-${value_list})
-        ON DUPLICATE KEY UPDATE
-${update_partly_list}
-    </insert>
+    <update id="updateUserPartly">
+        UPDATE `t_user` SET
+${partly_update_list}
+        WHERE `id` = #{request.id}
+    </update>
 
     <update id="updateUserMobile">
         UPDATE `t_user` SET

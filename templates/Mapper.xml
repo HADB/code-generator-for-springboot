@@ -34,16 +34,11 @@ ${value_list})
 ${update_list}
     </insert>
 
-    <insert id="insertOrUpdate${model_name_pascal_case}Partly">
-        INSERT INTO `${table_name}`(
-        <if test="${model_name_camel_case}.id != 0">`id`,</if>
-${name_list})
-        VALUES(
-        <if test="${model_name_camel_case}.id != 0">#{${model_name_camel_case}.id},</if>
-${value_list})
-        ON DUPLICATE KEY UPDATE
-${update_partly_list}
-    </insert>
+    <update id="update${model_name_pascal_case}Partly">
+        UPDATE `${table_name}` SET
+${partly_update_list}
+        WHERE `id` = #{request.id}
+    </update>
 
     <delete id="delete${model_name_pascal_case}">
         DELETE FROM `${table_name}`

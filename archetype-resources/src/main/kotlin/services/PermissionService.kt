@@ -46,7 +46,7 @@ class PermissionService {
     }
 
     fun editPermissionPartly(request: PermissionPartlyEditRequest) {
-        permissionMapper.insertOrUpdatePermissionPartly(request)
+        permissionMapper.updatePermissionPartly(request)
     }
 
     fun deletePermission(id: Long) {

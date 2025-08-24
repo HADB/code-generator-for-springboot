@@ -65,7 +65,7 @@ ${add_user_with_password_columns_data}
         } else {
             request.salt = null
         }
-        userMapper.insertOrUpdateUserPartly(request)
+        userMapper.updateUserPartly(request)
     }
 
     fun deleteUser(id: Long) {

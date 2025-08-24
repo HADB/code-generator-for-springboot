@@ -65,18 +65,8 @@
         `update_time` = NOW()
     </insert>
 
-    <insert id="updateUserRolePartly">
-        INSERT INTO `t_user_role`(
-        `user_id`,
-        `role_id`,
-        `create_time`,
-        `update_time`)
-        VALUES(
-        #{userRole.userId},
-        #{userRole.roleId},
-        NOW(),
-        NOW())
-        ON DUPLICATE KEY UPDATE
+    <update id="updateUserRolePartly">
+        UPDATE `t_user_role` SET
         <if test="request.userId != null">
             `user_id` = #{request.userId},
         </if>
@@ -84,7 +74,8 @@
             `role_id` = #{request.roleId},
         </if>
         `update_time` = NOW()
-    </insert>
+        WHERE `id` = #{request.id}
+    </update>
 
     <delete id="deleteUserRole">
         DELETE FROM `t_user_role`
