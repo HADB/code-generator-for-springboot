@@ -63,7 +63,6 @@
         `user_id` = #{userRole.userId},
         `role_id` = #{userRole.roleId},
         `update_time` = NOW()
-        WHERE `id` = #{userRole.id}
     </insert>
 
     <update id="updateUserRole">

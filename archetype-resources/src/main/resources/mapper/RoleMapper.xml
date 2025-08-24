@@ -81,7 +81,6 @@
         `description` = #{role.description},
         `built_in` = #{role.builtIn},
         `update_time` = NOW()
-        WHERE `id` = #{role.id}
     </insert>
 
     <update id="updateRole">

@@ -63,7 +63,6 @@
         `role_id` = #{rolePermission.roleId},
         `permission_id` = #{rolePermission.permissionId},
         `update_time` = NOW()
-        WHERE `id` = #{rolePermission.id}
     </insert>
 
     <update id="updateRolePermission">

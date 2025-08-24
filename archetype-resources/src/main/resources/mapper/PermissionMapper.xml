@@ -99,7 +99,6 @@
         `api_path` = #{permission.apiPath},
         `api_method` = #{permission.apiMethod},
         `update_time` = NOW()
-        WHERE `id` = #{permission.id}
     </insert>
 
     <update id="updatePermissionPartly">
