@@ -14,6 +14,15 @@ ${column_list}
 ${search_where}
     </sql>
 
+    <insert id="insert${model_name_pascal_case}" useGeneratedKeys="true" keyProperty="${model_name_camel_case}.id">
+        INSERT INTO `${table_name}`(
+        <if test="${model_name_camel_case}.id != 0">`id`,</if>
+${name_list})
+        VALUES(
+        <if test="${model_name_camel_case}.id != 0">#{${model_name_camel_case}.id},</if>
+${value_list})
+    </insert>
+
     <insert id="insertOrUpdate${model_name_pascal_case}" useGeneratedKeys="true" keyProperty="${model_name_camel_case}.id">
         INSERT INTO `${table_name}`(
         <if test="${model_name_camel_case}.id != 0">`id`,</if>

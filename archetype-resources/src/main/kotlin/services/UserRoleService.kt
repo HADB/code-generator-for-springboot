@@ -13,21 +13,31 @@ class UserRoleService {
     @Resource
     private lateinit var userRoleMapper: UserRoleMapper
 
-    fun editUserRole(request: UserRoleEditRequest): Long {
-        val userRole = UserRole(
+    fun getUserRoleFromEditRequest(request: UserRoleEditRequest): UserRole {
+        return UserRole(
             id = request.id,
             userId = request.userId,
             roleId = request.roleId
         )
+    }
+
+    fun addUserRole(request: UserRoleEditRequest): Long {
+        val userRole = getUserRoleFromEditRequest(request)
+        return addUserRole(userRole)
+    }
+
+    fun addUserRole(userRole: UserRole): Long {
+        userRoleMapper.insertUserRole(userRole)
+        return userRole.id
+    }
+
+    fun editUserRole(request: UserRoleEditRequest): Long {
+        val userRole = getUserRoleFromEditRequest(request)
         return editUserRole(userRole)
     }
 
     fun editUserRole(userRole: UserRole): Long {
-        if (userRole.id == 0L) {
-            userRoleMapper.insertUserRole(userRole)
-        } else {
-            userRoleMapper.updateUserRole(userRole)
-        }
+        userRoleMapper.insertOrUpdateUserRole(userRole)
         return userRole.id
     }
 

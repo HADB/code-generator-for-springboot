@@ -60,6 +60,30 @@
         NOW())
     </insert>
 
+    <insert id="insertOrUpdateRole">
+        INSERT INTO `t_role`(
+        `key`,
+        `name`,
+        `description`,
+        `built_in`,
+        `create_time`,
+        `update_time`)
+        VALUES(
+        #{role.key},
+        #{role.name},
+        #{role.description},
+        #{role.builtIn},
+        NOW(),
+        NOW())
+        ON DUPLICATE KEY UPDATE
+        `key` = #{role.key},
+        `name` = #{role.name},
+        `description` = #{role.description},
+        `built_in` = #{role.builtIn},
+        `update_time` = NOW()
+        WHERE `id` = #{role.id}
+    </insert>
+
     <update id="updateRole">
         UPDATE `t_role` SET
         `key` = #{role.key},

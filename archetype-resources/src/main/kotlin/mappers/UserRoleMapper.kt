@@ -9,6 +9,7 @@ import org.apache.ibatis.annotations.Param
 @Mapper
 interface UserRoleMapper {
     fun insertUserRole(@Param("userRole") userRole: UserRole)
+    fun insertOrUpdateUserRole(@Param("userRole") userRole: UserRole)
     fun updateUserRole(@Param("userRole") userRole: UserRole)
     fun updateUserRolePartly(@Param("request") request: UserRolePartlyEditRequest)
     fun deleteUserRole(@Param("id") id: Long)

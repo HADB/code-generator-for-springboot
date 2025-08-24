@@ -13,10 +13,24 @@ class ${model_name_pascal_case}Service {
     @Resource
     private lateinit var ${model_name_camel_case}Mapper: ${model_name_pascal_case}Mapper
 
-    fun edit${model_name_pascal_case}(request: ${model_name_pascal_case}EditRequest): Long {
-        val ${model_name_camel_case} = ${model_name_pascal_case}(
+    fun get${model_name_pascal_case}FromEditRequest(request: ${model_name_pascal_case}EditRequest): ${model_name_pascal_case} {
+        return ${model_name_pascal_case}(
 ${columns_data}
         )
+    }
+
+    fun add${model_name_pascal_case}(request: ${model_name_pascal_case}EditRequest): Long {
+        val ${model_name_camel_case} = get${model_name_pascal_case}FromEditRequest(request)
+        return add${model_name_pascal_case}(${model_name_camel_case})
+    }
+
+    fun add${model_name_pascal_case}(${model_name_camel_case}: ${model_name_pascal_case}): Long {
+        ${model_name_camel_case}Mapper.insert${model_name_pascal_case}(${model_name_camel_case})
+        return ${model_name_camel_case}.id
+    }
+
+    fun edit${model_name_pascal_case}(request: ${model_name_pascal_case}EditRequest): Long {
+        val ${model_name_camel_case} = get${model_name_pascal_case}FromEditRequest(request)
         return edit${model_name_pascal_case}(${model_name_camel_case})
     }
 

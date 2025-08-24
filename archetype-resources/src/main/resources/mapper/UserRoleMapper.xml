@@ -48,6 +48,24 @@
         NOW())
     </insert>
 
+    <insert id="insertOrUpdateUserRole">
+        INSERT INTO `t_user_role`(
+        `user_id`,
+        `role_id`,
+        `create_time`,
+        `update_time`)
+        VALUES(
+        #{userRole.userId},
+        #{userRole.roleId},
+        NOW(),
+        NOW())
+        ON DUPLICATE KEY UPDATE
+        `user_id` = #{userRole.userId},
+        `role_id` = #{userRole.roleId},
+        `update_time` = NOW()
+        WHERE `id` = #{userRole.id}
+    </insert>
+
     <update id="updateUserRole">
         UPDATE `t_user_role` SET
         `user_id` = #{userRole.userId},

@@ -72,8 +72,26 @@
         NOW())
     </insert>
 
-    <update id="updatePermission">
-        UPDATE `t_permission` SET
+    <insert id="insertOrUpdatePermission">
+        INSERT INTO `t_permission`(
+        `key`,
+        `name`,
+        `description`,
+        `type`,
+        `api_path`,
+        `api_method`,
+        `create_time`,
+        `update_time`)
+        VALUES(
+        #{permission.key},
+        #{permission.name},
+        #{permission.description},
+        #{permission.type},
+        #{permission.apiPath},
+        #{permission.apiMethod},
+        NOW(),
+        NOW())
+        ON DUPLICATE KEY UPDATE
         `key` = #{permission.key},
         `name` = #{permission.name},
         `description` = #{permission.description},
@@ -82,7 +100,7 @@
         `api_method` = #{permission.apiMethod},
         `update_time` = NOW()
         WHERE `id` = #{permission.id}
-    </update>
+    </insert>
 
     <update id="updatePermissionPartly">
         UPDATE `t_permission` SET

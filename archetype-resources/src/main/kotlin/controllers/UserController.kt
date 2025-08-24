@@ -34,10 +34,17 @@ class UserController {
         return Response.success(userId)
     }
 
+    @Operation(summary = "新增或修改「用户」")
+    @RequestMapping("", method = [RequestMethod.PUT])
+    fun addOrEdit(@RequestBody request: UserEditRequest): Response<Any> {
+        val userId = userService.editUser(request)
+        return Response.success(userId)
+    }
+
     @Operation(summary = "修改「用户」")
     @Parameter(name = "id", description = "User ID", required = true)
     @RequestMapping("/{id}", method = [RequestMethod.PUT])
-    fun edit(@PathVariable("id") id: Long, @RequestBody request: UserEditRequest): Response<Any> {
+    fun editById(@PathVariable("id") id: Long, @RequestBody request: UserEditRequest): Response<Any> {
         request.id = id
         userService.getUserById(id) ?: return Response.error("User 不存在")
         userService.editUser(request)
@@ -47,7 +54,7 @@ class UserController {
     @Operation(summary = "部分修改「用户」")
     @Parameter(name = "id", description = "User ID", required = true)
     @RequestMapping("/{id}", method = [RequestMethod.PATCH])
-    fun editPartly(@PathVariable("id") id: Long, @RequestBody request: UserPartlyEditRequest): Response<Any> {
+    fun editPartlyById(@PathVariable("id") id: Long, @RequestBody request: UserPartlyEditRequest): Response<Any> {
         request.id = id
         userService.getUserById(id) ?: return Response.error("User 不存在")
         userService.editUserPartly(request)
@@ -57,7 +64,7 @@ class UserController {
     @Operation(summary = "删除「用户」")
     @Parameter(name = "id", description = "User ID", required = true)
     @RequestMapping("/{id}", method = [RequestMethod.DELETE])
-    fun delete(@PathVariable("id") id: Long): Response<Any> {
+    fun deleteById(@PathVariable("id") id: Long): Response<Any> {
         userService.deleteUser(id)
         return Response.success()
     }
@@ -65,7 +72,7 @@ class UserController {
     @Operation(summary = "获取「用户」详情")
     @Parameter(name = "id", description = "User ID", required = true)
     @RequestMapping("/{id}", method = [RequestMethod.GET])
-    fun get(@PathVariable("id") id: Long): Response<User> {
+    fun getById(@PathVariable("id") id: Long): Response<User> {
         val user = userService.getUserById(id)
         return Response.success(user)
     }

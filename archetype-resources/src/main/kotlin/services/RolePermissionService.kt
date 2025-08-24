@@ -13,21 +13,31 @@ class RolePermissionService {
     @Resource
     private lateinit var rolePermissionMapper: RolePermissionMapper
 
-    fun editRolePermission(request: RolePermissionEditRequest): Long {
-        val rolePermission = RolePermission(
+    fun getRolePermissionFromEditRequest(request: RolePermissionEditRequest): RolePermission {
+        return RolePermission(
             id = request.id,
             roleId = request.roleId,
             permissionId = request.permissionId
         )
+    }
+
+    fun addRolePermission(request: RolePermissionEditRequest): Long {
+        val rolePermission = getRolePermissionFromEditRequest(request)
+        return addRolePermission(rolePermission)
+    }
+
+    fun addRolePermission(rolePermission: RolePermission): Long {
+        rolePermissionMapper.insertRolePermission(rolePermission)
+        return rolePermission.id
+    }
+
+    fun editRolePermission(request: RolePermissionEditRequest): Long {
+        val rolePermission = getRolePermissionFromEditRequest(request)
         return editRolePermission(rolePermission)
     }
 
     fun editRolePermission(rolePermission: RolePermission): Long {
-        if (rolePermission.id == 0L) {
-            rolePermissionMapper.insertRolePermission(rolePermission)
-        } else {
-            rolePermissionMapper.updateRolePermission(rolePermission)
-        }
+        rolePermissionMapper.insertOrUpdateRolePermission(rolePermission)
         return rolePermission.id
     }
 

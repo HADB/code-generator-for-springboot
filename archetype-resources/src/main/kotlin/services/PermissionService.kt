@@ -13,8 +13,8 @@ class PermissionService {
     @Resource
     private lateinit var permissionMapper: PermissionMapper
 
-    fun editPermission(request: PermissionEditRequest): Long {
-        val permission = Permission(
+    fun getPermissionFromEditRequest(request: PermissionEditRequest): Permission {
+        return Permission(
             id = request.id,
             key = request.key,
             name = request.name,
@@ -23,15 +23,25 @@ class PermissionService {
             apiPath = request.apiPath,
             apiMethod = request.apiMethod
         )
+    }
+
+    fun addPermission(request: PermissionEditRequest): Long {
+        val permission = getPermissionFromEditRequest(request)
+        return addPermission(permission)
+    }
+
+    fun addPermission(permission: Permission): Long {
+        permissionMapper.insertPermission(permission)
+        return permission.id
+    }
+
+    fun editPermission(request: PermissionEditRequest): Long {
+        val permission = getPermissionFromEditRequest(request)
         return editPermission(permission)
     }
 
     fun editPermission(permission: Permission): Long {
-        if (permission.id == 0L) {
-            permissionMapper.insertPermission(permission)
-        } else {
-            permissionMapper.updatePermission(permission)
-        }
+        permissionMapper.insertOrUpdatePermission(permission)
         return permission.id
     }
 

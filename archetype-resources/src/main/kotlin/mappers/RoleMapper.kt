@@ -9,6 +9,7 @@ import org.apache.ibatis.annotations.Param
 @Mapper
 interface RoleMapper {
     fun insertRole(@Param("role") role: Role)
+    fun insertOrUpdateRole(@Param("role") role: Role)
     fun updateRole(@Param("role") role: Role)
     fun updateRolePartly(@Param("request") request: RolePartlyEditRequest)
     fun deleteRole(@Param("id") id: Long)
@@ -16,6 +17,6 @@ interface RoleMapper {
     fun selectPagingRoles(@Param("request") request: RoleSearchRequest): List<Role>
     fun selectRolesCount(@Param("request") request: RoleSearchRequest): Long
 
-    fun selectRoleByKey(@Param("key") key: String): Role
+    fun selectRoleByKey(@Param("key") key: String): Role?
     fun selectRolesByUserId(@Param("userId") userId: Long): List<Role>
 }

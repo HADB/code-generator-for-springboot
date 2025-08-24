@@ -48,6 +48,24 @@
         NOW())
     </insert>
 
+    <insert id="insertOrUpdateRolePermission">
+        INSERT INTO `t_role_permission`(
+        `role_id`,
+        `permission_id`,
+        `create_time`,
+        `update_time`)
+        VALUES(
+        #{rolePermission.roleId},
+        #{rolePermission.permissionId},
+        NOW(),
+        NOW())
+        ON DUPLICATE KEY UPDATE
+        `role_id` = #{rolePermission.roleId},
+        `permission_id` = #{rolePermission.permissionId},
+        `update_time` = NOW()
+        WHERE `id` = #{rolePermission.id}
+    </insert>
+
     <update id="updateRolePermission">
         UPDATE `t_role_permission` SET
         `role_id` = #{rolePermission.roleId},
