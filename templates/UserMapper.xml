@@ -73,7 +73,7 @@ ${partly_update_list}
         LIMIT 1
     </select>
 
-    <select id="selectUserByMobile" resultType="net.yuanfen.sczone.models.User">
+    <select id="selectUserByMobile" resultType="${package_name}.models.User">
         SELECT
         <include refid="userColumns"/>
         FROM
