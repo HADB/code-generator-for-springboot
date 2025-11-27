@@ -1,15 +1,15 @@
 spring:
-    datasource:
-        driver-class-name: com.mysql.cj.jdbc.Driver
-        password: ''
-        url: ''
-        username: ''
-    redis:
-        primary:
-            database: ''
-            host: ''
-            password: ''
-            port: ''
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    password: ''
+    url: ''
+    username: ''
+  redis:
+    primary:
+      database: ''
+      host: ''
+      password: ''
+      port: ''
 mybatis:
-    configuration:
-        log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

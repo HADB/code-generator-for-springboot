@@ -1,38 +1,38 @@
 mybatis:
-    mapper-locations: classpath:mapper/*.xml
-    configuration:
-        map-underscore-to-camel-case: true
+  mapper-locations: classpath:mapper/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
 server:
-    port: ${port}
-    servlet:
-        encoding:
-            charset: UTF-8
-            enabled: true
-            force: true
-    shutdown: graceful
-    forward-headers-strategy: framework
+  port: ${port}
+  servlet:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+  shutdown: graceful
+  forward-headers-strategy: framework
 spring:
-    datasource:
-        hikari:
-            connection-init-sql: SET NAMES utf8mb4 COLLATE utf8mb4_0900_ai_ci
-            idle-timeout: 600000
-            maximum-pool-size: 10
-            minimum-idle: 2
-    flyway:
-        locations:
-            - classpath:flyway
-        table: t_flyway_history
-    jackson:
-        default-property-inclusion: non_null
-        property-naming-strategy: SNAKE_CASE
-        time-zone: GMT+8
-    main:
-        allow-circular-references: true
-    mvc:
-        pathmatch:
-            matching-strategy: ant_path_matcher
-    profiles:
-        active: dev
+  datasource:
+    hikari:
+      connection-init-sql: SET NAMES utf8mb4 COLLATE utf8mb4_0900_ai_ci
+      idle-timeout: 600000
+      maximum-pool-size: 10
+      minimum-idle: 2
+  flyway:
+    locations:
+      - classpath:flyway
+    table: t_flyway_history
+  jackson:
+    default-property-inclusion: non_null
+    property-naming-strategy: SNAKE_CASE
+    time-zone: GMT+8
+  main:
+    allow-circular-references: true
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+  profiles:
+    active: dev
 springdoc:
-    swagger-ui:
-        url: /v3/api-docs
+  swagger-ui:
+    url: /v3/api-docs
