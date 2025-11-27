@@ -39,7 +39,7 @@ class DbInitializationRunner : CommandLineRunner {
 
     private val logger = LoggerFactory.getLogger(this.javaClass)
 
-    override fun run(vararg args: String?) {
+    override fun run(vararg args: String) {
         logger.info("db runner started")
         val builtInAdminRoleId = roleService.getRoleByKey(BuiltInRoleKey.Admin)?.id
             ?: roleService.editRole(

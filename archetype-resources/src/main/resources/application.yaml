@@ -35,4 +35,5 @@ spring:
     active: dev
 springdoc:
   swagger-ui:
+    path: /docs
     url: /v3/api-docs

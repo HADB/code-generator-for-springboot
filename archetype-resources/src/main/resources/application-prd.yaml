@@ -10,3 +10,8 @@ spring:
       host: ''
       password: ''
       port: ''
+springdoc:
+  swagger-ui:
+    enabled: false
+  api-docs:
+    enabled: false

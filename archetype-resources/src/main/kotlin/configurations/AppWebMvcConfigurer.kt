@@ -21,6 +21,7 @@ class AppWebMvcConfigurer : WebMvcConfigurer {
     override fun addInterceptors(registry: InterceptorRegistry) {
         registry.addInterceptor(authorizationInterceptor)
             .addPathPatterns("/**")
+            .excludePathPatterns("/docs")
             .excludePathPatterns("/error")
             .excludePathPatterns("/swagger-resources/**")
             .excludePathPatterns("/swagger-ui.html")
