@@ -37,7 +37,7 @@ cd "$$CODE_GENERATOR_PATH" || exit
 
 
 # 运行 main.py 并传递参数
-poetry run python3 main.py run \
+uv run main.py run \
 --project_path="$$project_path" \
 --package_name=$$package_name \
 --group_id=$$group_id \

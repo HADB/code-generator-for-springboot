@@ -14,11 +14,12 @@
 
 注意，请使用 Python 3，另外建议开启 Idea -> Preferences -> Editor -> Code Style -> Kotlin -> Other -> Use trailing comma，以减少手动添加字段导致的合并冲突
 
-#### 安装依赖（使用 [poetry](https://python-poetry.org/docs/)）
+#### 安装依赖（使用 [uv](https://docs.astral.sh/uv/)）
 
 ```bash
-$ poetry shell
-$ poetry install
+$ uv venv # 安装虚拟环境
+$ uv sync # 安装项目依赖
+$ source .venv/bin/activate # 激活虚拟环境
 ```
 
 ### 设置环境变量
@@ -33,7 +34,7 @@ $ source ~/.zshrc
 #### 创建项目
 
 ```bash
-$ python3 main.py init
+$ uv run main.py init
 ```
 
 #### 更新项目

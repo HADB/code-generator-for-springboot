@@ -1,26 +1,12 @@
-[tool.isort]
-    profile = "black"
-
-[tool.black]
-    line-length = 180
-
-[tool.poetry]
-    authors = ["Bean <bean@yuanfen.net>"]
+[project]
+    authors = [{ name = "Bean", email = "bean@yuanfen.net" }]
+    dependencies = ["inflection>=0.5.1"]
     description = ""
     license = "MIT"
     name = "code-generator-for-springboot"
-    package-mode = false
     readme = "README.md"
+    requires-python = ">=3.14.0"
     version = "1.0.0"
 
-[tool.poetry.dependencies]
-    inflection = "^0.5.1"
-    python = "^3.12"
-
-[tool.poetry.group.dev.dependencies]
-    black = "^24.10.0"
-    isort = "^5.13.2"
-
-[build-system]
-    build-backend = "poetry.core.masonry.api"
-    requires = ["poetry-core"]
+[dependency-groups]
+    dev = ["ruff>=0.14.6"]

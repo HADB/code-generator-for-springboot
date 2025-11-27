@@ -2,6 +2,7 @@
 """
 crud-code-generator-for-springboot
 """
+
 import argparse
 import os
 import platform
@@ -176,7 +177,7 @@ def run_package():
                     if column["default"] == "NULL" or column["default"] == "CURRENT_TIMESTAMP":
                         column["default"] = "null"
                     if column["type"].find("decimal") >= 0:
-                        column["default"] = f"BigDecimal({column['default'].replace('\"', '')})"
+                        column["default"] = f"BigDecimal({column['default'].replace('"', '')})"
                     if (column["type"].find("int") >= 0 or column["type"].find("double") >= 0 or column["type"].find("decimal") >= 0) and column["default"].find('"') >= 0:
                         column["default"] = column["default"].replace('"', "")
                     if column["type"] == "tinyint" and column["name"].startswith("is_"):
@@ -386,7 +387,7 @@ def run_package():
                     column_type += " = 0"
                 if required:
                     line_text += f'    @field:NotNull(message = "{inflection.camelize(property_name, False)} 不能为空")\n'
-                line_text += f'    @field:Schema(description = "{column["comment"]}", required = { 'true' if required else 'false'}, hidden = { 'true' if hidden else 'false'})\n'
+                line_text += f'    @field:Schema(description = "{column["comment"]}", required = {"true" if required else "false"}, hidden = {"true" if hidden else "false"})\n'
                 line_text += f"    {define} {inflection.camelize(property_name, False)}: {column_type}"
                 lines.append(line_text)
                 swagger_index += 1
@@ -469,11 +470,11 @@ def run_package():
                 define = "val"
                 if column["type"] == "datetime" or column["type"] == "time" or column["type"] == "date":
                     line_text = f'    @field:Schema(description = "{column["comment"]} From")\n'
-                    line_text += f'    {define} {inflection.camelize(column["name"] + "From", False)}: {column_type}'
+                    line_text += f"    {define} {inflection.camelize(column['name'] + 'From', False)}: {column_type}"
                     lines.append(line_text)
                     swagger_index += 1
                     line_text = f'    @field:Schema(description = "{column["comment"]} To")\n'
-                    line_text += f'    {define} {inflection.camelize(column["name"] + "To", False)}: {column_type}'
+                    line_text += f"    {define} {inflection.camelize(column['name'] + 'To', False)}: {column_type}"
                     lines.append(line_text)
                     swagger_index += 1
                     continue
