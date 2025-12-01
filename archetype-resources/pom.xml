@@ -114,12 +114,12 @@
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-core</artifactId>
-            <version>11.17.2</version>
+            <version>11.18.0</version>
         </dependency>
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-mysql</artifactId>
-            <version>11.17.2</version>
+            <version>11.18.0</version>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
@@ -167,7 +167,7 @@
             <plugin>
                 <groupId>org.flywaydb</groupId>
                 <artifactId>flyway-maven-plugin</artifactId>
-                <version>11.17.2</version>
+                <version>11.18.0</version>
                 <configuration>
                     <url></url>
                     <user></user>
