@@ -9,4 +9,4 @@
     version = "1.0.0"
 
 [dependency-groups]
-    dev = ["ruff>=0.14.6"]
+    dev = ["ruff>=0.14.7"]
