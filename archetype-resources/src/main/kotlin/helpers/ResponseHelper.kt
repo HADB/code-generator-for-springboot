@@ -1,10 +1,10 @@
 package ${package_name}.helpers
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import ${package_name}.models.Response
 import org.springframework.stereotype.Component
 import jakarta.annotation.Resource
 import jakarta.servlet.http.HttpServletResponse
+import tools.jackson.databind.ObjectMapper
 
 @Component
 class ResponseHelper {
