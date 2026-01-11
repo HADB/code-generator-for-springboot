@@ -9,4 +9,3 @@ data class SearchResponse<T>(
     @field:Schema(description = "搜索结果总数")
     val count: Long
 )
-
