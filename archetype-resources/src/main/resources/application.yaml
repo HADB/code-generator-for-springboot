@@ -4,11 +4,6 @@ mybatis:
     map-underscore-to-camel-case: true
 server:
   port: ${port}
-  servlet:
-    encoding:
-      charset: UTF-8
-      enabled: true
-      force: true
   shutdown: graceful
   forward-headers-strategy: framework
 spring:
@@ -33,6 +28,11 @@ spring:
       matching-strategy: ant_path_matcher
   profiles:
     active: dev
+  servlet:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
 springdoc:
   swagger-ui:
     path: /docs
