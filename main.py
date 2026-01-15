@@ -46,7 +46,7 @@ def init_project():
             sub_path = path[len(ARCHETYPE_RESOURCE_PATH) + 1 :]
 
             with open(os.path.join(path, file_name), "r", encoding="utf-8") as file_read:
-                if "src/main/resources/sql" in path or "src\\main\\resources\\sql" in path:
+                if "src/main/resources/ddl" in path or "src\\main\\resources\\ddl" in path:
                     directory_path = os.path.join(project_info["project_path"], sub_path)
                     if not os.path.exists(directory_path):
                         os.makedirs(directory_path)
@@ -113,7 +113,7 @@ def run_package():
     global file_info
     if project_info["debug"]:
         print("执行 CRUD")
-    input_path = os.path.join(project_info["project_path"], "src/main/resources/sql")
+    input_path = os.path.join(project_info["project_path"], "src/main/resources/ddl")
     # kotlin 输出目录
     kotlin_output_path = os.path.join(project_info["project_path"], "src", "main", "kotlin", *project_info["package_name"].split("."))
     # mapper 输出目录

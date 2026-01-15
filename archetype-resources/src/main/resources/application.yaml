@@ -9,7 +9,7 @@ server:
 spring:
   datasource:
     hikari:
-      connection-init-sql: SET NAMES utf8mb4 COLLATE utf8mb4_0900_ai_ci
+      connection-init-sql: SET NAMES utf8mb4 COLLATE utf8mb4_zh_0900_as_cs
       idle-timeout: 600000
       maximum-pool-size: 10
       minimum-idle: 2
