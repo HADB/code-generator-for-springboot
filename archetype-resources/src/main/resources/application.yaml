@@ -33,6 +33,10 @@ spring:
       charset: UTF-8
       enabled: true
       force: true
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+      enabled: true
 springdoc:
   swagger-ui:
     path: /docs

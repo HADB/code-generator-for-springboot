@@ -220,6 +220,18 @@ def run_package():
                     lines.append(f'        <if test="request.{inflection.camelize(column["name"], False)} != null">')
                 lines.append(f"            AND `{file_info['model_name_snake_case']}`.`{column['name']}` = #{{request.{inflection.camelize(column['name'], False)}}}")
                 lines.append("        </if>")
+
+            lines.append("        <if test=\"request.keywords != null and request.keywords !=''\">")
+            lines.append("            AND (")
+            keyword_lines = []
+            for column in columns:
+                if column["name"] == "id" or column["name"].endswith("_number"):
+                    keyword_lines.append(f"            `{file_info['model_name_snake_case']}`.`{column['name']}` = #{{request.keywords}}")
+                elif column["type"] == "varchar" and ("name" in column["name"] or "description" in column["name"]):
+                    keyword_lines.append(f"            `{file_info['model_name_snake_case']}`.`{column['name']}` LIKE CONCAT('%', #{{request.keywords}}, '%')")
+            lines.append(" OR\n".join(keyword_lines))
+            lines.append("            )")
+            lines.append("        </if>")
             search_where = "\n".join(lines)
 
             lines = []
@@ -483,6 +495,11 @@ def run_package():
                 line_text += f"    {define} {inflection.camelize(property_name, False)}: {column_type}"
                 lines.append(line_text)
                 swagger_index += 1
+
+            line_text = '    @field:Schema(description = "搜索关键词")\n'
+            line_text += "    val keywords: String? = null"
+            lines.append(line_text)
+            swagger_index += 1
 
             line_text = '    @field:Schema(description = "排序条件")\n'
             line_text += "    val sortOrders: List<SortOrder>? = null"
