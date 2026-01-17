@@ -9,8 +9,11 @@ import ${package_name}.services.RoleService
 import ${package_name}.services.UserRoleService
 import ${package_name}.services.UserService
 import ${package_name}.viewmodels.permission.PermissionEditRequest
+import ${package_name}.viewmodels.permission.PermissionSearchRequest
 import ${package_name}.viewmodels.role.RoleEditRequest
+import ${package_name}.viewmodels.role.RoleSearchRequest
 import ${package_name}.viewmodels.user.UserEditRequest
+import ${package_name}.viewmodels.user.UserSearchRequest
 import ${package_name}.viewmodels.userRole.UserRoleEditRequest
 import org.slf4j.LoggerFactory
 import org.springframework.boot.CommandLineRunner
@@ -41,7 +44,7 @@ class DbInitializationRunner : CommandLineRunner {
 
     override fun run(vararg args: String) {
         logger.info("db runner started")
-        val builtInAdminRoleId = roleService.getRoleByKey(BuiltInRoleKey.Admin)?.id
+        val builtInAdminRoleId = roleService.searchRole(RoleSearchRequest(key = BuiltInRoleKey.Admin))?.id
             ?: roleService.addOrEditRole(
                 RoleEditRequest(
                     key = BuiltInRoleKey.Admin,
@@ -53,7 +56,7 @@ class DbInitializationRunner : CommandLineRunner {
                 logger.info("已创建系统内置管理员角色")
             }
 
-        userService.getUserByUsername("Admin")?.id ?: let {
+        userService.searchUser(UserSearchRequest(username = "Admin")) ?: let {
             val password = passwordHelper.random(16)
             val adminUserId = userService.addOrEditUser(
                 UserEditRequest(
@@ -61,12 +64,14 @@ class DbInitializationRunner : CommandLineRunner {
                     password = password
                 )
             )
-            userRoleService.addOrEditUserRole(
-                UserRoleEditRequest(
-                    userId = adminUserId,
-                    roleId = builtInAdminRoleId
+            if (adminUserId != null && builtInAdminRoleId != null) {
+                userRoleService.addOrEditUserRole(
+                    UserRoleEditRequest(
+                        userId = adminUserId,
+                        roleId = builtInAdminRoleId
+                    )
                 )
-            )
+            }
             logger.info("已创建初始管理员用户, 用户名: Admin, 密码: $$password")
         }
 
@@ -84,7 +89,7 @@ class DbInitializationRunner : CommandLineRunner {
                             val apiPath = "$${controllerPath}$${path}"
                             val apiMethod = method.name
                             val permissionKey = "$${apiMethod}:$${apiPath}"
-                            val permission = permissionService.getPermissionByKey(permissionKey)
+                            val permission = permissionService.searchPermission(PermissionSearchRequest(key = permissionKey))
                             if (permission == null) {
                                 permissionService.addOrEditPermission(
                                     PermissionEditRequest(

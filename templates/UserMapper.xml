@@ -28,7 +28,6 @@ ${column_list}
 ${search_where}
     </sql>
 
-
     <insert id="insertOrUpdateUser" useGeneratedKeys="true" keyProperty="user.id">
         INSERT INTO `t_user`(
         <if test="user.id != 0">`id`,</if>
@@ -46,30 +45,52 @@ ${partly_update_list}
         WHERE `id` = #{request.id}
     </update>
 
-    <update id="updateUserMobile">
-        UPDATE `t_user` SET
-        `mobile` = #{user.mobile}
-        WHERE `id` = #{user.id}
-    </update>
-
-    <update id="updateUserPassword">
-        UPDATE `t_user` SET
-        `password` = #{user.password},
-        `salt` = #{user.salt}
-        WHERE `id` = #{user.id}
-    </update>
-
     <delete id="deleteUser">
         DELETE FROM `t_user`
         WHERE `id` = #{id}
     </delete>
 
-    <select id="selectUserById" resultType="${package_name}.models.User">
+    <select id="selectUser" resultType="${package_name}.models.User">
         SELECT
         <include refid="userColumns"/>
         FROM
         <include refid="userTables"/>
-        WHERE `user`.`id` = #{id}
+        <where>
+            <include refid="userSearchWhere"/>
+        </where>
+        <choose>
+            <when test="request.sortOrders != null and request.sortOrders.size() != 0">
+                ORDER BY
+                <foreach collection="request.sortOrders" item="sortOrder" separator=",">
+                    $${sortOrder.field} $${sortOrder.direction}
+                </foreach>
+            </when>
+            <otherwise>
+                ORDER BY `user`.`id` DESC
+            </otherwise>
+        </choose>
+        LIMIT 1
+    </select>
+
+    <select id="selectUserWithPassword" resultType="${package_name}.models.User">
+        SELECT
+        <include refid="userColumnsWithPassword"/>
+        FROM
+        <include refid="userTables"/>
+        <where>
+            <include refid="userSearchWhere"/>
+        </where>
+        <choose>
+            <when test="request.sortOrders != null and request.sortOrders.size() != 0">
+                ORDER BY
+                <foreach collection="request.sortOrders" item="sortOrder" separator=",">
+                    $${sortOrder.field} $${sortOrder.direction}
+                </foreach>
+            </when>
+            <otherwise>
+                ORDER BY `user`.`id` DESC
+            </otherwise>
+        </choose>
         LIMIT 1
     </select>
 
@@ -104,12 +125,19 @@ ${partly_update_list}
         </where>
     </select>
 
-    <select id="selectUserByUsername" resultType="${package_name}.models.User">
+    <select id="selectRolesByUserId" resultType="${package_name}.models.Role">
         SELECT
-        <include refid="userColumnsWithPassword"/>
+        <include refid="roleColumns"/>
         FROM
-        <include refid="userTables"/>
-        WHERE `user`.`username` = #{username}
-        LIMIT 1
+        <include refid="roleTables"/>
+        WHERE `role`.`id` IN (SELECT `role_id` FROM `t_user_role` `user_role` WHERE `user_role`.`user_id` = #{userId})
+    </select>
+
+    <select id="selectPermissionsByUserId" resultType="${package_name}.models.Permission">
+        SELECT
+        <include refid="permissionColumns"/>
+        FROM
+        <include refid="permissionTables"/>
+        WHERE `permission`.`id` IN (SELECT `permission_id` FROM `t_role_permission` `role_permission` WHERE `role_permission`.`role_id` IN (SELECT `role_id` FROM `t_user_role` `user_role` WHERE `user_role`.`user_id` = #{userId}))
     </select>
 </mapper>

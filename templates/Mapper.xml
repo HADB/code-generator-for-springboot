@@ -36,12 +36,25 @@ ${partly_update_list}
         WHERE `id` = #{id}
     </delete>
 
-    <select id="select${model_name_pascal_case}ById" resultType="${package_name}.models.${model_name_pascal_case}">
+    <select id="select${model_name_pascal_case}" resultType="${package_name}.models.${model_name_pascal_case}">
         SELECT
         <include refid="${model_name_camel_case}Columns"/>
         FROM
         <include refid="${model_name_camel_case}Tables"/>
-        WHERE `${model_name_snake_case}`.`id` = #{id}
+        <where>
+            <include refid="${model_name_camel_case}SearchWhere"/>
+        </where>
+        <choose>
+            <when test="request.sortOrders != null and request.sortOrders.size() != 0">
+                ORDER BY
+                <foreach collection="request.sortOrders" item="sortOrder" separator=",">
+                    $${sortOrder.field} $${sortOrder.direction}
+                </foreach>
+            </when>
+            <otherwise>
+                ORDER BY `${model_name_snake_case}`.`id` DESC
+            </otherwise>
+        </choose>
         LIMIT 1
     </select>
 
@@ -61,7 +74,7 @@ ${partly_update_list}
                 </foreach>
             </when>
             <otherwise>
-                ORDER BY ${orders}
+                ORDER BY `${model_name_snake_case}`.`id` DESC
             </otherwise>
         </choose>
         LIMIT #{request.paging.offset}, #{request.paging.pageSize}

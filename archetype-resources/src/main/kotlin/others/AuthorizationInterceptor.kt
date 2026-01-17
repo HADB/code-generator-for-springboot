@@ -10,9 +10,8 @@ import ${package_name}.helpers.ResponseHelper
 import ${package_name}.helpers.TokenHelper
 import ${package_name}.models.Response
 import ${package_name}.models.User
-import ${package_name}.services.PermissionService
-import ${package_name}.services.RoleService
 import ${package_name}.services.UserService
+import ${package_name}.viewmodels.user.UserSearchRequest
 import org.springframework.stereotype.Component
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
@@ -35,11 +34,6 @@ class AuthorizationInterceptor : HandlerInterceptor {
     @Resource
     private lateinit var userService: UserService
 
-    @Resource
-    private lateinit var roleService: RoleService
-
-    @Resource
-    private lateinit var permissionService: PermissionService
 
     override fun preHandle(request: HttpServletRequest, response: HttpServletResponse, handler: Any): Boolean {
         if (handler !is HandlerMethod) {
@@ -92,12 +86,12 @@ class AuthorizationInterceptor : HandlerInterceptor {
         }
 
         // 获取 user
-        val user = userService.getUserByKey(service, key)
+        val user = userService.searchUser(UserSearchRequest(id = key.toLong()))
         if (user == null) {
             responseHelper.setResponse(response, Response.Errors.tokenInvalid())
             return false
         }
-        val userRoles = roleService.getRolesByUserId(user.id)
+        val userRoles = userService.getRolesByUserId(user.id)
 
         // 允许已登录用户访问，直接通过
         if (allowSignedIn) {
@@ -136,7 +130,7 @@ class AuthorizationInterceptor : HandlerInterceptor {
     override fun afterCompletion(request: HttpServletRequest, response: HttpServletResponse, handler: Any, ex: Exception?) = Unit
 
     private fun checkApiPermission(user: User, method: String, path: String): Boolean {
-        val userPermissions = permissionService.getPermissionsByUserId(user.id)
+        val userPermissions = userService.getPermissionsByUserId(user.id)
         return userPermissions.any { p -> p.apiMethod == method && p.apiPath == path }
     }
 }

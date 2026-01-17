@@ -40,7 +40,7 @@ class UserController {
     @RequestMapping("/{id}", method = [RequestMethod.PUT])
     fun editById(@PathVariable id: Long, @RequestBody request: UserEditRequest): Response<Any> {
         request.id = id
-        userService.getUserById(id) ?: return Response.error("User 不存在")
+        userService.searchUser(UserSearchRequest(id = id)) ?: return Response.error("User 不存在")
         userService.addOrEditUser(request)
         return Response.success()
     }
@@ -50,7 +50,7 @@ class UserController {
     @RequestMapping("/{id}", method = [RequestMethod.PATCH])
     fun editPartlyById(@PathVariable id: Long, @RequestBody request: UserPartlyEditRequest): Response<Any> {
         request.id = id
-        userService.getUserById(id) ?: return Response.error("User 不存在")
+        userService.searchUser(UserSearchRequest(id = id)) ?: return Response.error("User 不存在")
         userService.editUserPartly(request)
         return Response.success()
     }
@@ -67,7 +67,7 @@ class UserController {
     @Parameter(name = "id", description = "User ID", required = true)
     @RequestMapping("/{id}", method = [RequestMethod.GET])
     fun getById(@PathVariable id: Long): Response<User> {
-        val user = userService.getUserById(id)
+        val user = userService.searchUser(UserSearchRequest(id = id))
         return Response.success(user)
     }
 
@@ -91,7 +91,7 @@ class UserController {
     @RequestMapping("/password-sign-in", method = [RequestMethod.POST])
     @AllowAnonymous
     fun passwordSignIn(@RequestBody request: PasswordSignInRequest, @RequestAttribute service: String): Response<Any> {
-        val user = userService.getUserByUsername(request.username) ?: return Response.Errors.accountNotExist()
+        val user = userService.searchUserWithPassword(UserSearchRequest(username = request.username)) ?: return Response.Errors.accountNotExist()
 
         if (!passwordHelper.verify(request.password, user)) {
             return Response.Errors.passwordIncorrect()

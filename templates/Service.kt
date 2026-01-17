@@ -19,14 +19,14 @@ ${columns_data}
         )
     }
 
-    fun addOrEdit${model_name_pascal_case}(request: ${model_name_pascal_case}EditRequest): Long {
+    fun addOrEdit${model_name_pascal_case}(request: ${model_name_pascal_case}EditRequest): Long? {
         val ${model_name_camel_case} = get${model_name_pascal_case}FromEditRequest(request)
         return addOrEdit${model_name_pascal_case}(${model_name_camel_case})
     }
 
-    fun addOrEdit${model_name_pascal_case}(${model_name_camel_case}: ${model_name_pascal_case}): Long {
+    fun addOrEdit${model_name_pascal_case}(${model_name_camel_case}: ${model_name_pascal_case}): Long? {
         ${model_name_camel_case}Mapper.insertOrUpdate${model_name_pascal_case}(${model_name_camel_case})
-        return ${model_name_camel_case}.id
+        return ${model_name_camel_case}.id.takeIf { it != 0L }
     }
 
     fun edit${model_name_pascal_case}Partly(request: ${model_name_pascal_case}PartlyEditRequest) {
@@ -37,8 +37,8 @@ ${columns_data}
         ${model_name_camel_case}Mapper.delete${model_name_pascal_case}(id)
     }
 
-    fun get${model_name_pascal_case}ById(id: Long): ${model_name_pascal_case}? {
-        return ${model_name_camel_case}Mapper.select${model_name_pascal_case}ById(id)
+    fun search${model_name_pascal_case}(request: ${model_name_pascal_case}SearchRequest): ${model_name_pascal_case}? {
+        return ${model_name_camel_case}Mapper.select${model_name_pascal_case}(request)
     }
 
     fun search${model_name_pascal_case_plural}(request: ${model_name_pascal_case}SearchRequest): List<${model_name_pascal_case}> {

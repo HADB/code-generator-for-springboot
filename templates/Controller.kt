@@ -34,7 +34,7 @@ class ${model_name_pascal_case}Controller {
     @RequestMapping("/{id}", method = [RequestMethod.PUT])
     fun editById(@PathVariable id: Long, @RequestBody request: ${model_name_pascal_case}EditRequest): Response<Any> {
         request.id = id
-        ${model_name_camel_case}Service.get${model_name_pascal_case}ById(id) ?: return Response.error("${model_name_pascal_case} 不存在")
+        ${model_name_camel_case}Service.search${model_name_pascal_case}(${model_name_pascal_case}SearchRequest(id = id)) ?: return Response.error("${model_name_pascal_case} 不存在")
         ${model_name_camel_case}Service.addOrEdit${model_name_pascal_case}(request)
         return Response.success()
     }
@@ -44,7 +44,7 @@ class ${model_name_pascal_case}Controller {
     @RequestMapping("/{id}", method = [RequestMethod.PATCH])
     fun editPartlyById(@PathVariable id: Long, @RequestBody request: ${model_name_pascal_case}PartlyEditRequest): Response<Any> {
         request.id = id
-        ${model_name_camel_case}Service.get${model_name_pascal_case}ById(id) ?: return Response.error("${model_name_pascal_case} 不存在")
+        ${model_name_camel_case}Service.search${model_name_pascal_case}(${model_name_pascal_case}SearchRequest(id = id)) ?: return Response.error("${model_name_pascal_case} 不存在")
         ${model_name_camel_case}Service.edit${model_name_pascal_case}Partly(request)
         return Response.success()
     }
@@ -61,7 +61,7 @@ class ${model_name_pascal_case}Controller {
     @Parameter(name = "id", description = "${model_name_pascal_case} ID", required = true)
     @RequestMapping("/{id}", method = [RequestMethod.GET])
     fun getById(@PathVariable id: Long): Response<${model_name_pascal_case}> {
-        val ${model_name_camel_case} = ${model_name_camel_case}Service.get${model_name_pascal_case}ById(id)
+        val ${model_name_camel_case} = ${model_name_camel_case}Service.search${model_name_pascal_case}(${model_name_pascal_case}SearchRequest(id = id))
         return Response.success(${model_name_camel_case})
     }
 

@@ -3,6 +3,7 @@ package ${package_name}.others
 import ${package_name}.constants.AppConstants
 import ${package_name}.models.User
 import ${package_name}.services.UserService
+import ${package_name}.viewmodels.user.UserSearchRequest
 import org.springframework.core.MethodParameter
 import org.springframework.stereotype.Component
 import org.springframework.web.bind.support.WebDataBinderFactory
@@ -26,9 +27,8 @@ class CurrentUserResolver : HandlerMethodArgumentResolver {
 
     override fun resolveArgument(parameter: MethodParameter, mavContainer: ModelAndViewContainer?, webRequest: NativeWebRequest, binderFactory: WebDataBinderFactory?): Any? {
         val key = webRequest.getAttribute(AppConstants.KEY, RequestAttributes.SCOPE_REQUEST)?.toString()
-        val service = webRequest.getAttribute(AppConstants.SERVICE, RequestAttributes.SCOPE_REQUEST)?.toString()
-        if (service != null && key != null) {
-            return userService.getUserByKey(service, key)
+        if (key != null) {
+            return userService.searchUser(UserSearchRequest(id = key.toLong()))
         }
         return null
     }

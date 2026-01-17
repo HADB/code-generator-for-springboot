@@ -202,7 +202,7 @@ def run_package():
 
             lines = []
             for column in columns:
-                if column["name"] == "sort_weight" or (file_info["model_name"] == "user" and (column["name"] == "password" or column["name"] == "salt")):
+                if file_info["model_name"] == "user" and (column["name"] == "password" or column["name"] == "salt"):
                     continue
                 if column["type"] == "datetime" or column["type"] == "time" or column["type"] == "date":
                     lines.append(f'        <if test="request.{inflection.camelize(column["name"], False)}From != null">')
@@ -285,14 +285,6 @@ def run_package():
                     lines.append("        </if>")
             partly_update_list = "\n".join(lines)
 
-            lines = []
-            for column in columns:
-                if column["name"] == "sort_weight":
-                    lines.append(f"`{file_info['model_name_snake_case']}`.`sort_weight` DESC")
-            if not lines:
-                lines.append(f"`{file_info['model_name_snake_case']}`.`id` DESC")
-            orders = ", ".join(lines)
-
             if file_info["model_name"] == "user":
                 file_read = open(os.path.join(TEMPLATE_PATH, "UserMapper.xml"), "r", encoding="UTF-8")
             else:
@@ -302,7 +294,6 @@ def run_package():
                 file_read.read(),
                 column_list=column_list,
                 name_list=name_list,
-                orders=orders,
                 search_where=search_where,
                 update_list=update_list,
                 value_list=value_list,
@@ -472,8 +463,6 @@ def run_package():
             lines = []
             swagger_index = 0
             for column in columns:
-                if column["name"] == "id" or column["name"] == "sort_weight":
-                    continue
                 column_type, property_name = get_column_type_property_name(column)
                 column_type += "? = null"
                 define = "val"

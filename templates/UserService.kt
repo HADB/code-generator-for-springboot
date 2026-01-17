@@ -1,16 +1,14 @@
 package ${package_name}.services
 
-import ${package_name}.constants.AppConstants
 import ${package_name}.helpers.PasswordHelper
 import ${package_name}.helpers.RedisHelper
 import ${package_name}.helpers.TokenHelper
 import ${package_name}.mappers.UserMapper
-import ${package_name}.models.Response
+import ${package_name}.models.Permission
+import ${package_name}.models.Role
 import ${package_name}.models.User
-import ${package_name}.others.RedisKey
 import ${package_name}.viewmodels.user.*
 import org.springframework.stereotype.Component
-import java.util.concurrent.TimeUnit
 import jakarta.annotation.Resource
 
 @Component
@@ -24,8 +22,6 @@ class UserService {
     @Resource
     private lateinit var passwordHelper: PasswordHelper
 
-    @Resource
-    private lateinit var redisHelper: RedisHelper
 
     fun getUserFromEditRequest(request: UserEditRequest): User {
         val salt = passwordHelper.salt
@@ -38,14 +34,14 @@ ${add_user_with_password_columns_data}
         )
     }
 
-    fun addOrEditUser(request: UserEditRequest): Long {
+    fun addOrEditUser(request: UserEditRequest): Long? {
         val user = getUserFromEditRequest(request)
         return addOrEditUser(user)
     }
 
-    fun addOrEditUser(user: User): Long {
+    fun addOrEditUser(user: User): Long? {
         userMapper.insertOrUpdateUser(user)
-        return user.id
+        return user.id.takeIf { it != 0L }
     }
 
     fun editUserPartly(request: UserPartlyEditRequest) {
@@ -62,12 +58,12 @@ ${add_user_with_password_columns_data}
         userMapper.deleteUser(id)
     }
 
-    fun getUserById(id: Long): User? {
-        return userMapper.selectUserById(id)
+    fun searchUser(request: UserSearchRequest): User? {
+        return userMapper.selectUser(request)
     }
 
-    fun getUserByKey(service: String, key: String): User? {
-        return userMapper.selectUserById(key.toLong())
+    fun searchUserWithPassword(request: UserSearchRequest): User? {
+        return userMapper.selectUserWithPassword(request)
     }
 
     fun searchUsers(request: UserSearchRequest): List<User> {
@@ -78,8 +74,12 @@ ${add_user_with_password_columns_data}
         return userMapper.selectUsersCount(request)
     }
 
-    fun getUserByUsername(username: String): User? {
-        return userMapper.selectUserByUsername(username)
+    fun getRolesByUserId(userId: Long): List<Role> {
+        return userMapper.selectRolesByUserId(userId)
+    }
+
+    fun getPermissionsByUserId(userId: Long): List<Permission> {
+        return userMapper.selectPermissionsByUserId(userId)
     }
 
     fun signIn(service: String, user: User): SignInResponse {
