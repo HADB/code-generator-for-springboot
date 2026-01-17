@@ -17,6 +17,9 @@
     </sql>
 
     <sql id="roleSearchWhere">
+        <if test="request.id != null">
+            AND `role`.`id` = #{request.id}
+        </if>
         <if test="request.key != null and request.key !=''">
             AND `role`.`key` = #{request.key}
         </if>
@@ -43,25 +46,9 @@
         </if>
     </sql>
 
-    <insert id="insertRole" useGeneratedKeys="true" keyProperty="role.id">
-        INSERT INTO `t_role`(
-        `key`,
-        `name`,
-        `description`,
-        `built_in`,
-        `create_time`,
-        `update_time`)
-        VALUES(
-        #{role.key},
-        #{role.name},
-        #{role.description},
-        #{role.builtIn},
-        NOW(),
-        NOW())
-    </insert>
-
     <insert id="insertOrUpdateRole">
         INSERT INTO `t_role`(
+        <if test="role.id != 0">`id`,</if>
         `key`,
         `name`,
         `description`,
@@ -69,6 +56,7 @@
         `create_time`,
         `update_time`)
         VALUES(
+        <if test="role.id != 0">#{role.id},</if>
         #{role.key},
         #{role.name},
         #{role.description},
@@ -85,13 +73,13 @@
 
     <update id="updateRolePartly">
         UPDATE `t_role` SET
-        <if test="request.key != null and request.key !=''">
+        <if test="request.key != null">
             `key` = #{request.key},
         </if>
-        <if test="request.name != null and request.name !=''">
+        <if test="request.name != null">
             `name` = #{request.name},
         </if>
-        <if test="request.description != null and request.description !=''">
+        <if test="request.description != null">
             `description` = #{request.description},
         </if>
         <if test="request.builtIn != null">

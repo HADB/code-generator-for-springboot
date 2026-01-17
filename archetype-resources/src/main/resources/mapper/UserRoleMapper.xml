@@ -15,6 +15,9 @@
     </sql>
 
     <sql id="userRoleSearchWhere">
+        <if test="request.id != null">
+            AND `user_role`.`id` = #{request.id}
+        </if>
         <if test="request.userId != null">
             AND `user_role`.`user_id` = #{request.userId}
         </if>
@@ -35,26 +38,15 @@
         </if>
     </sql>
 
-    <insert id="insertUserRole" useGeneratedKeys="true" keyProperty="userRole.id">
-        INSERT INTO `t_user_role`(
-        `user_id`,
-        `role_id`,
-        `create_time`,
-        `update_time`)
-        VALUES(
-        #{userRole.userId},
-        #{userRole.roleId},
-        NOW(),
-        NOW())
-    </insert>
-
     <insert id="insertOrUpdateUserRole">
         INSERT INTO `t_user_role`(
+        <if test="userRole.id != 0">`id`,</if>
         `user_id`,
         `role_id`,
         `create_time`,
         `update_time`)
         VALUES(
+        <if test="userRole.id != 0">#{userRole.id},</if>
         #{userRole.userId},
         #{userRole.roleId},
         NOW(),

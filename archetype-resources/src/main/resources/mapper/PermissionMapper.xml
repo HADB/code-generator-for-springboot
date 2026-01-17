@@ -19,6 +19,9 @@
     </sql>
 
     <sql id="permissionSearchWhere">
+        <if test="request.id != null">
+            AND `permission`.`id` = #{request.id}
+        </if>
         <if test="request.key != null and request.key !=''">
             AND `permission`.`key` = #{request.key}
         </if>
@@ -51,29 +54,9 @@
         </if>
     </sql>
 
-    <insert id="insertPermission" useGeneratedKeys="true" keyProperty="permission.id">
-        INSERT INTO `t_permission`(
-        `key`,
-        `name`,
-        `description`,
-        `type`,
-        `api_path`,
-        `api_method`,
-        `create_time`,
-        `update_time`)
-        VALUES(
-        #{permission.key},
-        #{permission.name},
-        #{permission.description},
-        #{permission.type},
-        #{permission.apiPath},
-        #{permission.apiMethod},
-        NOW(),
-        NOW())
-    </insert>
-
     <insert id="insertOrUpdatePermission">
         INSERT INTO `t_permission`(
+        <if test="permission.id != 0">`id`,</if>
         `key`,
         `name`,
         `description`,
@@ -83,6 +66,7 @@
         `create_time`,
         `update_time`)
         VALUES(
+        <if test="permission.id != 0">#{permission.id},</if>
         #{permission.key},
         #{permission.name},
         #{permission.description},
@@ -103,22 +87,22 @@
 
     <update id="updatePermissionPartly">
         UPDATE `t_permission` SET
-        <if test="request.key != null and request.key !=''">
+        <if test="request.key != null">
             `key` = #{request.key},
         </if>
-        <if test="request.name != null and request.name !=''">
+        <if test="request.name != null">
             `name` = #{request.name},
         </if>
-        <if test="request.description != null and request.description !=''">
+        <if test="request.description != null">
             `description` = #{request.description},
         </if>
         <if test="request.type != null">
             `type` = #{request.type},
         </if>
-        <if test="request.apiPath != null and request.apiPath !=''">
+        <if test="request.apiPath != null">
             `api_path` = #{request.apiPath},
         </if>
-        <if test="request.apiMethod != null and request.apiMethod !=''">
+        <if test="request.apiMethod != null">
             `api_method` = #{request.apiMethod},
         </if>
         `update_time` = NOW()

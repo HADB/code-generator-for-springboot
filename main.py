@@ -202,7 +202,7 @@ def run_package():
 
             lines = []
             for column in columns:
-                if column["name"] == "id" or column["name"] == "sort_weight" or (file_info["model_name"] == "user" and (column["name"] == "password" or column["name"] == "salt")):
+                if column["name"] == "sort_weight" or (file_info["model_name"] == "user" and (column["name"] == "password" or column["name"] == "salt")):
                     continue
                 if column["type"] == "datetime" or column["type"] == "time" or column["type"] == "date":
                     lines.append(f'        <if test="request.{inflection.camelize(column["name"], False)}From != null">')
@@ -280,12 +280,7 @@ def run_package():
                 elif column["name"] == "update_time" or column["name"] == "updated_time":
                     lines.append(f"        `{column['name']}` = NOW()")
                 else:
-                    if column["type"] == "varchar" or column["type"] == "text":
-                        lines.append(
-                            f"        <if test=\"request.{inflection.camelize(column['name'], False)} != null and request.{inflection.camelize(column['name'], False)} !=''\">"
-                        )
-                    else:
-                        lines.append(f'        <if test="request.{inflection.camelize(column["name"], False)} != null">')
+                    lines.append(f'        <if test="request.{inflection.camelize(column["name"], False)} != null">')
                     lines.append(f"            `{column['name']}` = #{{request.{inflection.camelize(column['name'], False)}}},")
                     lines.append("        </if>")
             partly_update_list = "\n".join(lines)

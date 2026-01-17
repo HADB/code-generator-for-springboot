@@ -15,6 +15,9 @@
     </sql>
 
     <sql id="rolePermissionSearchWhere">
+        <if test="request.id != null">
+            AND `role_permission`.`id` = #{request.id}
+        </if>
         <if test="request.roleId != null">
             AND `role_permission`.`role_id` = #{request.roleId}
         </if>
@@ -35,26 +38,15 @@
         </if>
     </sql>
 
-    <insert id="insertRolePermission" useGeneratedKeys="true" keyProperty="rolePermission.id">
-        INSERT INTO `t_role_permission`(
-        `role_id`,
-        `permission_id`,
-        `create_time`,
-        `update_time`)
-        VALUES(
-        #{rolePermission.roleId},
-        #{rolePermission.permissionId},
-        NOW(),
-        NOW())
-    </insert>
-
     <insert id="insertOrUpdateRolePermission">
         INSERT INTO `t_role_permission`(
+        <if test="rolePermission.id != 0">`id`,</if>
         `role_id`,
         `permission_id`,
         `create_time`,
         `update_time`)
         VALUES(
+        <if test="rolePermission.id != 0">#{rolePermission.id},</if>
         #{rolePermission.roleId},
         #{rolePermission.permissionId},
         NOW(),
