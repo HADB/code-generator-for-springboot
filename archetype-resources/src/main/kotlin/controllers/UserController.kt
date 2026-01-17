@@ -87,11 +87,11 @@ class UserController {
         return Response.success()
     }
 
-    @Operation(summary = "账号密码登录")
+    @Operation(summary = "密码登录")
     @RequestMapping("/password-sign-in", method = [RequestMethod.POST])
     @AllowAnonymous
     fun passwordSignIn(@RequestBody request: PasswordSignInRequest, @RequestAttribute service: String): Response<Any> {
-        val user = userService.searchUserWithPassword(UserSearchRequest(username = request.username)) ?: return Response.Errors.accountNotExist()
+        val user = userService.searchUserWithPassword(UserSearchRequest(mobile = request.mobile)) ?: return Response.Errors.accountNotExist()
 
         if (!passwordHelper.verify(request.password, user)) {
             return Response.Errors.passwordIncorrect()

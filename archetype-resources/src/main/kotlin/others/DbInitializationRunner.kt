@@ -44,6 +44,11 @@ class DbInitializationRunner : CommandLineRunner {
 
     override fun run(vararg args: String) {
         logger.info("db runner started")
+        initAdminAndRoles()
+        logger.info("db runner done")
+    }
+
+    fun initAdminAndRoles() {
         val builtInAdminRoleId = roleService.searchRole(RoleSearchRequest(key = BuiltInRoleKey.Admin))?.id
             ?: roleService.addOrEditRole(
                 RoleEditRequest(
@@ -61,6 +66,7 @@ class DbInitializationRunner : CommandLineRunner {
             val adminUserId = userService.addOrEditUser(
                 UserEditRequest(
                     username = "Admin",
+                    mobile = "11111111111",
                     password = password
                 )
             )
@@ -117,8 +123,6 @@ class DbInitializationRunner : CommandLineRunner {
                 }
             }
         }
-
-        logger.info("db runner done")
     }
 
     fun getAllControllerClasses(basePackage: String): List<Class<*>> {
