@@ -76,10 +76,10 @@
         NOW(),
         NOW())
         ON DUPLICATE KEY UPDATE
-        `key` = #{role.key},
-        `name` = #{role.name},
-        `description` = #{role.description},
-        `built_in` = #{role.builtIn},
+        `key` = COALESCE(#{role.key}, `key`),
+        `name` = COALESCE(#{role.name}, `name`),
+        `description` = COALESCE(#{role.description}, `description`),
+        `built_in` = COALESCE(#{role.builtIn}, `built_in`),
         `update_time` = NOW()
     </insert>
 

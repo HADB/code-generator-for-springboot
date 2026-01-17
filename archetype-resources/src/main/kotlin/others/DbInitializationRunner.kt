@@ -42,7 +42,7 @@ class DbInitializationRunner : CommandLineRunner {
     override fun run(vararg args: String) {
         logger.info("db runner started")
         val builtInAdminRoleId = roleService.getRoleByKey(BuiltInRoleKey.Admin)?.id
-            ?: roleService.editRole(
+            ?: roleService.addOrEditRole(
                 RoleEditRequest(
                     key = BuiltInRoleKey.Admin,
                     name = "管理员",
@@ -55,13 +55,13 @@ class DbInitializationRunner : CommandLineRunner {
 
         userService.getUserByUsername("Admin")?.id ?: let {
             val password = passwordHelper.random(16)
-            val adminUserId = userService.editUser(
+            val adminUserId = userService.addOrEditUser(
                 UserEditRequest(
                     username = "Admin",
                     password = password
                 )
             )
-            userRoleService.editUserRole(
+            userRoleService.addOrEditUserRole(
                 UserRoleEditRequest(
                     userId = adminUserId,
                     roleId = builtInAdminRoleId
@@ -86,7 +86,7 @@ class DbInitializationRunner : CommandLineRunner {
                             val permissionKey = "$${apiMethod}:$${apiPath}"
                             val permission = permissionService.getPermissionByKey(permissionKey)
                             if (permission == null) {
-                                permissionService.editPermission(
+                                permissionService.addOrEditPermission(
                                     PermissionEditRequest(
                                         key = permissionKey,
                                         name = summary,
@@ -96,7 +96,7 @@ class DbInitializationRunner : CommandLineRunner {
                                     )
                                 )
                             } else if (permission.name != summary) {
-                                permissionService.editPermission(
+                                permissionService.addOrEditPermission(
                                     PermissionEditRequest(
                                         id = permission.id,
                                         key = permissionKey,

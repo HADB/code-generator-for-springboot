@@ -60,8 +60,8 @@
         NOW(),
         NOW())
         ON DUPLICATE KEY UPDATE
-        `user_id` = #{userRole.userId},
-        `role_id` = #{userRole.roleId},
+        `user_id` = COALESCE(#{userRole.userId}, `user_id`),
+        `role_id` = COALESCE(#{userRole.roleId}, `role_id`),
         `update_time` = NOW()
     </insert>
 

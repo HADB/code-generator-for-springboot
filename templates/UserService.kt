@@ -38,22 +38,12 @@ ${add_user_with_password_columns_data}
         )
     }
 
-    fun addUser(request: UserEditRequest): Long {
+    fun addOrEditUser(request: UserEditRequest): Long {
         val user = getUserFromEditRequest(request)
-        return addUser(user)
+        return addOrEditUser(user)
     }
 
-    fun addUser(user: User): Long {
-        userMapper.insertUser(user)
-        return user.id
-    }
-
-    fun editUser(request: UserEditRequest): Long {
-        val user = getUserFromEditRequest(request)
-        return editUser(user)
-    }
-
-    fun editUser(user: User): Long {
+    fun addOrEditUser(user: User): Long {
         userMapper.insertOrUpdateUser(user)
         return user.id
     }

@@ -23,22 +23,12 @@ class RoleService {
         )
     }
 
-    fun addRole(request: RoleEditRequest): Long {
+    fun addOrEditRole(request: RoleEditRequest): Long {
         val role = getRoleFromEditRequest(request)
-        return addRole(role)
+        return addOrEditRole(role)
     }
 
-    fun addRole(role: Role): Long {
-        roleMapper.insertRole(role)
-        return role.id
-    }
-
-    fun editRole(request: RoleEditRequest): Long {
-        val role = getRoleFromEditRequest(request)
-        return editRole(role)
-    }
-
-    fun editRole(role: Role): Long {
+    fun addOrEditRole(role: Role): Long {
         roleMapper.insertOrUpdateRole(role)
         return role.id
     }

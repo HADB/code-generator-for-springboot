@@ -8,7 +8,6 @@ import org.apache.ibatis.annotations.Param
 
 @Mapper
 interface RolePermissionMapper {
-    fun insertRolePermission(@Param("rolePermission") rolePermission: RolePermission)
     fun insertOrUpdateRolePermission(@Param("rolePermission") rolePermission: RolePermission)
     fun updateRolePermissionPartly(@Param("request") request: RolePermissionPartlyEditRequest)
     fun deleteRolePermission(@Param("id") id: Long)

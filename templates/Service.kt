@@ -19,22 +19,12 @@ ${columns_data}
         )
     }
 
-    fun add${model_name_pascal_case}(request: ${model_name_pascal_case}EditRequest): Long {
+    fun addOrEdit${model_name_pascal_case}(request: ${model_name_pascal_case}EditRequest): Long {
         val ${model_name_camel_case} = get${model_name_pascal_case}FromEditRequest(request)
-        return add${model_name_pascal_case}(${model_name_camel_case})
+        return addOrEdit${model_name_pascal_case}(${model_name_camel_case})
     }
 
-    fun add${model_name_pascal_case}(${model_name_camel_case}: ${model_name_pascal_case}): Long {
-        ${model_name_camel_case}Mapper.insert${model_name_pascal_case}(${model_name_camel_case})
-        return ${model_name_camel_case}.id
-    }
-
-    fun edit${model_name_pascal_case}(request: ${model_name_pascal_case}EditRequest): Long {
-        val ${model_name_camel_case} = get${model_name_pascal_case}FromEditRequest(request)
-        return edit${model_name_pascal_case}(${model_name_camel_case})
-    }
-
-    fun edit${model_name_pascal_case}(${model_name_camel_case}: ${model_name_pascal_case}): Long {
+    fun addOrEdit${model_name_pascal_case}(${model_name_camel_case}: ${model_name_pascal_case}): Long {
         ${model_name_camel_case}Mapper.insertOrUpdate${model_name_pascal_case}(${model_name_camel_case})
         return ${model_name_camel_case}.id
     }

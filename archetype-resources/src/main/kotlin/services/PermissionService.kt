@@ -25,22 +25,12 @@ class PermissionService {
         )
     }
 
-    fun addPermission(request: PermissionEditRequest): Long {
+    fun addOrEditPermission(request: PermissionEditRequest): Long {
         val permission = getPermissionFromEditRequest(request)
-        return addPermission(permission)
+        return addOrEditPermission(permission)
     }
 
-    fun addPermission(permission: Permission): Long {
-        permissionMapper.insertPermission(permission)
-        return permission.id
-    }
-
-    fun editPermission(request: PermissionEditRequest): Long {
-        val permission = getPermissionFromEditRequest(request)
-        return editPermission(permission)
-    }
-
-    fun editPermission(permission: Permission): Long {
+    fun addOrEditPermission(permission: Permission): Long {
         permissionMapper.insertOrUpdatePermission(permission)
         return permission.id
     }

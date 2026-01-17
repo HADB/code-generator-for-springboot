@@ -8,7 +8,6 @@ import org.apache.ibatis.annotations.Param
 
 @Mapper
 interface ${model_name_pascal_case}Mapper {
-    fun insert${model_name_pascal_case}(@Param("${model_name_camel_case}") ${model_name_camel_case}: ${model_name_pascal_case})
     fun insertOrUpdate${model_name_pascal_case}(@Param("${model_name_camel_case}") ${model_name_camel_case}: ${model_name_pascal_case})
     fun update${model_name_pascal_case}Partly(@Param("request") request: ${model_name_pascal_case}PartlyEditRequest)
     fun delete${model_name_pascal_case}(@Param("id") id: Long)

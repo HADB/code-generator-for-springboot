@@ -258,7 +258,9 @@ def run_package():
                 elif column["name"] == "update_time" or column["name"] == "updated_time":
                     lines.append(f"        `{column['name']}` = NOW()")
                 else:
-                    lines.append(f"        `{column['name']}` = #{{{file_info['model_name_camel_case']}.{inflection.camelize(column['name'], False)}}}")
+                    lines.append(
+                        f"        `{column['name']}` = COALESCE(#{{{file_info['model_name_camel_case']}.{inflection.camelize(column['name'], False)}}}, `{column['name']}`)"
+                    )
             update_list = ",\n".join(lines)
 
             lines = []

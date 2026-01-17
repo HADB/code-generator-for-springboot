@@ -27,17 +27,11 @@ class UserController {
     @Resource
     private lateinit var passwordHelper: PasswordHelper
 
-    @Operation(summary = "新增「用户」")
-    @RequestMapping("", method = [RequestMethod.POST])
-    fun add(@RequestBody request: UserEditRequest): Response<Any> {
-        val userId = userService.editUser(request)
-        return Response.success(userId)
-    }
 
     @Operation(summary = "新增或修改「用户」")
     @RequestMapping("", method = [RequestMethod.PUT])
     fun addOrEdit(@RequestBody request: UserEditRequest): Response<Any> {
-        val userId = userService.editUser(request)
+        val userId = userService.addOrEditUser(request)
         return Response.success(userId)
     }
 
@@ -47,7 +41,7 @@ class UserController {
     fun editById(@PathVariable id: Long, @RequestBody request: UserEditRequest): Response<Any> {
         request.id = id
         userService.getUserById(id) ?: return Response.error("User 不存在")
-        userService.editUser(request)
+        userService.addOrEditUser(request)
         return Response.success()
     }
 

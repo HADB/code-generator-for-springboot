@@ -92,12 +92,12 @@
         NOW(),
         NOW())
         ON DUPLICATE KEY UPDATE
-        `key` = #{permission.key},
-        `name` = #{permission.name},
-        `description` = #{permission.description},
-        `type` = #{permission.type},
-        `api_path` = #{permission.apiPath},
-        `api_method` = #{permission.apiMethod},
+        `key` = COALESCE(#{permission.key}, `key`),
+        `name` = COALESCE(#{permission.name}, `name`),
+        `description` = COALESCE(#{permission.description}, `description`),
+        `type` = COALESCE(#{permission.type}, `type`),
+        `api_path` = COALESCE(#{permission.apiPath}, `api_path`),
+        `api_method` = COALESCE(#{permission.apiMethod}, `api_method`),
         `update_time` = NOW()
     </insert>
 

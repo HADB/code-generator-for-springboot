@@ -8,7 +8,6 @@ import org.apache.ibatis.annotations.Param
 
 @Mapper
 interface UserMapper {
-    fun insertUser(@Param("user") user: User)
     fun insertOrUpdateUser(@Param("user") user: User)
     fun updateUserPartly(@Param("request") request: UserPartlyEditRequest)
     fun deleteUser(@Param("id") id: Long)

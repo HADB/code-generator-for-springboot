@@ -21,22 +21,12 @@ class RolePermissionService {
         )
     }
 
-    fun addRolePermission(request: RolePermissionEditRequest): Long {
+    fun addOrEditRolePermission(request: RolePermissionEditRequest): Long {
         val rolePermission = getRolePermissionFromEditRequest(request)
-        return addRolePermission(rolePermission)
+        return addOrEditRolePermission(rolePermission)
     }
 
-    fun addRolePermission(rolePermission: RolePermission): Long {
-        rolePermissionMapper.insertRolePermission(rolePermission)
-        return rolePermission.id
-    }
-
-    fun editRolePermission(request: RolePermissionEditRequest): Long {
-        val rolePermission = getRolePermissionFromEditRequest(request)
-        return editRolePermission(rolePermission)
-    }
-
-    fun editRolePermission(rolePermission: RolePermission): Long {
+    fun addOrEditRolePermission(rolePermission: RolePermission): Long {
         rolePermissionMapper.insertOrUpdateRolePermission(rolePermission)
         return rolePermission.id
     }

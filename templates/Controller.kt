@@ -21,17 +21,11 @@ class ${model_name_pascal_case}Controller {
     @Resource
     private lateinit var ${model_name_camel_case}Service: ${model_name_pascal_case}Service
 
-    @Operation(summary = "新增「${model_description}」")
-    @RequestMapping("", method = [RequestMethod.POST])
-    fun add(@RequestBody request: ${model_name_pascal_case}EditRequest): Response<Any> {
-        val ${model_name_camel_case}Id = ${model_name_camel_case}Service.add${model_name_pascal_case}(request)
-        return Response.success(${model_name_camel_case}Id)
-    }
 
     @Operation(summary = "新增或修改「${model_description}」")
     @RequestMapping("", method = [RequestMethod.PUT])
     fun addOrEdit(@RequestBody request: ${model_name_pascal_case}EditRequest): Response<Any> {
-        val ${model_name_camel_case}Id = ${model_name_camel_case}Service.edit${model_name_pascal_case}(request)
+        val ${model_name_camel_case}Id = ${model_name_camel_case}Service.addOrEdit${model_name_pascal_case}(request)
         return Response.success(${model_name_camel_case}Id)
     }
 
@@ -41,7 +35,7 @@ class ${model_name_pascal_case}Controller {
     fun editById(@PathVariable id: Long, @RequestBody request: ${model_name_pascal_case}EditRequest): Response<Any> {
         request.id = id
         ${model_name_camel_case}Service.get${model_name_pascal_case}ById(id) ?: return Response.error("${model_name_pascal_case} 不存在")
-        ${model_name_camel_case}Service.edit${model_name_pascal_case}(request)
+        ${model_name_camel_case}Service.addOrEdit${model_name_pascal_case}(request)
         return Response.success()
     }
 
