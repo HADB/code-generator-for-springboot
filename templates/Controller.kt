@@ -38,7 +38,7 @@ class ${model_name_pascal_case}Controller {
     @Operation(summary = "修改「${model_description}」")
     @Parameter(name = "id", description = "${model_name_pascal_case} ID", required = true)
     @RequestMapping("/{id}", method = [RequestMethod.PUT])
-    fun editById(@PathVariable("id") id: Long, @RequestBody request: ${model_name_pascal_case}EditRequest): Response<Any> {
+    fun editById(@PathVariable id: Long, @RequestBody request: ${model_name_pascal_case}EditRequest): Response<Any> {
         request.id = id
         ${model_name_camel_case}Service.get${model_name_pascal_case}ById(id) ?: return Response.error("${model_name_pascal_case} 不存在")
         ${model_name_camel_case}Service.edit${model_name_pascal_case}(request)
@@ -48,7 +48,7 @@ class ${model_name_pascal_case}Controller {
     @Operation(summary = "部分修改「${model_description}」")
     @Parameter(name = "id", description = "${model_name_pascal_case} ID", required = true)
     @RequestMapping("/{id}", method = [RequestMethod.PATCH])
-    fun editPartlyById(@PathVariable("id") id: Long, @RequestBody request: ${model_name_pascal_case}PartlyEditRequest): Response<Any> {
+    fun editPartlyById(@PathVariable id: Long, @RequestBody request: ${model_name_pascal_case}PartlyEditRequest): Response<Any> {
         request.id = id
         ${model_name_camel_case}Service.get${model_name_pascal_case}ById(id) ?: return Response.error("${model_name_pascal_case} 不存在")
         ${model_name_camel_case}Service.edit${model_name_pascal_case}Partly(request)
@@ -58,7 +58,7 @@ class ${model_name_pascal_case}Controller {
     @Operation(summary = "删除「${model_description}」")
     @Parameter(name = "id", description = "${model_name_pascal_case} ID", required = true)
     @RequestMapping("/{id}", method = [RequestMethod.DELETE])
-    fun deleteById(@PathVariable("id") id: Long): Response<Any> {
+    fun deleteById(@PathVariable id: Long): Response<Any> {
         ${model_name_camel_case}Service.delete${model_name_pascal_case}(id)
         return Response.success()
     }
@@ -66,7 +66,7 @@ class ${model_name_pascal_case}Controller {
     @Operation(summary = "获取「${model_description}」详情")
     @Parameter(name = "id", description = "${model_name_pascal_case} ID", required = true)
     @RequestMapping("/{id}", method = [RequestMethod.GET])
-    fun getById(@PathVariable("id") id: Long): Response<${model_name_pascal_case}> {
+    fun getById(@PathVariable id: Long): Response<${model_name_pascal_case}> {
         val ${model_name_camel_case} = ${model_name_camel_case}Service.get${model_name_pascal_case}ById(id)
         return Response.success(${model_name_camel_case})
     }
