@@ -529,7 +529,6 @@ def run_package():
                 file_read = open(os.path.join(TEMPLATE_PATH, "UserService.kt"), "r", encoding="UTF-8")
                 columns_data = []
                 add_user_with_password_columns_data = []
-                bind_mobile_columns_data = []
                 for column in columns:
                     property_name = column["name"]
                     if column["name"] == "create_time" or column["name"] == "update_time" or column["name"] == "created_time" or column["name"] == "updated_time":
@@ -540,16 +539,11 @@ def run_package():
                         add_user_with_password_columns_data.append(f"            {inflection.camelize(property_name, False)} = request.{inflection.camelize(property_name, False)}")
                     else:
                         add_user_with_password_columns_data.append(f"            {inflection.camelize(property_name, False)} = {inflection.camelize(property_name, False)}")
-                    if column["name"] != "mobile" and column["name"] != "id":
-                        bind_mobile_columns_data.append(
-                            f"            mobileUser.{inflection.camelize(property_name, False)} = currentUser.{inflection.camelize(property_name, False)}"
-                        )
 
                 content = substitute(
                     file_read.read(),
                     columns_data=",\n".join(columns_data),
                     add_user_with_password_columns_data=",\n".join(add_user_with_password_columns_data),
-                    bind_mobile_columns_data="\n".join(bind_mobile_columns_data),
                 )
             else:
                 file_read = open(os.path.join(TEMPLATE_PATH, "Service.kt"), "r", encoding="UTF-8")

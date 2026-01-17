@@ -24,10 +24,16 @@ class UserService {
 
 
     fun getUserFromEditRequest(request: UserEditRequest): User {
-        val salt = passwordHelper.salt
-        var password = passwordHelper.salt
+        var salt: String?
+        var password: String?
         if (!request.password.isNullOrEmpty()) {
+            // 密码不为空，更新密码和盐
+            salt = passwordHelper.salt
             password = passwordHelper.generate(request.password, salt)
+        } else {
+            // 不更新密码和盐
+            salt = null
+            password = null
         }
         return User(
 ${add_user_with_password_columns_data}
