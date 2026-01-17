@@ -127,17 +127,17 @@ ${partly_update_list}
 
     <select id="selectRolesByUserId" resultType="${package_name}.models.Role">
         SELECT
-        <include refid="roleColumns"/>
+        <include refid="${package_name}.mappers.RoleMapper.roleColumns"/>
         FROM
-        <include refid="roleTables"/>
+        <include refid="${package_name}.mappers.RoleMapper.roleTables"/>
         WHERE `role`.`id` IN (SELECT `role_id` FROM `t_user_role` `user_role` WHERE `user_role`.`user_id` = #{userId})
     </select>
 
     <select id="selectPermissionsByUserId" resultType="${package_name}.models.Permission">
         SELECT
-        <include refid="permissionColumns"/>
+        <include refid="${package_name}.mappers.PermissionMapper.permissionColumns"/>
         FROM
-        <include refid="permissionTables"/>
+        <include refid="${package_name}.mappers.PermissionMapper.permissionTables"/>
         WHERE `permission`.`id` IN (SELECT `permission_id` FROM `t_role_permission` `role_permission` WHERE `role_permission`.`role_id` IN (SELECT `role_id` FROM `t_user_role` `user_role` WHERE `user_role`.`user_id` = #{userId}))
     </select>
 </mapper>

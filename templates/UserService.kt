@@ -46,10 +46,13 @@ ${add_user_with_password_columns_data}
 
     fun editUserPartly(request: UserPartlyEditRequest) {
         if (!request.password.isNullOrEmpty()) {
+            // 密码不为空，更新密码和盐
             request.salt = passwordHelper.salt
             request.password = passwordHelper.generate(request.password!!, request.salt!!)
         } else {
+            // 不更新密码和盐
             request.salt = null
+            request.password = null
         }
         userMapper.updateUserPartly(request)
     }

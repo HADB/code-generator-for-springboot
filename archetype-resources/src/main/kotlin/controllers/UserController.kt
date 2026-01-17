@@ -109,11 +109,27 @@ class UserController {
         return Response.success()
     }
 
-
     @Operation(summary = "用户信息")
     @RequestMapping("/info", method = [RequestMethod.GET])
     @AllowSignedIn
     fun info(@RequestAttribute service: String, @CurrentUser user: User): Response<Any> {
         return Response.success(user)
+    }
+
+    @Operation(summary = "修改密码")
+    @RequestMapping("/change-password", method = [RequestMethod.POST])
+    @AllowSignedIn
+    fun changePassword(@RequestBody request: ChangePasswordRequest, @CurrentUser user: User): Response<Any> {
+        val userWithPassword = userService.searchUserWithPassword(UserSearchRequest(mobile = user.mobile)) ?: return Response.error("用户不存在")
+        if (!passwordHelper.verify(request.oldPassword, userWithPassword)) {
+            return Response.error("原密码不正确")
+        }
+        userService.editUserPartly(
+            UserPartlyEditRequest(
+                id = user.id,
+                password = request.newPassword,
+            )
+        )
+        return Response.success()
     }
 }
