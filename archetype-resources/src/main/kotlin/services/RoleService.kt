@@ -45,8 +45,8 @@ class RoleService {
         return roleMapper.selectRoleById(id)
     }
 
-    fun searchPagingRoles(request: RoleSearchRequest): List<Role> {
-        return roleMapper.selectPagingRoles(request)
+    fun searchRoles(request: RoleSearchRequest): List<Role> {
+        return roleMapper.selectRoles(request)
     }
 
     fun searchRolesCount(request: RoleSearchRequest): Long {

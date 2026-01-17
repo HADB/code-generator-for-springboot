@@ -43,8 +43,8 @@ class UserRoleService {
         return userRoleMapper.selectUserRoleById(id)
     }
 
-    fun searchPagingUserRoles(request: UserRoleSearchRequest): List<UserRole> {
-        return userRoleMapper.selectPagingUserRoles(request)
+    fun searchUserRoles(request: UserRoleSearchRequest): List<UserRole> {
+        return userRoleMapper.selectUserRoles(request)
     }
 
     fun searchUserRolesCount(request: UserRoleSearchRequest): Long {

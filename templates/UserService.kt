@@ -70,8 +70,8 @@ ${add_user_with_password_columns_data}
         return userMapper.selectUserById(key.toLong())
     }
 
-    fun searchPagingUsers(request: UserSearchRequest): List<User> {
-        return userMapper.selectPagingUsers(request)
+    fun searchUsers(request: UserSearchRequest): List<User> {
+        return userMapper.selectUsers(request)
     }
 
     fun searchUsersCount(request: UserSearchRequest): Long {
@@ -91,9 +91,5 @@ ${add_user_with_password_columns_data}
 
     fun signOut(service: String, user: User) {
         tokenHelper.deleteToken(service, user.id.toString())
-    }
-
-    fun getUserByMobile(mobile: String): User? {
-        return userMapper.selectUserByMobile(mobile)
     }
 }

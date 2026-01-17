@@ -73,16 +73,7 @@ ${partly_update_list}
         LIMIT 1
     </select>
 
-    <select id="selectUserByMobile" resultType="${package_name}.models.User">
-        SELECT
-        <include refid="userColumns"/>
-        FROM
-        <include refid="userTables"/>
-        WHERE `user`.`mobile` = #{mobile}
-        LIMIT 1
-    </select>
-
-    <select id="selectPagingUsers" resultType="${package_name}.models.User">
+    <select id="selectUsers" resultType="${package_name}.models.User">
         SELECT
         <include refid="userColumns"/>
         FROM

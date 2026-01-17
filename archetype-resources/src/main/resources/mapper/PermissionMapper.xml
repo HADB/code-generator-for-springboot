@@ -139,7 +139,7 @@
         LIMIT 1
     </select>
 
-    <select id="selectPagingPermissions" resultType="${package_name}.models.Permission">
+    <select id="selectPermissions" resultType="${package_name}.models.Permission">
         SELECT
         <include refid="permissionColumns"/>
         FROM
@@ -168,14 +168,6 @@
         <where>
             <include refid="permissionSearchWhere"/>
         </where>
-    </select>
-
-    <select id="selectPermissionsByRoleId" resultType="${package_name}.models.Permission">
-        SELECT
-        <include refid="permissionColumns"/>
-        FROM
-        <include refid="permissionTables"/>
-        WHERE `permission`.`id` IN (SELECT `permission_id` FROM `t_role_permission` `role_permission` WHERE `role_permission`.`role_id` = #{roleId})
     </select>
 
     <select id="selectPermissionsByUserId" resultType="${package_name}.models.Permission">

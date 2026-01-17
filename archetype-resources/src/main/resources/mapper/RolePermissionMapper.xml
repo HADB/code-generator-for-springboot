@@ -91,7 +91,7 @@
         LIMIT 1
     </select>
 
-    <select id="selectPagingRolePermissions" resultType="${package_name}.models.RolePermission">
+    <select id="selectRolePermissions" resultType="${package_name}.models.RolePermission">
         SELECT
         <include refid="rolePermissionColumns"/>
         FROM

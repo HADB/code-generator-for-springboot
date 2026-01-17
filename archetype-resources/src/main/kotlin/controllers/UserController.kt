@@ -74,7 +74,7 @@ class UserController {
     @Operation(summary = "搜索「用户」")
     @RequestMapping("/search", method = [RequestMethod.POST])
     fun search(@RequestBody request: UserSearchRequest): Response<SearchResponse<User>> {
-        val results = userService.searchPagingUsers(request)
+        val results = userService.searchUsers(request)
         val count = userService.searchUsersCount(request)
         val response = SearchResponse(results, count)
         return Response.success(response)

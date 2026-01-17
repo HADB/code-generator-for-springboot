@@ -43,8 +43,8 @@ class RolePermissionService {
         return rolePermissionMapper.selectRolePermissionById(id)
     }
 
-    fun searchPagingRolePermissions(request: RolePermissionSearchRequest): List<RolePermission> {
-        return rolePermissionMapper.selectPagingRolePermissions(request)
+    fun searchRolePermissions(request: RolePermissionSearchRequest): List<RolePermission> {
+        return rolePermissionMapper.selectRolePermissions(request)
     }
 
     fun searchRolePermissionsCount(request: RolePermissionSearchRequest): Long {

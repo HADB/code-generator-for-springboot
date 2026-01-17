@@ -12,10 +12,9 @@ interface PermissionMapper {
     fun updatePermissionPartly(@Param("request") request: PermissionPartlyEditRequest)
     fun deletePermission(@Param("id") id: Long)
     fun selectPermissionById(@Param("id") id: Long): Permission?
-    fun selectPagingPermissions(@Param("request") request: PermissionSearchRequest): List<Permission>
+    fun selectPermissions(@Param("request") request: PermissionSearchRequest): List<Permission>
     fun selectPermissionsCount(@Param("request") request: PermissionSearchRequest): Long
 
-    fun selectPermissionsByRoleId(@Param("roleId") roleId: Long): List<Permission>
     fun selectPermissionsByUserId(@Param("userId") roleId: Long): List<Permission>
     fun selectPermissionByKey(@Param("key") key: String): Permission?
 }

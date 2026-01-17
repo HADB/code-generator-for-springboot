@@ -115,7 +115,7 @@
         LIMIT 1
     </select>
 
-    <select id="selectPagingRoles" resultType="${package_name}.models.Role">
+    <select id="selectRoles" resultType="${package_name}.models.Role">
         SELECT
         <include refid="roleColumns"/>
         FROM

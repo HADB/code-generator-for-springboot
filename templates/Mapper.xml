@@ -45,7 +45,7 @@ ${partly_update_list}
         LIMIT 1
     </select>
 
-    <select id="selectPaging${model_name_pascal_case_plural}" resultType="${package_name}.models.${model_name_pascal_case}">
+    <select id="select${model_name_pascal_case_plural}" resultType="${package_name}.models.${model_name_pascal_case}">
         SELECT
         <include refid="${model_name_camel_case}Columns"/>
         FROM

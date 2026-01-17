@@ -12,7 +12,7 @@ interface RoleMapper {
     fun updateRolePartly(@Param("request") request: RolePartlyEditRequest)
     fun deleteRole(@Param("id") id: Long)
     fun selectRoleById(@Param("id") id: Long): Role?
-    fun selectPagingRoles(@Param("request") request: RoleSearchRequest): List<Role>
+    fun selectRoles(@Param("request") request: RoleSearchRequest): List<Role>
     fun selectRolesCount(@Param("request") request: RoleSearchRequest): Long
 
     fun selectRoleByKey(@Param("key") key: String): Role?

@@ -47,16 +47,12 @@ class PermissionService {
         return permissionMapper.selectPermissionById(id)
     }
 
-    fun searchPagingPermissions(request: PermissionSearchRequest): List<Permission> {
-        return permissionMapper.selectPagingPermissions(request)
+    fun searchPermissions(request: PermissionSearchRequest): List<Permission> {
+        return permissionMapper.selectPermissions(request)
     }
 
     fun searchPermissionsCount(request: PermissionSearchRequest): Long {
         return permissionMapper.selectPermissionsCount(request)
-    }
-
-    fun getPermissionsByRoleId(roleId: Long): List<Permission> {
-        return permissionMapper.selectPermissionsByRoleId(roleId)
     }
 
     fun getPermissionsByUserId(userId: Long): List<Permission> {

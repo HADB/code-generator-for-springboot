@@ -12,6 +12,6 @@ interface RolePermissionMapper {
     fun updateRolePermissionPartly(@Param("request") request: RolePermissionPartlyEditRequest)
     fun deleteRolePermission(@Param("id") id: Long)
     fun selectRolePermissionById(@Param("id") id: Long): RolePermission?
-    fun selectPagingRolePermissions(@Param("request") request: RolePermissionSearchRequest): List<RolePermission>
+    fun selectRolePermissions(@Param("request") request: RolePermissionSearchRequest): List<RolePermission>
     fun selectRolePermissionsCount(@Param("request") request: RolePermissionSearchRequest): Long
 }
