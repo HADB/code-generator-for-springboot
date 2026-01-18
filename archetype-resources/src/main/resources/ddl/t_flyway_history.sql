@@ -11,4 +11,4 @@ CREATE TABLE `t_flyway_history` (
     `success`        TINYINT(1)                          NOT NULL,
     PRIMARY KEY (`installed_rank`),
     KEY `t_flyway_history_s_idx` (`success`)
-) ENGINE = InnoDB DEFAULT CHARSET = `utf8mb4`;
+) ENGINE = InnoDB DEFAULT CHARSET = `utf8mb4` COLLATE=utf8mb4_zh_0900_as_cs;

@@ -10,4 +10,4 @@ CREATE TABLE `t_role` (
     UNIQUE KEY  `idx_key`           (`key`),
     KEY         `idx_create_time`   (`create_time`),
     KEY         `idx_update_time`   (`update_time`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='角色';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_zh_0900_as_cs COMMENT='角色';
