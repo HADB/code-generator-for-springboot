@@ -155,7 +155,7 @@ def run_package():
                         print("表名与文件名不一致！")
                         return
                     continue
-                if line.find(" KEY ") >= 0:
+                if line.find(" KEY ") >= 0 or line.find(" INDEX ") >= 0 or line.find(" UNIQUE ") >= 0:
                     continue  # 跳过索引
                 if line.find("CHARSET=") >= 0:
                     table_description = line[line.find("COMMENT") + 8 :].split("'")[1]  # 读取表注释
