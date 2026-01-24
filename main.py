@@ -86,27 +86,48 @@ def copy_archetype_resources():
                 continue
             sub_path = path[len(ARCHETYPE_RESOURCE_PATH) + 1 :]
 
-            with open(os.path.join(path, file_name), "r", encoding="utf-8") as file_read:
-                directory_path = os.path.join(project_info["project_path"], sub_path)
-                if "src/main/kotlin" in path or "src\\main\\kotlin" in path:
-                    directory_path = os.path.join(project_info["project_path"], "src/main/kotlin", *project_info["package_name"].split("."), sub_path[len("src/main/kotlin") + 1 :])
-                if not os.path.exists(directory_path):
-                    os.makedirs(directory_path)
-                file_path = os.path.join(directory_path, file_name)
-                if os.path.exists(file_path) and os.path.splitext(file_name)[-1] == ".sql":
-                    if project_info["debug"]:
-                        print("跳过:" + file_path)
-                    continue
+            directory_path = os.path.join(project_info["project_path"], sub_path)
+            if "src/main/kotlin" in path or "src\\main\\kotlin" in path:
+                directory_path = os.path.join(project_info["project_path"], "src/main/kotlin", *project_info["package_name"].split("."), sub_path[len("src/main/kotlin") + 1 :])
+            if not os.path.exists(directory_path):
+                os.makedirs(directory_path)
+            file_path = os.path.join(directory_path, file_name)
+            if os.path.exists(file_path) and os.path.splitext(file_name)[-1] == ".sql":
                 if project_info["debug"]:
-                    print("准备复制:" + file_path)
-                content = substitute(file_read.read())
+                    print("跳过:" + file_path)
+                continue
+            if project_info["debug"]:
+                print("准备复制:" + file_path)
 
+            # 直接复制文件列表（不进行模板替换）
+            copy_files = [
+                ".gitlab-ci.yml",
+                "gradle-wrapper.jar",
+                "gradlew",
+                "gradlew.bat",
+                "renovate.json",
+            ]
+            binary_extensions = [".jar", ".class", ".zip", ".tar", ".gz"]
+
+            is_copy = file_name in copy_files or any(file_name.endswith(ext) for ext in binary_extensions)
+
+            if is_copy:
+                # 直接复制
+                with open(os.path.join(path, file_name), "rb") as file_read:
+                    content = file_read.read()
+                with open(file_path, "wb") as file_write:
+                    file_write.write(content)
+            else:
+                # 进行模板替换
+                with open(os.path.join(path, file_name), "r", encoding="utf-8") as file_read:
+                    content = substitute(file_read.read())
                 with open(file_path, "w", encoding="utf-8") as file_write:
                     file_write.write(content)
-                    if project_info["debug"]:
-                        print("已复制:" + file_path)
-                if file_name == "generator.sh" and platform.system() != "Windows":
-                    subprocess.run(["chmod", "+x", file_path])
+
+            if project_info["debug"]:
+                print("已复制:" + file_path)
+            if file_name == "generator.sh" and platform.system() != "Windows":
+                subprocess.run(["chmod", "+x", file_path])
 
 
 def run_package():

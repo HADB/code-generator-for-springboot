@@ -1,6 +1,6 @@
 FROM eclipse-temurin:25.0.1_8-jre-alpine
 
-COPY target/app.jar /app.jar
+COPY build/libs/app.jar /app.jar
 
 ENV SPRING_PROFILES_ACTIVE="prd"
 

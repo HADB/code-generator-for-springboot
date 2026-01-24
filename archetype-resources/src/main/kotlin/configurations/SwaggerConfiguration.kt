@@ -21,7 +21,7 @@ class SwaggerConfiguration {
         return OpenAPI()
             .info(
                 Info()
-                    .title("${artifact_id}")
+                    .title("${artifact_id}-api")
                     .description("${description} API")
                     .version("v${version}")
             )
