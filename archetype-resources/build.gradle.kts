@@ -9,8 +9,8 @@ plugins {
     kotlin("plugin.noarg") version "2.3.0"
     kotlin("plugin.spring") version "2.3.0"
     id("io.spring.dependency-management") version "1.1.7"
-    id("org.springframework.boot") version "4.0.1"
-    id("org.flywaydb.flyway") version "11.20.1"
+    id("org.springframework.boot") version "4.0.2"
+    id("org.flywaydb.flyway") version "11.20.3"
 }
 
 java {
@@ -48,9 +48,9 @@ dependencies {
     implementation("org.apache.commons:commons-lang3")
     implementation("org.apache.commons:commons-pool2")
     implementation("org.apache.httpcomponents.client5:httpclient5")
-    implementation("org.apache.poi:poi-ooxml:5.4.0")
-    implementation("org.flywaydb:flyway-core:11.20.1")
-    implementation("org.flywaydb:flyway-mysql:11.20.1")
+    implementation("org.apache.poi:poi-ooxml:5.5.1")
+    implementation("org.flywaydb:flyway-core:11.20.3")
+    implementation("org.flywaydb:flyway-mysql:11.20.3")
     implementation("org.mybatis.spring.boot:mybatis-spring-boot-starter:4.0.1")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.1")
     implementation("tools.jackson.module:jackson-module-kotlin")
